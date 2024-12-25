@@ -1,0 +1,38 @@
+package com.pareidolia.controller.admin;
+
+
+import com.pareidolia.dto.ConsumerDTO;
+import com.pareidolia.service.admin.AdminConsumerService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+@CrossOrigin
+@RestController
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@RequestMapping(path = "/admin/consumer")
+public class AdminConsumerController {
+
+	private final AdminConsumerService adminConsumerService;
+
+	//display
+	@GetMapping(value = "/{id}/data", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ConsumerDTO getData(@PathVariable("id") Long idConsumer) {
+		return adminConsumerService.getData(idConsumer);
+	}
+
+	//update
+	@PostMapping(value = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ConsumerDTO update(@RequestBody ConsumerDTO consumerDTO) {
+		return adminConsumerService.update(consumerDTO);
+	}
+
+	// add inutile
+
+	// delete
+	@DeleteMapping(value = "/{id}")
+	public void delete(@PathVariable("id") Long id) {
+		adminConsumerService.delete(id);
+	}
+}

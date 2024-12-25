@@ -1,0 +1,24 @@
+@startuml
+actor Generic
+boundary RestUI #DodgerBlue
+participant AccessController #Orange
+participant AccessService #Salmon
+participant AccountRepository #MediumSeaGreen
+participant JWTService #DodgerBlue
+database Database #Salmon
+
+group Consumer/Admin Login
+	Generic -> RestUI ++ : POST /generic/access/login
+	RestUI -> AccessController ++ : login(loginDTO)
+	AccessController -> AccessService ++ : login(loginDTO)
+	AccessService -> AccountRepository ++ : findByEmailAndPassword
+	AccountRepository -> Database ++ : connection and retrieve data
+	Database --> AccountRepository -- : Account
+	AccountRepository --> AccessService -- : Account
+	AccessService -> JWTService ++ : create
+	JWTService --> AccessService -- : JWT
+	AccessService --> AccessController -- : JWT
+	AccessController --> RestUI -- : JWT
+	RestUI --> Generic -- : 200 OK - TEXT/PLAIN Response (JWT)
+end
+@enduml
