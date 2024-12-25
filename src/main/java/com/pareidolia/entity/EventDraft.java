@@ -29,9 +29,9 @@ public class EventDraft {
     @Id
     @Column(name = "id")
     private Long id;
-	@Basic
-	@Column(name = "id_event")
-	private Long idEvent;
+    @Basic
+    @Column(name = "id_event")
+    private Long idEvent;
     @Basic
     @Column(name = "title", nullable = false)
     private String title;
@@ -53,12 +53,12 @@ public class EventDraft {
     @Basic
     @Column(name = "max_number_of_participants", nullable = false)
     private Long maxNumberOfParticipants;
-	@CreationTimestamp
-	@Column(name = "creation_time", nullable = false, updatable = false)
-	private LocalDateTime creationTime;
-	@UpdateTimestamp
-	@Column(name = "last_update", nullable = false)
-	private LocalDateTime lastUpdate;
+    @CreationTimestamp
+    @Column(name = "creation_time", nullable = false, updatable = false)
+    private LocalDateTime creationTime;
+    @UpdateTimestamp
+    @Column(name = "last_update", nullable = false)
+    private LocalDateTime lastUpdate;
 
     @Override
     public boolean equals(Object o) {

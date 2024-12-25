@@ -1,14 +1,13 @@
 package com.pareidolia.service.promoter;
 
 import com.pareidolia.dto.EventDraftDTO;
-import com.pareidolia.dto.PromoterDTO;
 import com.pareidolia.entity.Account;
 import com.pareidolia.entity.EventDraft;
 import com.pareidolia.entity.EventDraftPromoterAssociation;
 import com.pareidolia.entity.PromoterInfo;
-import com.pareidolia.mapper.AccountMapper;
 import com.pareidolia.mapper.EventDraftMapper;
-import com.pareidolia.repository.*;
+import com.pareidolia.repository.EventDraftPromoterAssociationRepository;
+import com.pareidolia.repository.EventDraftRepository;
 import com.pareidolia.validator.EventDraftValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,6 @@ package com.pareidolia.service.consumer;
 
 import com.pareidolia.dto.ConsumerDTO;
 import com.pareidolia.dto.ReviewDTO;
-import com.pareidolia.entity.Event;
 import com.pareidolia.entity.Review;
 import com.pareidolia.mapper.ReviewMapper;
 import com.pareidolia.repository.EventRepository;
@@ -32,8 +31,8 @@ public class ConsumerReviewService {
 			throw new IllegalArgumentException("Invalid Event ID");
 		}
 		// Verifica la presenza dell'evento e che sia finito
-		if(eventRepository.findById(idEvent).isEmpty()){
-			throw new  IllegalArgumentException("Invalid Event ID");
+		if (eventRepository.findById(idEvent).isEmpty()) {
+			throw new IllegalArgumentException("Invalid Event ID");
 		}
 		reviewValidator.validateEventIsOver(idEvent);
 		if (reviewRepository.findAllByIdEvent(idEvent).isEmpty()) {

@@ -17,42 +17,42 @@ import java.util.stream.Collectors;
 
 @Service
 public class JWTService {
-    private final Algorithm algorithm;
+	private final Algorithm algorithm;
 
-    public JWTService(@Value("jwt.secret") String secret) {
-        this.algorithm = Algorithm.HMAC256(secret);
-    }
+	public JWTService(@Value("jwt.secret") String secret) {
+		this.algorithm = Algorithm.HMAC256(secret);
+	}
 
-    public String create(Account.Type role, String username, String password) {
-        LocalDateTime issuedAt = LocalDateTime.now();
-        return JWT.create()
-                .withIssuedAt(Date.from(issuedAt.atZone(ZoneOffset.systemDefault()).toInstant()))
-                .withClaim("role", role.name())
-                .withClaim("username", username)
-                .withClaim("password", password)
-                .sign(algorithm);
-    }
+	public String create(Account.Type role, String username, String password) {
+		LocalDateTime issuedAt = LocalDateTime.now();
+		return JWT.create()
+			.withIssuedAt(Date.from(issuedAt.atZone(ZoneOffset.systemDefault()).toInstant()))
+			.withClaim("role", role.name())
+			.withClaim("username", username)
+			.withClaim("password", password)
+			.sign(algorithm);
+	}
 
-    public Map<String, Object> verify(String token) throws TokenVerificationException {
-        JWTVerifier verifier = JWT.require(algorithm).build();
-        try {
-            DecodedJWT jwt = verifier.verify(token);
-            return jwt.getClaims().entrySet()
-                    .stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().as(Object.class)));
-        } catch (Exception e) {
-            throw new TokenVerificationException(e);
-        }
-    }
+	public Map<String, Object> verify(String token) throws TokenVerificationException {
+		JWTVerifier verifier = JWT.require(algorithm).build();
+		try {
+			DecodedJWT jwt = verifier.verify(token);
+			return jwt.getClaims().entrySet()
+				.stream()
+				.collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().as(Object.class)));
+		} catch (Exception e) {
+			throw new TokenVerificationException(e);
+		}
+	}
 
-    @NoArgsConstructor
-    public static class TokenVerificationException extends RuntimeException {
-        public TokenVerificationException(Throwable t) {
-            super(t);
-        }
+	@NoArgsConstructor
+	public static class TokenVerificationException extends RuntimeException {
+		public TokenVerificationException(Throwable t) {
+			super(t);
+		}
 
-        public TokenVerificationException(String msg) {
-            super(msg);
-        }
-    }
+		public TokenVerificationException(String msg) {
+			super(msg);
+		}
+	}
 }

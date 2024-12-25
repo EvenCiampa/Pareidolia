@@ -15,12 +15,12 @@ import java.util.Optional;
 public interface EventPromoterAssociationRepository extends JpaRepository<EventPromoterAssociation, Long> {
 
 	@Query("""
-		SELECT org.springframework.data.util.Pair(a, pi)
-		FROM EventPromoterAssociation epa
-		INNER JOIN PromoterInfo pi ON pi.idPromoter = epa.idPromoter
-		INNER JOIN Account a ON a.id = epa.idPromoter
-		WHERE epa.idEvent = :idEvent
-	""")
+			SELECT org.springframework.data.util.Pair(a, pi)
+			FROM EventPromoterAssociation epa
+			INNER JOIN PromoterInfo pi ON pi.idPromoter = epa.idPromoter
+			INNER JOIN Account a ON a.id = epa.idPromoter
+			WHERE epa.idEvent = :idEvent
+		""")
 	List<Pair<Account, PromoterInfo>> findPromotersByIdEvent(Long idEvent);
 
 	Optional<EventPromoterAssociation> findByIdEventAndIdPromoter(Long idEvent, Long id);

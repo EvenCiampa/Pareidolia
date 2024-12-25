@@ -27,6 +27,8 @@ public class PromoterReviewController {
 
 	// crea una nuova review (idEvent è contenuto nella requestBody del DTO) QUINDI HO DECISO CHE PUò COMMENTARE IL PROMOTER
 	@PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ReviewDTO create(@RequestBody ReviewDTO createReviewDTO) {return promoterReviewService.create(createReviewDTO);}
+	public ReviewDTO create(@RequestBody ReviewDTO createReviewDTO) {
+		return promoterReviewService.create(createReviewDTO);
+	}
 
 }

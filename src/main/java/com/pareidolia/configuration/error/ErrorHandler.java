@@ -79,10 +79,10 @@ public class ErrorHandler {
 			|| ex instanceof BadCredentialsException
 			|| ex instanceof JWTService.TokenVerificationException)) {
 			log.error(String.format("ERROR: %s; MESSAGE: %s, USER: %s STACKTRACE: %s",
-				ex.getClass().toString(), ex.getMessage(), getUserData(), stackTraceFilter(ex.getStackTrace())));
+				ex.getClass(), ex.getMessage(), getUserData(), stackTraceFilter(ex.getStackTrace())));
 		} else {
 			log.warn(String.format("WARN: %s; MESSAGE: %s, USER: %s STACKTRACE: %s",
-				ex.getClass().toString(), ex.getMessage(), getUserData(), stackTraceFilter(ex.getStackTrace())));
+				ex.getClass(), ex.getMessage(), getUserData(), stackTraceFilter(ex.getStackTrace())));
 		}
 
 		ErrorResponse errorInfo = new ErrorResponse(
@@ -131,7 +131,7 @@ public class ErrorHandler {
 		headers.setContentType(new MediaType("application", "json"));
 
 		log.warn(String.format("WARN: %s; MESSAGE: %s, USER: %s STACKTRACE: %s",
-			ex.getClass().toString(), ex.getMessage(), getUserData(), stackTraceFilter(ex.getStackTrace())));
+			ex.getClass(), ex.getMessage(), getUserData(), stackTraceFilter(ex.getStackTrace())));
 
 		return new ResponseEntity<>(errorInfo, headers, HttpStatus.BAD_REQUEST);
 	}

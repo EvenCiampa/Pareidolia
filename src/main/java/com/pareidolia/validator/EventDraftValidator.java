@@ -4,7 +4,6 @@ import com.pareidolia.dto.EventDraftDTO;
 import com.pareidolia.dto.PromoterDTO;
 import com.pareidolia.entity.Account;
 import com.pareidolia.entity.EventDraft;
-import com.pareidolia.entity.PromoterInfo;
 import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.repository.EventDraftPromoterAssociationRepository;
 import com.pareidolia.repository.EventDraftRepository;

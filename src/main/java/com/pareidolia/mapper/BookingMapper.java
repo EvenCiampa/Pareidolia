@@ -2,12 +2,10 @@ package com.pareidolia.mapper;
 
 
 import com.pareidolia.dto.BookingDTO;
-import com.pareidolia.dto.PromoterDTO;
 import com.pareidolia.entity.Account;
 import com.pareidolia.entity.Booking;
 import com.pareidolia.entity.Event;
 import com.pareidolia.entity.PromoterInfo;
-import org.springframework.data.domain.Page;
 import org.springframework.data.util.Pair;
 
 import java.io.Serializable;

@@ -11,11 +11,11 @@ import java.util.Optional;
 @Repository
 public interface PromoterInfoRepository extends JpaRepository<PromoterInfo, Long> {
 	@Query("""
-		SELECT p
-		FROM PromoterInfo p
-		INNER JOIN EventPromoterAssociation ep ON ep.idPromoter = p.idPromoter
-		WHERE ep.idEvent = :idEvent
-	""")
+			SELECT p
+			FROM PromoterInfo p
+			INNER JOIN EventPromoterAssociation ep ON ep.idPromoter = p.idPromoter
+			WHERE ep.idEvent = :idEvent
+		""")
 	List<PromoterInfo> findAllByIdEvent(Long idEvent);
 
 	Optional<PromoterInfo> findByIdPromoter(Long idPromoter);

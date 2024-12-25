@@ -1,7 +1,6 @@
 package com.pareidolia.service.promoter;
 
 import com.pareidolia.dto.BookingDTO;
-import com.pareidolia.dto.ConsumerDTO;
 import com.pareidolia.dto.PromoterDTO;
 import com.pareidolia.entity.Account;
 import com.pareidolia.entity.Booking;
@@ -12,7 +11,6 @@ import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.repository.BookingRepository;
 import com.pareidolia.repository.EventPromoterAssociationRepository;
 import com.pareidolia.repository.EventRepository;
-import com.pareidolia.service.consumer.ConsumerService;
 import com.pareidolia.service.generic.PublicService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +21,6 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service

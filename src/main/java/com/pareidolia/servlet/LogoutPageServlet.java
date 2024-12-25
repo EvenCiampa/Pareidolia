@@ -9,13 +9,13 @@ import java.io.IOException;
 
 @WebServlet("/logout")
 public class LogoutPageServlet extends HttpServlet {
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        Long idUtente = (Long) request.getSession().getAttribute("idUtente");
-        if (idUtente != null) {
-            request.getSession().removeAttribute("idUtente");
-        }
-        response.sendRedirect("/login");
-    }
+	@Override
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+		throws IOException {
+		Long idUtente = (Long) request.getSession().getAttribute("idUtente");
+		if (idUtente != null) {
+			request.getSession().removeAttribute("idUtente");
+		}
+		response.sendRedirect("/login");
+	}
 }

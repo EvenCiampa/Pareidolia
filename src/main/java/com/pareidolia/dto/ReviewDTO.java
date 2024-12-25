@@ -1,7 +1,9 @@
 package com.pareidolia.dto;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -10,10 +12,10 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewDTO implements Serializable {
-    private Long id;
-    private String title;
-    private String description;
-    private Long score;
-    private Long idConsumer;
+	private Long id;
+	private String title;
+	private String description;
+	private Long score;
+	private Long idConsumer;
 	private Long idEvent;
 }

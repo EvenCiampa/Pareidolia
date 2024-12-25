@@ -13,17 +13,17 @@ import java.util.Optional;
 
 @Repository
 public interface EventDraftPromoterAssociationRepository extends JpaRepository<EventDraftPromoterAssociation, Long> {
-	// Trova l'associazione tra un evento e un promoter specifico
-	Optional<EventDraftPromoterAssociation> findByIdEventDraftAndIdPromoter(Long idEventDraft, Long idPromoter);
+    // Trova l'associazione tra un evento e un promoter specifico
+    Optional<EventDraftPromoterAssociation> findByIdEventDraftAndIdPromoter(Long idEventDraft, Long idPromoter);
 
-	void deleteByIdEventDraftAndIdPromoter(Long eventDraftId, Long promoterId);
+    void deleteByIdEventDraftAndIdPromoter(Long eventDraftId, Long promoterId);
 
-	@Query("""
-		SELECT org.springframework.data.util.Pair(a, pi)
-		FROM EventDraftPromoterAssociation edpa
-		INNER JOIN PromoterInfo pi ON pi.idPromoter = edpa.idPromoter
-		INNER JOIN Account a ON a.id = edpa.idPromoter
-		WHERE edpa.idEvent = :idEvent
-	""")
-	List<Pair<Account, PromoterInfo>> findPromotersByIdEventDraft(Long idEventDraft);
+    @Query("""
+            	SELECT org.springframework.data.util.Pair(a, pi)
+            	FROM EventDraftPromoterAssociation edpa
+            	INNER JOIN PromoterInfo pi ON pi.idPromoter = edpa.idPromoter
+            	INNER JOIN Account a ON a.id = edpa.idPromoter
+            	WHERE edpa.idEvent = :idEvent
+            """)
+    List<Pair<Account, PromoterInfo>> findPromotersByIdEventDraft(Long idEventDraft);
 }

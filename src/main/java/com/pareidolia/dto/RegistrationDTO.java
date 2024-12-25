@@ -13,10 +13,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class RegistrationDTO implements Serializable {
 
-    private String email;
-    private String password;
-    private String name;
-    private String surname;
-    private String phone;
+	private String email;
+	private String password;
+	private String name;
+	private String surname;
+	private String phone;
 
 }

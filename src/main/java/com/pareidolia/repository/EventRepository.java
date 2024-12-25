@@ -10,10 +10,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 	@Query("""
-		SELECT e
-		FROM Event e
-		INNER JOIN EventPromoterAssociation epa ON epa.idEvent = e.id
-		WHERE epa.idPromoter = :idPromoter
-	""")
+			SELECT e
+			FROM Event e
+			INNER JOIN EventPromoterAssociation epa ON epa.idEvent = e.id
+			WHERE epa.idPromoter = :idPromoter
+		""")
 	Page<Event> findAllByPromoterId(Long idPromoter, PageRequest pageRequest);
 }

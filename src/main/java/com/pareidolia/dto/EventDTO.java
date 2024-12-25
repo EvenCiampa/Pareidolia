@@ -16,15 +16,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventDTO implements Serializable {
-    private Long id;
-    private String title;
-    private String description;
-    private String place;
-    private LocalDate date;
-    private LocalTime time;
-    private Duration duration;
-    //private Long idPromoter;
-    private List<PromoterDTO> promoters;
-    private Long maxNumberOfParticipants;
-    private Double score;
+	private Long id;
+	private String title;
+	private String description;
+	private String place;
+	private LocalDate date;
+	private LocalTime time;
+	private Duration duration;
+	//private Long idPromoter;
+	private List<PromoterDTO> promoters;
+	private Long maxNumberOfParticipants;
+	private Double score;
 }

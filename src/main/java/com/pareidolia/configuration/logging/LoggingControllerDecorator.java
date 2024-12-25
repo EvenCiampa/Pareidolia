@@ -16,10 +16,10 @@ public class LoggingControllerDecorator {
     public Object logControllerCall(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().getName();
         String className = joinPoint.getTarget().getClass().getSimpleName();
-        
+
         logger.info("Starting {} in {}", methodName, className);
         long startTime = System.currentTimeMillis();
-        
+
         try {
             Object result = joinPoint.proceed();
             long endTime = System.currentTimeMillis();

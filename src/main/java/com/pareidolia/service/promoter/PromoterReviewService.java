@@ -31,8 +31,8 @@ public class PromoterReviewService {
 			throw new IllegalArgumentException("Invalid Event ID");
 		}
 		// Verifica la presenza dell'evento e che sia finito
-		if(eventRepository.findById(idEvent).isEmpty()){
-			throw new  IllegalArgumentException("Invalid Event ID");
+		if (eventRepository.findById(idEvent).isEmpty()) {
+			throw new IllegalArgumentException("Invalid Event ID");
 		}
 		reviewValidator.validateEventIsOver(idEvent);
 		if (reviewRepository.findAllByIdEvent(idEvent).isEmpty()) {
@@ -45,6 +45,7 @@ public class PromoterReviewService {
 		);
 		return reviews.map(ReviewMapper::entityToDTO);
 	}
+
 	public ReviewDTO create(ReviewDTO reviewDTO) {
 		reviewValidator.validateEventIsOver(reviewDTO.getIdEvent());
 		reviewValidator.validateReviewFields(reviewDTO);

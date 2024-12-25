@@ -3,7 +3,10 @@ package com.pareidolia.service.admin;
 import com.pareidolia.dto.EventDTO;
 import com.pareidolia.dto.EventDraftDTO;
 import com.pareidolia.dto.PromoterDTO;
-import com.pareidolia.entity.*;
+import com.pareidolia.entity.Account;
+import com.pareidolia.entity.EventDraft;
+import com.pareidolia.entity.EventDraftPromoterAssociation;
+import com.pareidolia.entity.PromoterInfo;
 import com.pareidolia.mapper.EventDraftMapper;
 import com.pareidolia.mapper.EventDraftPromoterAssociationMapper;
 import com.pareidolia.repository.EventDraftPromoterAssociationRepository;
@@ -98,7 +101,7 @@ public class AdminEventDraftService {
 	}
 
 	public void delete(Long id) {
-		if(adminService.getData().getId() == null) {
+		if (adminService.getData().getId() == null) {
 			throw new IllegalArgumentException("Invalid ID");
 		}
 		if (id == null) {
@@ -110,7 +113,7 @@ public class AdminEventDraftService {
 	}
 
 	public EventDraftDTO update(EventDraftDTO eventDraftDTO) {
-		if(adminService.getData().getId() == null) {
+		if (adminService.getData().getId() == null) {
 			throw new IllegalArgumentException("Invalid ID");
 		}
 		if (eventDraftDTO.getId() == null) {
@@ -160,7 +163,7 @@ public class AdminEventDraftService {
 				eventDraftPromoterAssociationRepository.save(
 					EventDraftPromoterAssociationMapper.promoterDTOToEntity(promoterDTO, eventDraftDTO.getId())
 				);
-		});
+			});
 	}
 
 	public EventDTO publish(Long eventDraftId) {

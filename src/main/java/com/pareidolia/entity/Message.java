@@ -18,19 +18,19 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "Message")
 public class Message {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id")
-    private Long id;
-    @Basic
-    @Column(name = "message", columnDefinition = "TEXT")
-    private String message;
-    @Basic
-    @Column(name = "id_account", nullable = false)
-    private Long idAccount;
-    @Basic
-    @Column(name = "id_event_draft", nullable = false)
-    private Long idEventDraft;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@Column(name = "id")
+	private Long id;
+	@Basic
+	@Column(name = "message", columnDefinition = "TEXT")
+	private String message;
+	@Basic
+	@Column(name = "id_account", nullable = false)
+	private Long idAccount;
+	@Basic
+	@Column(name = "id_event_draft", nullable = false)
+	private Long idEventDraft;
 	@CreationTimestamp
 	@Column(name = "creation_time", nullable = false, updatable = false)
 	private LocalDateTime creationTime;
@@ -38,15 +38,15 @@ public class Message {
 	@Column(name = "last_update", nullable = false)
 	private LocalDateTime lastUpdate;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Message message1)) return false;
-        return Objects.equals(id, message1.id) && Objects.equals(message, message1.message) && Objects.equals(idAccount, message1.idAccount) && Objects.equals(idEventDraft, message1.idEventDraft);
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Message message1)) return false;
+		return Objects.equals(id, message1.id) && Objects.equals(message, message1.message) && Objects.equals(idAccount, message1.idAccount) && Objects.equals(idEventDraft, message1.idEventDraft);
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, message, idAccount, idEventDraft);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, message, idAccount, idEventDraft);
+	}
 }

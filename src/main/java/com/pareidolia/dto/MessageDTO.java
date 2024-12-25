@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class MessageDTO implements Serializable {
 	private Long id;
-    private String message;
-    private Long idAccount;
+	private String message;
+	private Long idAccount;
 	private LocalDateTime creationTime;
 }

@@ -41,13 +41,12 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class SecurityConfiguration {
-	private final ObjectMapper mapper;
-
 	private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
 		new AntPathRequestMatcher("/admin/**"),
 		new AntPathRequestMatcher("/consumer/**"),
 		new AntPathRequestMatcher("/promoter/**")
 	);
+	private final ObjectMapper mapper;
 
 	@Bean
 	public AuthenticationManager authenticationManager(TokenAuthenticationProvider authenticationProvider) {

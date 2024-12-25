@@ -1,7 +1,6 @@
 package com.pareidolia.mapper;
 
 import com.pareidolia.dto.PromoterDTO;
-import com.pareidolia.entity.EventDraftPromoterAssociation;
 import com.pareidolia.entity.EventPromoterAssociation;
 
 public class EventPromoterAssociationMapper {

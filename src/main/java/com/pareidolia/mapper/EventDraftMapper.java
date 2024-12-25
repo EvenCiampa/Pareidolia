@@ -2,7 +2,6 @@ package com.pareidolia.mapper;
 
 import com.pareidolia.dto.EventDTO;
 import com.pareidolia.dto.EventDraftDTO;
-import com.pareidolia.dto.PromoterDTO;
 import com.pareidolia.entity.Account;
 import com.pareidolia.entity.EventDraft;
 import com.pareidolia.entity.PromoterInfo;
@@ -39,7 +38,7 @@ public class EventDraftMapper {
 		return entity;
 	}
 
-	public static void updateEntitiesWithPromoterDTO(EventDraft entity, EventDraftDTO dto) {;
+	public static void updateEntitiesWithPromoterDTO(EventDraft entity, EventDraftDTO dto) {
 		entity.setTitle(dto.getTitle());
 		entity.setDescription(dto.getDescription());
 		entity.setPlace(dto.getPlace());

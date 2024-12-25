@@ -16,24 +16,24 @@ import java.util.Objects;
 @AllArgsConstructor
 @Table(name = "Review")
 public class Review {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id")
-    private Long id;
-    @Basic
-    @Column(name = "title", nullable = false)
-    private String title;
-    @Basic
-    @Column(name = "description", columnDefinition = "TEXT")
-    private String description;
-    @Basic
-    @Column(name = "score", nullable = false)
-    private Long score;
-    @Basic
-    @Column(name = "id_consumer", nullable = false)
-    private Long idConsumer;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@Column(name = "id")
+	private Long id;
 	@Basic
-	@Column(name="id_event", nullable = false)
+	@Column(name = "title", nullable = false)
+	private String title;
+	@Basic
+	@Column(name = "description", columnDefinition = "TEXT")
+	private String description;
+	@Basic
+	@Column(name = "score", nullable = false)
+	private Long score;
+	@Basic
+	@Column(name = "id_consumer", nullable = false)
+	private Long idConsumer;
+	@Basic
+	@Column(name = "id_event", nullable = false)
 	private Long idEvent;
 	@CreationTimestamp
 	@Column(name = "creation_time", nullable = false, updatable = false)

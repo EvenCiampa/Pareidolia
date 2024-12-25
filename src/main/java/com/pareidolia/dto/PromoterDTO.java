@@ -12,11 +12,11 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PromoterDTO implements Serializable {
-    private Long id;
-    private String name;
-    private String surname;
-    private String phone;
-    private String email;
-    private String photo;
-    private String presentation;
+	private Long id;
+	private String name;
+	private String surname;
+	private String phone;
+	private String email;
+	private String photo;
+	private String presentation;
 }

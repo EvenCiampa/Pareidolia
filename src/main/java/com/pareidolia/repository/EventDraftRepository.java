@@ -11,11 +11,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EventDraftRepository extends JpaRepository<EventDraft, Long> {
-	@Query("""
-		SELECT ed
-		FROM EventDraft ed
-		INNER JOIN EventDraftPromoterAssociation edpa ON edpa.idEventDraft = ed.id
-		WHERE edpa.idPromoter = :idPromoter
-	""")
-	Page<EventDraft> findAllByPromoterId(Long idPromoter, PageRequest pageRequest);
+    @Query("""
+            	SELECT ed
+            	FROM EventDraft ed
+            	INNER JOIN EventDraftPromoterAssociation edpa ON edpa.idEventDraft = ed.id
+            	WHERE edpa.idPromoter = :idPromoter
+            """)
+    Page<EventDraft> findAllByPromoterId(Long idPromoter, PageRequest pageRequest);
 }
