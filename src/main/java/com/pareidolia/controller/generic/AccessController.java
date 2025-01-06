@@ -3,6 +3,7 @@ package com.pareidolia.controller.generic;
 import com.pareidolia.dto.LoginDTO;
 import com.pareidolia.dto.RegistrationDTO;
 import com.pareidolia.service.generic.AccessService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RequestMapping(path = "/generic/access")
+@Tag(name = "Public", description = "The Public APIs")
 public class AccessController {
 
 	private final AccessService accessService;

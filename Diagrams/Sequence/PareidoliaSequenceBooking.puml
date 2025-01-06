@@ -4,13 +4,28 @@ boundary RestUI #DodgerBlue
 participant JWTAuthentication #DodgerBlue
 participant BookingController #Orange
 participant BookingService #Salmon
-participant ConsumerRepository #MediumSeaGreen
-participant TreatmentRepository #MediumSeaGreen
+participant AccountRepository #MediumSeaGreen
+participant EventRepository #MediumSeaGreen
 participant BookingRepository #MediumSeaGreen
 participant BookingConfigurationRepository #MediumSeaGreen
 database Database #Salmon
 
 group Consumer booking
+Consumer -> RestUI ++ : POST /consumer/booking/get
+RestUI -> JWTAuthentication ++ : JWT
+JWTAuthentication -> RestUI -- : UserData
+RestUI -> BookingController ++ : get(bookingDTO)
+BookingController -> BookingService ++ : getBooking
+BookingController -> BookingService ++ : getBookings
+BookingService -> BookingRepository ++ : findById
+BookingRepository -> Database ++ : connection and retrieve data
+Database --> BookingRepository -- : Booking
+BookingRepository --> BookingService -- : Booking
+BookingService -> AccountRepository ++ : findById
+AccountRepository -> Database ++ : connection and retrieve data
+Database --> AccountRepository -- : IdAccount
+'(!Objects.equals(booking.getIdAccount(), consumerService.getData().getId())) '
+AccountRepository --> BookingService -- :
 Consumer -> RestUI ++ : POST /consumer/booking/create
 RestUI -> JWTAuthentication ++ : JWT
 JWTAuthentication -> RestUI -- : UserData
@@ -21,10 +36,10 @@ BookingService -> ConsumerRepository ++ : findById
 ConsumerRepository -> Database ++ : connection and retrieve data
 Database --> ConsumerRepository -- : ConsumerEntity
 ConsumerRepository --> BookingService -- : ConsumerEntity
-BookingService -> TreatmentRepository ++ : findById
-TreatmentRepository -> Database ++ : connection and retrieve data
-Database --> TreatmentRepository -- : TreatmentEntity
-TreatmentRepository --> BookingService -- : TreatmentEntity
+BookingService -> EventRepository ++ : findById
+EventRepository -> Database ++ : connection and retrieve data
+Database --> EventRepository -- : EventRepository
+EventRepository --> BookingService -- : EventRepository
 BookingService -> BookingRepository ++ : countByActiveAndConsumerId
 BookingRepository -> Database ++ : connection and retrieve data
 Database --> BookingRepository -- : count
@@ -44,10 +59,10 @@ BookingConfigurationRepository --> BookingService -- : List<BookingConfiguration
 	loop for each booking day
 	BookingService -> BookingService : bookingConfigurationCheck
 	end
-BookingService -> TreatmentRepository ++ : findById
-TreatmentRepository -> Database ++ : connection and retrieve data
-Database --> TreatmentRepository -- : TreatmentEntity
-TreatmentRepository --> BookingService -- : TreatmentEntity
+BookingService -> EventRepository ++ : findById
+EventRepository -> Database ++ : connection and retrieve data
+Database --> EventRepository -- : TreatmentEntity
+EventRepository --> BookingService -- : TreatmentEntity
 BookingService -> BookingRepository ++ : save
 BookingRepository -> Database ++ : connection and save data
 Database --> BookingRepository -- : BookingEntity

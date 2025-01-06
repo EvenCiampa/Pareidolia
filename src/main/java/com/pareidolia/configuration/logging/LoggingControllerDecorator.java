@@ -1,33 +1,60 @@
 package com.pareidolia.configuration.logging;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+
+@Slf4j
 @Aspect
 @Component
 public class LoggingControllerDecorator {
-    private static final Logger logger = LoggerFactory.getLogger(LoggingControllerDecorator.class);
+	@Around("execution(* com.pareidolia.controller..*.*(..))")
+	public Object logControllerMethods(ProceedingJoinPoint joinPoint) throws Throwable {
+		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+		String className = signature.getDeclaringType().getSimpleName();
+		String methodName = signature.getName();
 
-    @Around("execution(* com.pareidolia.controller..*.*(..))")
-    public Object logControllerCall(ProceedingJoinPoint joinPoint) throws Throwable {
-        String methodName = joinPoint.getSignature().getName();
-        String className = joinPoint.getTarget().getClass().getSimpleName();
+		// Log prima dell'esecuzione del metodo
+		log.info("→ Executing {}.{}() with arguments: {}",
+			className,
+			methodName,
+			Arrays.toString(joinPoint.getArgs())
+		);
 
-        logger.info("Starting {} in {}", methodName, className);
-        long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 
-        try {
-            Object result = joinPoint.proceed();
-            long endTime = System.currentTimeMillis();
-            logger.info("Completed {} in {} ms", methodName, (endTime - startTime));
-            return result;
-        } catch (Exception e) {
-            logger.error("Error in {} - {}", methodName, e.getMessage());
-            throw e;
-        }
-    }
+		try {
+			// Esegue il metodo
+			Object result = joinPoint.proceed();
+
+			// Log dopo l'esecuzione con successo
+			long duration = System.currentTimeMillis() - startTime;
+			log.info("← {}.{}() completed in {}ms with result: {}",
+				className,
+				methodName,
+				duration,
+				result != null ? result.toString() : "void"
+			);
+
+			return result;
+
+		} catch (Exception e) {
+			// Log in caso di errore
+			long duration = System.currentTimeMillis() - startTime;
+			log.error("× {}.{}() failed after {}ms with exception: {}",
+				className,
+				methodName,
+				duration,
+				e.getMessage()
+			);
+			throw e;
+		}
+	}
 } 

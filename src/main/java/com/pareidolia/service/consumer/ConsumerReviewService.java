@@ -48,7 +48,7 @@ public class ConsumerReviewService {
 
 	public ReviewDTO create(ReviewDTO reviewDTO) {
 		reviewValidator.validateEventIsOver(reviewDTO.getIdEvent());
-		reviewValidator.validateReviewFields(reviewDTO);
+		reviewValidator.validateNewReviewFields(reviewDTO);
 
 		Review newReview = ReviewMapper.dtoToEntity(reviewDTO);
 

@@ -23,14 +23,14 @@ public class Message {
 	@Column(name = "id")
 	private Long id;
 	@Basic
-	@Column(name = "message", columnDefinition = "TEXT")
+	@Column(name = "message", nullable = false, columnDefinition = "TEXT")
 	private String message;
 	@Basic
 	@Column(name = "id_account", nullable = false)
 	private Long idAccount;
 	@Basic
-	@Column(name = "id_event_draft", nullable = false)
-	private Long idEventDraft;
+	@Column(name = "id_event", nullable = false)
+	private Long idEvent;
 	@CreationTimestamp
 	@Column(name = "creation_time", nullable = false, updatable = false)
 	private LocalDateTime creationTime;
@@ -38,15 +38,21 @@ public class Message {
 	@Column(name = "last_update", nullable = false)
 	private LocalDateTime lastUpdate;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_account", insertable = false, updatable = false)
+	private Account account;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_event", insertable = false, updatable = false)
+	private Event event;
+
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
 		if (!(o instanceof Message message1)) return false;
-		return Objects.equals(id, message1.id) && Objects.equals(message, message1.message) && Objects.equals(idAccount, message1.idAccount) && Objects.equals(idEventDraft, message1.idEventDraft);
+		return Objects.equals(id, message1.id) && Objects.equals(message, message1.message) && Objects.equals(idAccount, message1.idAccount) && Objects.equals(idEvent, message1.idEvent);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, message, idAccount, idEventDraft);
+		return Objects.hash(id, message, idAccount, idEvent);
 	}
 }

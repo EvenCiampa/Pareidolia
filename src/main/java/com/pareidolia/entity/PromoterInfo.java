@@ -36,6 +36,10 @@ public class PromoterInfo {
 	@Column(name = "last_update", nullable = false)
 	private LocalDateTime lastUpdate;
 
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "id_promoter", insertable = false, updatable = false)
+	private Account account;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

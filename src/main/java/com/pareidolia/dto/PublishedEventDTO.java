@@ -9,7 +9,6 @@ import java.io.Serializable;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginDTO implements Serializable {
-	public String email;
-	public String password;
+public class PublishedEventDTO extends EventDTO implements Serializable {
+	public Double score;
 }

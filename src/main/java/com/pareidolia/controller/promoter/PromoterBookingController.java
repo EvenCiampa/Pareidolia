@@ -3,6 +3,8 @@ package com.pareidolia.controller.promoter;
 
 import com.pareidolia.dto.BookingDTO;
 import com.pareidolia.service.promoter.PromoterBookingService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RequestMapping(path = "/promoter/booking")
+@SecurityRequirement(name = "JWT_Promoter")
+@Tag(name = "Promoter", description = "The Promoter APIs")
 public class PromoterBookingController {
 
 	private final PromoterBookingService promoterBookingService;

@@ -1,12 +1,13 @@
 package com.pareidolia.validator;
 
-import com.pareidolia.dto.EventDraftDTO;
 import com.pareidolia.dto.PromoterDTO;
+import com.pareidolia.dto.EventDTO;
 import com.pareidolia.entity.Account;
-import com.pareidolia.entity.EventDraft;
+import com.pareidolia.entity.Event;
 import com.pareidolia.repository.AccountRepository;
-import com.pareidolia.repository.EventDraftPromoterAssociationRepository;
-import com.pareidolia.repository.EventDraftRepository;
+import com.pareidolia.repository.EventPromoterAssociationRepository;
+import com.pareidolia.repository.EventRepository;
+import com.pareidolia.state.EventStateHandler;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
@@ -24,12 +26,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class EventDraftValidator {
 
+	private final EventRepository eventRepository;
 	private final AccountValidator accountValidator;
 	private final AccountRepository accountRepository;
-	private final EventDraftRepository eventDraftRepository;
-	private final EventDraftPromoterAssociationRepository eventDraftPromoterAssociationRepository;
+	private final EventPromoterAssociationRepository eventPromoterAssociationRepository;
 
-	public void createEventDraftValidator(EventDraftDTO eventDraftDTO) {
+	public void createEventDraftValidator(EventDTO eventDraftDTO) {
 		titleValidation(eventDraftDTO.getTitle());
 		descriptionValidation(eventDraftDTO.getDescription());
 		placeValidation(eventDraftDTO.getPlace());
@@ -86,12 +88,12 @@ public class EventDraftValidator {
 
 	// Metodo principale per la validazione dell'aggiunta di un Promoter all'EventDraft
 	public void validateAddPromoterToEventDraft(Long eventDraftId, Long accountId) {
-		EventDraft eventDraft = eventDraftRepository.findById(eventDraftId)
+		Event eventDraft = eventRepository.findById(eventDraftId)
 			.orElseThrow(() -> new IllegalArgumentException("Invalid EventDraft ID"));
 		Account account = validateAccountExists(accountId);
 		accountValidator.accountTypeValidation(account.getReferenceType(), Account.Type.PROMOTER);
 		validatePromoterNotAlreadyAssociated(eventDraftId, accountId);
-		validatePromoterNotPublished(eventDraft);
+		validateEditable(eventDraft);
 	}
 
 	// Controlla se l'account esiste
@@ -104,8 +106,8 @@ public class EventDraftValidator {
 	// Controlla che l'account non sia già associato all'evento
 	public void validatePromoterNotAlreadyAssociated(Long eventDraftId, Long accountId) {
 		// findByIdEventDraftAndIdPromoter per verificare se l'associazione esiste già
-		boolean isAlreadyAssociated = eventDraftPromoterAssociationRepository
-			.findByIdEventDraftAndIdPromoter(eventDraftId, accountId)
+		boolean isAlreadyAssociated = eventPromoterAssociationRepository
+			.findByIdEventAndIdPromoter(eventDraftId, accountId)
 			.isPresent();
 
 		if (isAlreadyAssociated) {
@@ -114,19 +116,19 @@ public class EventDraftValidator {
 	}
 
 	// Controlla che l'EventDraft non sia già associato all'evento (publicato)
-	public void validatePromoterNotPublished(EventDraft eventDraft) {
-		if (eventDraft.getIdEvent() != null) {
-			throw new IllegalArgumentException("EventDraft is approved, cannot add promoter");
+	public void validateEditable(Event eventDraft) {
+		if (EventStateHandler.canEdit(eventDraft)) {
+			throw new IllegalArgumentException("Event cannot be edited in the current state: " + eventDraft.getState());
 		}
 	}
 
 	//aggiorna i dati di eventDraft
-	public EventDraft getEventDraftAndValidateUpdate(EventDraftDTO eventDraftDTO) {
-		EventDraft eventDraft = eventDraftRepository.findById(eventDraftDTO.getId())
+	public Event getEventDraftAndValidateUpdate(EventDTO eventDraftDTO) {
+		Event eventDraft = eventRepository.findById(eventDraftDTO.getId())
 			.orElseThrow(() -> new IllegalArgumentException("EventDraft not found"));
 
 		// validate update like: AccountValidator.getPromoterAndValidateUpdate-> fatto diversamente
-		validatePromoterNotPublished(eventDraft);
+		validateEditable(eventDraft);
 
 		// Step 3: Validate the fields in EventDraftDTO
 		titleValidation(eventDraftDTO.getTitle());
@@ -143,10 +145,10 @@ public class EventDraftValidator {
 	}
 
 	//aggiorna la lista promoters associata all'eventDraft
-	private void updatePromoterAssociations(EventDraft eventDraft, List<PromoterDTO> promoterDTOs) {
+	private void updatePromoterAssociations(Event eventDraft, List<PromoterDTO> promoterDTOs) {
 		//  Recupera gli ID dei promoter ATTUALI associati all'evento
-		Set<Long> currentPromoterIds = eventDraftPromoterAssociationRepository
-			.findPromotersByIdEventDraft(eventDraft.getId()).stream()
+		Set<Long> currentPromoterIds = eventPromoterAssociationRepository
+			.findPromotersByIdEvent(eventDraft.getId()).stream()
 			.map(pair -> pair.getSecond().getIdPromoter())
 			.collect(Collectors.toSet());
 
@@ -180,18 +182,18 @@ public class EventDraftValidator {
 
 	//Implementazione della rimozione di un promoter durante aggiornamento eventDraft
 	public void removePromoterToEventDraft(Long eventDraftId, Long accountId) {
-		eventDraftRepository.findById(eventDraftId).orElseThrow(() -> new IllegalArgumentException("Invalid EventDraft ID"));
+		eventRepository.findById(eventDraftId).orElseThrow(() -> new IllegalArgumentException("Invalid EventDraft ID"));
 
 		validatePromoterAssociated(eventDraftId, accountId);
 
-		eventDraftPromoterAssociationRepository.deleteByIdEventDraftAndIdPromoter(eventDraftId, accountId);
+		eventPromoterAssociationRepository.deleteByIdEventAndIdPromoter(eventDraftId, accountId);
 	}
 
 	// Controlla se l'associazione Promoter-EventDraft esiste già
 	public void validatePromoterAssociated(Long eventDraftId, Long accountId) {
 		// Controlla se l'associazione esiste
-		boolean isAlreadyAssociated = eventDraftPromoterAssociationRepository
-			.findByIdEventDraftAndIdPromoter(eventDraftId, accountId)
+		boolean isAlreadyAssociated = eventPromoterAssociationRepository
+			.findByIdEventAndIdPromoter(eventDraftId, accountId)
 			.isPresent();
 
 		if (!isAlreadyAssociated) {
@@ -199,7 +201,7 @@ public class EventDraftValidator {
 		}
 	}
 
-	public void createEventDraftValidatorWithPromoter(EventDraftDTO eventDraftDTO, Long accountId) {
+	public void createEventDraftValidatorWithPromoter(EventDTO eventDraftDTO) {
 		titleValidation(eventDraftDTO.getTitle());
 		descriptionValidation(eventDraftDTO.getDescription());
 		placeValidation(eventDraftDTO.getPlace());
@@ -209,8 +211,13 @@ public class EventDraftValidator {
 		maxNumberOfParticipantsValidation(eventDraftDTO.getMaxNumberOfParticipants());
 
 		// 2. Validazione del promoter associato (come nel metodo validateAddPromoterToEventDraft)
-		Account account = validateAccountExists(accountId);
-		accountValidator.accountTypeValidation(account.getReferenceType(), Account.Type.PROMOTER);
+		if (eventDraftDTO.getPromoters() == null || eventDraftDTO.getPromoters().isEmpty()) {
+			throw new IllegalArgumentException("Event promoters must not be empty.");
+		} else if (!eventDraftDTO.getPromoters().stream().allMatch(ConcurrentHashMap.newKeySet()::add)) {
+			throw new IllegalArgumentException("Event promoters must contain no duplicates.");
+		}
+
+		eventDraftDTO.getPromoters().forEach(accountValidator::getPromoterAndValidate);
 	}
 }
 

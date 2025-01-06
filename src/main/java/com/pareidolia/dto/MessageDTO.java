@@ -1,20 +1,18 @@
 package com.pareidolia.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@AllArgsConstructor
+@ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class MessageDTO implements Serializable {
-	private Long id;
-	private String message;
-	private Long idAccount;
-	private LocalDateTime creationTime;
+	public Long id;
+	public String message;
+	public Long idAccount;
+	public LocalDateTime creationTime;
 }

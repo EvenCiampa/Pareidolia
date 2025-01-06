@@ -1,0 +1,14 @@
+volumes:
+    pareidolia_db:
+
+services:
+    db:
+        image: mysql:8.0.40
+        restart: always
+        environment:
+            MYSQL_DATABASE: "pareidolia"
+            MYSQL_ROOT_PASSWORD: "rootroot"
+        ports:
+            - "3306:3306"
+        volumes:
+            - pareidolia_db:/var/lib/mysql

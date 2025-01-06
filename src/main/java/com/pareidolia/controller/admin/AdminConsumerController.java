@@ -3,6 +3,8 @@ package com.pareidolia.controller.admin;
 
 import com.pareidolia.dto.ConsumerDTO;
 import com.pareidolia.service.admin.AdminConsumerService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RequestMapping(path = "/admin/consumer")
+@SecurityRequirement(name = "JWT_Admin")
+@Tag(name = "Admin", description = "The Admin APIs")
 public class AdminConsumerController {
 
 	private final AdminConsumerService adminConsumerService;

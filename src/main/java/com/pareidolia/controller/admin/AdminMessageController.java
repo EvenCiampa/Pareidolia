@@ -3,6 +3,8 @@ package com.pareidolia.controller.admin;
 
 import com.pareidolia.dto.MessageDTO;
 import com.pareidolia.service.admin.AdminMessageService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RequestMapping(path = "/admin/message")
+@SecurityRequirement(name = "JWT_Admin")
+@Tag(name = "Admin", description = "The Admin APIs")
 public class AdminMessageController {
 
 	private final AdminMessageService adminMessageService;

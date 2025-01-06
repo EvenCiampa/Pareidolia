@@ -35,6 +35,13 @@ public class EventPromoterAssociation {
 	@Column(name = "last_update", nullable = false)
 	private LocalDateTime lastUpdate;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_event", insertable = false, updatable = false)
+	private Event event;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_promoter", insertable = false, updatable = false)
+	private Account promoter;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

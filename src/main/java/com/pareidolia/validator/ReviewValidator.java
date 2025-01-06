@@ -3,6 +3,7 @@ package com.pareidolia.validator;
 import com.pareidolia.dto.ReviewDTO;
 import com.pareidolia.entity.Event;
 import com.pareidolia.repository.EventRepository;
+import com.pareidolia.repository.ReviewRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor(onConstructor_ = {@Autowired})
 public class ReviewValidator {
 	private final EventRepository eventRepository;
+	private final ReviewRepository reviewRepository;
 
 	public void validateEventIsOver(Long idEvent) {
 		if (idEvent == null) {
@@ -33,7 +35,7 @@ public class ReviewValidator {
 	}
 
 	// Verifica la validità dei campi della recensione
-	public void validateReviewFields(ReviewDTO reviewDTO) {
+	public void validateNewReviewFields(ReviewDTO reviewDTO) {
 		if (reviewDTO == null) {
 			throw new IllegalArgumentException("Review data is missing.");
 		}
@@ -54,6 +56,10 @@ public class ReviewValidator {
 		// Validazione del punteggio
 		if (reviewDTO.getScore() == null || reviewDTO.getScore() < 1 || reviewDTO.getScore() > 5) {
 			throw new IllegalArgumentException("Score must be between 1 and 5.");
+		}
+
+		if (reviewRepository.findByIdConsumerAndIdEvent(reviewDTO.getIdConsumer(), reviewDTO.getIdEvent()).isPresent()) {
+			throw new IllegalArgumentException("Review already exists.");
 		}
 	}
 }

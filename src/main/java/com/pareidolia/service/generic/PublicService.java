@@ -1,12 +1,12 @@
 package com.pareidolia.service.generic;
 
-import com.pareidolia.dto.EventDTO;
+import com.pareidolia.dto.PublishedEventDTO;
 import com.pareidolia.dto.PromoterDTO;
 import com.pareidolia.entity.Account;
 import com.pareidolia.entity.Event;
 import com.pareidolia.entity.PromoterInfo;
 import com.pareidolia.mapper.AccountMapper;
-import com.pareidolia.mapper.EventMapper;
+import com.pareidolia.mapper.PublishedEventMapper;
 import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.repository.EventPromoterAssociationRepository;
 import com.pareidolia.repository.EventRepository;
@@ -33,18 +33,22 @@ public class PublicService {
 	private final EventPromoterAssociationRepository eventPromoterAssociationRepository;
 	private final AccountRepository accountRepository;
 
-	public EventDTO getEvent(Long id) {
+	public PublishedEventDTO getEvent(Long id) {
 		Event event = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Event not found"));
+		if (event.getState() != Event.EventState.PUBLISHED) {
+			throw new IllegalArgumentException("Event not found");
+		}
 		List<Pair<Account, PromoterInfo>> promoters = findPromotersByEventId(id); // Trova i promotori associati all'evento
-		return EventMapper.entityToDTO(event, promoters);
+		return PublishedEventMapper.entityToDTO(event, promoters);
 	}
 
-	public Page<EventDTO> getEvents(Integer page, Integer size) {
-		return eventRepository.findAll(
+	public Page<PublishedEventDTO> getEvents(Integer page, Integer size) {
+		return eventRepository.findAllByState(
+			Event.EventState.PUBLISHED,
 			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(10, Optional.ofNullable(size).orElse(10)), Sort.by(Sort.Order.asc("id")))
 		).map(event -> {
 			List<Pair<Account, PromoterInfo>> promoters = findPromotersByEventId(event.getId());
-			return EventMapper.entityToDTO(event, promoters);
+			return PublishedEventMapper.entityToDTO(event, promoters);
 		});
 	}
 
@@ -67,10 +71,10 @@ public class PublicService {
 		});
 	}
 
-	public Page<EventDTO> getPromoterEvents(Long idPromoter, Integer page, Integer size) {
-		Page<Event> events = eventRepository.findAllByPromoterId(idPromoter,
+	public Page<PublishedEventDTO> getPromoterEvents(Long idPromoter, Integer page, Integer size) {
+		Page<Event> events = eventRepository.findAllByStateAndPromoterId(Event.EventState.PUBLISHED, idPromoter,
 			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(10, Optional.ofNullable(size).orElse(10)), Sort.by(Sort.Order.asc("e.id")))
 		);
-		return events.map(event -> EventMapper.entityToDTO(event, findPromotersByEventId(event.getId())));
+		return events.map(event -> PublishedEventMapper.entityToDTO(event, findPromotersByEventId(event.getId())));
 	}
 }

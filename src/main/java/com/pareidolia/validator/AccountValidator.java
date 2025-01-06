@@ -1,10 +1,7 @@
 package com.pareidolia.validator;
 
 
-import com.pareidolia.dto.AdminDTO;
-import com.pareidolia.dto.ConsumerDTO;
-import com.pareidolia.dto.PromoterDTO;
-import com.pareidolia.dto.RegistrationDTO;
+import com.pareidolia.dto.*;
 import com.pareidolia.entity.Account;
 import com.pareidolia.entity.PromoterInfo;
 import com.pareidolia.repository.AccountRepository;
@@ -15,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 @Component
@@ -33,11 +31,13 @@ public class AccountValidator {
 		emailNotExistsValidation(dto.getEmail());
 	}
 
-	public Account getAdminAndValidateUpdate(AdminDTO dto) {
+	public Account getAccountAndValidateUpdate(AccountDTO dto, boolean skipTypeValidation) {
 		Account account = accountRepository.findById(dto.getId())
 			.orElseThrow(() -> new IllegalArgumentException("Account not found"));
 
-		accountTypeValidation(account.getReferenceType(), Account.Type.ADMIN);
+		if (!skipTypeValidation) {
+			accountTypeValidation(account.getReferenceType(), List.of(Account.Type.ADMIN, Account.Type.CONSUMER));
+		}
 		phoneValidation(dto.getPhone());
 		emailValidation(dto.getEmail());
 
@@ -56,10 +56,16 @@ public class AccountValidator {
 	}
 
 	public Pair<Account, PromoterInfo> getPromoterAndValidateUpdate(PromoterDTO dto) {
+		return getPromoterAndValidateUpdate(dto, false);
+	}
+
+	public Pair<Account, PromoterInfo> getPromoterAndValidateUpdate(PromoterDTO dto, boolean skipTypeValidation) {
 		Account account = accountRepository.findById(dto.getId())
 			.orElseThrow(() -> new IllegalArgumentException("Account not found"));
 
-		accountTypeValidation(account.getReferenceType(), Account.Type.PROMOTER);
+		if (!skipTypeValidation) {
+			accountTypeValidation(account.getReferenceType(), Account.Type.PROMOTER);
+		}
 
 		PromoterInfo promoterInfo = promoterInfoRepository.findByIdPromoter(dto.getId())
 			.orElseThrow(() -> new IllegalArgumentException("Promoter not found"));
@@ -70,8 +76,26 @@ public class AccountValidator {
 		return Pair.of(account, promoterInfo);
 	}
 
+	public Pair<Account, PromoterInfo> getPromoterAndValidate(PromoterDTO dto) {
+		Account account = accountRepository.findById(dto.getId())
+			.orElseThrow(() -> new IllegalArgumentException("Account not found"));
+
+		accountTypeValidation(account.getReferenceType(), Account.Type.PROMOTER);
+
+		PromoterInfo promoterInfo = promoterInfoRepository.findByIdPromoter(dto.getId())
+			.orElseThrow(() -> new IllegalArgumentException("Promoter not found"));
+
+		return Pair.of(account, promoterInfo);
+	}
+
 	void accountTypeValidation(Account.Type referenceType, Account.Type expectedReferenceType) {
 		if (referenceType != expectedReferenceType) {
+			throw new IllegalArgumentException("Invalid Account Type");
+		}
+	}
+
+	void accountTypeValidation(Account.Type referenceType, List<Account.Type> validReferenceTypes) {
+		if (!validReferenceTypes.contains(referenceType)) {
 			throw new IllegalArgumentException("Invalid Account Type");
 		}
 	}

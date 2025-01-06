@@ -3,6 +3,8 @@ package com.pareidolia.controller.consumer;
 
 import com.pareidolia.dto.BookingDTO;
 import com.pareidolia.service.consumer.ConsumerBookingService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RequestMapping(path = "/consumer/booking")
+@SecurityRequirement(name = "JWT_Consumer")
+@Tag(name = "Consumer", description = "The Consumer APIs")
 public class ConsumerBookingController {
 
 	private final ConsumerBookingService consumerBookingService;

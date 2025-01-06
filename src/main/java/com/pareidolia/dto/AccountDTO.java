@@ -9,11 +9,11 @@ import java.io.Serializable;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationDTO implements Serializable {
-	public String email;
-	@ToString.Exclude
-	public String password;
+public class AccountDTO implements Serializable {
+	public Long id;
 	public String name;
 	public String surname;
 	public String phone;
+	public String email;
+	public String referenceType;
 }

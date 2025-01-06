@@ -1,18 +1,21 @@
 package com.pareidolia.mapper;
 
 import com.pareidolia.dto.EventDTO;
-import com.pareidolia.dto.EventDraftDTO;
+import com.pareidolia.dto.PromoterDTO;
+import com.pareidolia.dto.PublishedEventDTO;
 import com.pareidolia.entity.Account;
-import com.pareidolia.entity.EventDraft;
+import com.pareidolia.entity.Event;
+import com.pareidolia.entity.EventPromoterAssociation;
 import com.pareidolia.entity.PromoterInfo;
+import com.pareidolia.repository.EventPromoterAssociationRepository;
 import org.springframework.data.util.Pair;
 
 import java.util.List;
 
-public class EventDraftMapper {
+public class PublishedEventMapper {
 
-	public static EventDraftDTO entityToDTO(EventDraft entity, List<Pair<Account, PromoterInfo>> promoters) {
-		EventDraftDTO dto = new EventDraftDTO();
+	public static PublishedEventDTO entityToDTO(Event entity, List<Pair<Account, PromoterInfo>> promoters) {
+		PublishedEventDTO dto = new PublishedEventDTO();
 		dto.setId(entity.getId());
 		dto.setTitle(entity.getTitle());
 		dto.setDescription(entity.getDescription());
@@ -22,11 +25,13 @@ public class EventDraftMapper {
 		dto.setDuration(entity.getDuration());
 		dto.setPromoters(promoters.stream().map(promoter -> AccountMapper.entityToPromoterDTO(promoter.getFirst(), promoter.getSecond())).toList());
 		dto.setMaxNumberOfParticipants(entity.getMaxNumberOfParticipants());
+		dto.setScore(entity.getAverageScore());
+		dto.setState(entity.getState());
 		return dto;
 	}
 
-	public static EventDraft dtoToEntity(EventDraftDTO dto) {
-		EventDraft entity = new EventDraft();
+	public static Event dtoToEntity(PublishedEventDTO dto) {
+		Event entity = new Event();
 		entity.setId(dto.getId());
 		entity.setTitle(dto.getTitle());
 		entity.setDescription(dto.getDescription());
@@ -34,11 +39,17 @@ public class EventDraftMapper {
 		entity.setDate(dto.getDate());
 		entity.setTime(dto.getTime());
 		entity.setDuration(dto.getDuration());
+		entity.setAverageScore(0.0);
 		entity.setMaxNumberOfParticipants(dto.getMaxNumberOfParticipants());
+		if (dto.getState() != null) {
+			entity.setState(dto.getState());
+		} else {
+			entity.setState(Event.EventState.DRAFT); // default state
+		}
 		return entity;
 	}
 
-	public static void updateEntitiesWithPromoterDTO(EventDraft entity, EventDraftDTO dto) {
+	public static void updateEntitiesWithPublishedEventDTO(Event entity, PublishedEventDTO dto) {
 		entity.setTitle(dto.getTitle());
 		entity.setDescription(dto.getDescription());
 		entity.setPlace(dto.getPlace());
@@ -48,16 +59,4 @@ public class EventDraftMapper {
 		entity.setMaxNumberOfParticipants(dto.getMaxNumberOfParticipants());
 	}
 
-	public static EventDTO eventDraftToEventDTO(EventDraft draft, List<Pair<Account, PromoterInfo>> promoters) {
-		EventDTO eventDTO = new EventDTO();
-		eventDTO.setTitle(draft.getTitle());
-		eventDTO.setDescription(draft.getDescription());
-		eventDTO.setPlace(draft.getPlace());
-		eventDTO.setDate(draft.getDate());
-		eventDTO.setTime(draft.getTime());
-		eventDTO.setDuration(draft.getDuration());
-		eventDTO.setPromoters(promoters.stream().map(promoter -> AccountMapper.entityToPromoterDTO(promoter.getFirst(), promoter.getSecond())).toList());
-		eventDTO.setMaxNumberOfParticipants(draft.getMaxNumberOfParticipants());
-		return eventDTO;
-	}
 }

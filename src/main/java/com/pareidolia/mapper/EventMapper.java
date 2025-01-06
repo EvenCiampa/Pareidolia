@@ -24,7 +24,6 @@ public class EventMapper {
 		dto.setDuration(entity.getDuration());
 		dto.setPromoters(promoters.stream().map(promoter -> AccountMapper.entityToPromoterDTO(promoter.getFirst(), promoter.getSecond())).toList());
 		dto.setMaxNumberOfParticipants(entity.getMaxNumberOfParticipants());
-		dto.setScore(entity.getAverageScore());
 		return dto;
 	}
 
@@ -37,20 +36,9 @@ public class EventMapper {
 		entity.setDate(dto.getDate());
 		entity.setTime(dto.getTime());
 		entity.setDuration(dto.getDuration());
-		entity.setAverageScore(0.0);
 		entity.setMaxNumberOfParticipants(dto.getMaxNumberOfParticipants());
 		return entity;
 	}
-
-	public static void createPromoterAssociations(Event savedEvent, List<PromoterDTO> promoterDTOs, EventPromoterAssociationRepository eventPromoterAssociationRepository) {
-		for (PromoterDTO promoterDTO : promoterDTOs) {
-			EventPromoterAssociation association = new EventPromoterAssociation();
-			association.setIdEvent(savedEvent.getId());
-			association.setIdPromoter(promoterDTO.getId());
-			eventPromoterAssociationRepository.save(association);
-		}
-	}
-
 
 	public static void updateEntitiesWithEventDTO(Event entity, EventDTO dto) {
 		entity.setTitle(dto.getTitle());
@@ -60,5 +48,14 @@ public class EventMapper {
 		entity.setTime(dto.getTime());
 		entity.setDuration(dto.getDuration());
 		entity.setMaxNumberOfParticipants(dto.getMaxNumberOfParticipants());
+	}
+
+	public static void createPromoterAssociations(Event savedEvent, List<PromoterDTO> promoterDTOs, EventPromoterAssociationRepository eventPromoterAssociationRepository) {
+		for (PromoterDTO promoterDTO : promoterDTOs) {
+			EventPromoterAssociation association = new EventPromoterAssociation();
+			association.setIdEvent(savedEvent.getId());
+			association.setIdPromoter(promoterDTO.getId());
+			eventPromoterAssociationRepository.save(association);
+		}
 	}
 }

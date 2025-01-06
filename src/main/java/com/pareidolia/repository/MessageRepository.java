@@ -2,20 +2,15 @@ package com.pareidolia.repository;
 
 import com.pareidolia.entity.Message;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
+	List<Message> findByIdEventOrderByCreationTimeDesc(Long idEvent);
 
-	@Query("""
-			SELECT m
-			FROM Message m
-			INNER JOIN EventDraft ed ON  ed.id = m.idEventDraft
-			WHERE m.idEventDraft = :idEventDraft
-		""")
-	Page<Message> findMessagesByIdEventDraft(Long idEventDraft, PageRequest pageRequest);
+	Page<Message> findByIdEvent(Long idEvent, Pageable pageable);
 }

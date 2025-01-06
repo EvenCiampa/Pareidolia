@@ -6,7 +6,7 @@ import com.pareidolia.entity.Account;
 import com.pareidolia.entity.Message;
 import com.pareidolia.mapper.MessageMapper;
 import com.pareidolia.repository.AccountRepository;
-import com.pareidolia.repository.EventDraftRepository;
+import com.pareidolia.repository.EventRepository;
 import com.pareidolia.repository.MessageRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +25,15 @@ public class AdminMessageService {
 	private final AdminService adminService;
 	private final MessageRepository messageRepository;
 	private final AccountRepository accountRepository;
-	private final EventDraftRepository eventDraftRepository;
+	private final EventRepository eventRepository;
 
 	public Page<MessageDTO> getEventDraftMessages(Long idEventDraft, Integer page, Integer size) {
 		// ricerca messaggi relativi a una draft e paginali
 		if (idEventDraft == null) {
 			throw new IllegalArgumentException("Invalid EventDraft ID");
 		}
-		Page<Message> messages = messageRepository.findMessagesByIdEventDraft(idEventDraft,
-			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(10, Optional.ofNullable(size).orElse(10)), Sort.by(Sort.Order.asc("m.id")))
+		Page<Message> messages = messageRepository.findByIdEvent(idEventDraft,
+			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(10, Optional.ofNullable(size).orElse(10)), Sort.by(Sort.Order.desc("m.creationTime")))
 		);
 		return messages.map(MessageMapper::entityToDTO);
 	}
@@ -50,7 +50,7 @@ public class AdminMessageService {
 		if (message.length() > 1000) {
 			throw new IllegalArgumentException("Message is too long.");
 		}
-		if (eventDraftRepository.findById(idEventDraft).isEmpty()) {
+		if (eventRepository.findById(idEventDraft).isEmpty()) {
 			throw new IllegalArgumentException("EventDraft not found");
 		}
 		AdminDTO adminDTO = adminService.getData();
@@ -59,7 +59,7 @@ public class AdminMessageService {
 		// crea un entità e salvala sul db
 		Message newMessage = new Message();
 		newMessage.setIdAccount(account.getId());
-		newMessage.setIdEventDraft(idEventDraft);
+		newMessage.setIdEvent(idEventDraft);
 		newMessage.setMessage(message);
 
 		newMessage = messageRepository.save(newMessage);

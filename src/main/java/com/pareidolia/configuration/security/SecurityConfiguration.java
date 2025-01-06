@@ -61,7 +61,7 @@ public class SecurityConfiguration {
 			.formLogin(AbstractHttpConfigurer::disable)
 			.httpBasic(AbstractHttpConfigurer::disable)
 			.logout(AbstractHttpConfigurer::disable)
-			.requiresChannel(it -> it.anyRequest().requiresSecure())
+			.requiresChannel(it -> it.anyRequest().requiresInsecure())
 			.headers(it -> it.cacheControl(HeadersConfigurer.CacheControlConfig::disable))
 			.sessionManagement(it -> it.sessionCreationPolicy(STATELESS)) // disable session cookies bc of token JWT
 			.exceptionHandling(it -> it.authenticationEntryPoint((request, response, authException) -> forbiddenEntryPoint(response))) // enable exception handling

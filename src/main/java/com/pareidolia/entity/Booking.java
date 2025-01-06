@@ -36,6 +36,13 @@ public class Booking {
 	@Column(name = "last_update", nullable = false)
 	private LocalDateTime lastUpdate;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_account", insertable = false, updatable = false)
+	private Account account;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_event", insertable = false, updatable = false)
+	private Event event;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

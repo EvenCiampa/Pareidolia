@@ -23,7 +23,7 @@ public interface EventPromoterAssociationRepository extends JpaRepository<EventP
 		""")
 	List<Pair<Account, PromoterInfo>> findPromotersByIdEvent(Long idEvent);
 
-	Optional<EventPromoterAssociation> findByIdEventAndIdPromoter(Long idEvent, Long id);
+	Optional<EventPromoterAssociation> findByIdEventAndIdPromoter(Long idEvent, Long idPromoter);
 
 	void deleteByIdEventAndIdPromoter(Long eventId, Long promoterId);
 }

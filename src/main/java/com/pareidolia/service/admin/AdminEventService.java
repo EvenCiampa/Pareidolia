@@ -1,23 +1,29 @@
 package com.pareidolia.service.admin;
 
-
 import com.pareidolia.dto.EventDTO;
 import com.pareidolia.dto.PromoterDTO;
 import com.pareidolia.entity.Account;
 import com.pareidolia.entity.Event;
 import com.pareidolia.entity.PromoterInfo;
 import com.pareidolia.mapper.EventMapper;
+import com.pareidolia.mapper.PublishedEventMapper;
 import com.pareidolia.mapper.EventPromoterAssociationMapper;
 import com.pareidolia.repository.EventPromoterAssociationRepository;
 import com.pareidolia.repository.EventRepository;
+import com.pareidolia.state.EventStateHandler;
+import com.pareidolia.validator.EventDraftValidator;
 import com.pareidolia.validator.EventValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,23 +33,57 @@ import java.util.stream.Collectors;
 public class AdminEventService {
 	private final EventValidator eventValidator;
 	private final EventRepository eventRepository;
+	private final EventDraftValidator eventDraftValidator;
 	private final EventPromoterAssociationRepository eventPromoterAssociationRepository;
 
-	//questo metodo viene chiamato da publish, unico modo per creare un evento è quindi crearne una bozza prima
-	public EventDTO create(EventDTO eventDTO) {
-		if (eventDTO.getId() == null) {
-			throw new IllegalArgumentException("Invalid Event ID");
-		}
-		eventValidator.validateEventDate(eventDTO.getDate(), eventDTO.getTime());
-		Event event = EventMapper.dtoToEntity(eventDTO);
+	public EventDTO getEvent(Long id) {
+		Event eventDraft = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Event ID"));
 
-		Event savedEvent = eventRepository.save(event);
+		List<Pair<Account, PromoterInfo>> promoters =
+			eventPromoterAssociationRepository.findPromotersByIdEvent(id);
 
-		EventMapper.createPromoterAssociations(savedEvent, eventDTO.getPromoters(), eventPromoterAssociationRepository);
+		return PublishedEventMapper.entityToDTO(eventDraft, promoters);
+	}
 
-		List<Pair<Account, PromoterInfo>> promoters = eventPromoterAssociationRepository.findPromotersByIdEvent(savedEvent.getId());
+	public Page<EventDTO> getEvents(Integer page, Integer size, Event.EventState state) {
+		return eventRepository.findAllByState(
+			state,
+			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(10, Optional.ofNullable(size).orElse(10)), Sort.by(Sort.Order.asc("id")))
+		).map(eventDraft -> {
+			// Per ogni bozza di evento, recupera i promoter associati
+			List<Pair<Account, PromoterInfo>> promoters = eventPromoterAssociationRepository.findPromotersByIdEvent(eventDraft.getId());
+			// Converte l'EventDraft in EventDraftDTO
+			return PublishedEventMapper.entityToDTO(eventDraft, promoters);
+		});
+	}
 
-		return EventMapper.entityToDTO(savedEvent, promoters);
+	public Page<EventDTO> getPromoterEvents(Long idPromoter, Integer page, Integer size, Event.EventState state) {
+		Page<Event> eventDrafts = eventRepository.findAllByStateAndPromoterId(state, idPromoter,
+			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(10, Optional.ofNullable(size).orElse(10)), Sort.by(Sort.Order.asc("e.id")))
+		);
+		return eventDrafts.map(eventDraft -> {
+			// Per ogni bozza di evento, recupera i promoter associati
+			List<Pair<Account, PromoterInfo>> promoters = eventPromoterAssociationRepository.findPromotersByIdEvent(eventDraft.getId());
+			// Converte l'EventDraft in EventDraftDTO
+			return PublishedEventMapper.entityToDTO(eventDraft, promoters);
+		});
+	}
+
+	public EventDTO create(EventDTO eventDraftDTO) {
+		eventDraftValidator.createEventDraftValidatorWithPromoter(eventDraftDTO);
+
+		Event eventDraft = EventMapper.dtoToEntity(eventDraftDTO);
+
+		Event savedEventDraft = eventRepository.save(eventDraft);
+
+		// Crea l'associazione tra l'evento e i promoter selezionati dall'admin
+		EventMapper.createPromoterAssociations(savedEventDraft, eventDraftDTO.getPromoters(), eventPromoterAssociationRepository);
+
+		// Recupera i promoter associati all'evento
+		List<Pair<Account, PromoterInfo>> promoters =
+			eventPromoterAssociationRepository.findPromotersByIdEvent(savedEventDraft.getId());
+
+		return EventMapper.entityToDTO(savedEventDraft, promoters);
 	}
 
 	public EventDTO update(EventDTO eventDTO) {
@@ -52,21 +92,25 @@ public class AdminEventService {
 		}
 		Event event = eventRepository.findById(eventDTO.getId())
 			.orElseThrow(() -> new IllegalArgumentException("Event not found"));
+		if (!EventStateHandler.canEdit(event)) {
+			throw new IllegalArgumentException("Invalid Event state: " + event.getState());
+		}
+
 		eventValidator.getEventAndValidateUpdate(eventDTO);
 
 		EventMapper.updateEntitiesWithEventDTO(event, eventDTO);
 		eventRepository.save(event);
 
-		updateEventPromoters(eventDTO);
+		updateEventPromoters(eventDTO.getId(), eventDTO.getPromoters());
 
 		List<Pair<Account, PromoterInfo>> promoters = eventPromoterAssociationRepository.findPromotersByIdEvent(event.getId());
 		return EventMapper.entityToDTO(event, promoters);
 	}
 
-	private void updateEventPromoters(EventDTO eventDTO) {
+	public void updateEventPromoters(Long idEvent, List<PromoterDTO> promoters) {
 		// Recupera le associazioni esistenti per l'evento
 		List<Pair<Account, PromoterInfo>> existingPromoters =
-			eventPromoterAssociationRepository.findPromotersByIdEvent(eventDTO.getId());
+			eventPromoterAssociationRepository.findPromotersByIdEvent(idEvent);
 
 		// Map degli idPromoter esistenti per confronto
 		Set<Long> existingPromoterIds = existingPromoters.stream()
@@ -74,23 +118,23 @@ public class AdminEventService {
 			.collect(Collectors.toSet());
 
 		// Set degli idPromoter forniti dal DTO
-		Set<Long> newPromoterIds = eventDTO.getPromoters().stream()
+		Set<Long> newPromoterIds = promoters.stream()
 			.map(PromoterDTO::getId)
 			.collect(Collectors.toSet());
 
 		// Rimuovi le associazioni per i promoter non più presenti nel DTO
 		existingPromoterIds.stream()
 			.filter(id -> !newPromoterIds.contains(id))
-			.forEach(id -> eventPromoterAssociationRepository.deleteByIdEventAndIdPromoter(eventDTO.getId(), id));
+			.forEach(id -> eventPromoterAssociationRepository.deleteByIdEventAndIdPromoter(idEvent, id));
 
 		// Aggiungi o aggiorna le associazioni per i nuovi promoter
-		eventDTO.getPromoters()
+		promoters
 			.stream()
 			.filter(promoterDTO -> !existingPromoterIds.contains(promoterDTO.getId()))
 			.forEach(promoterDTO -> {
 				// Aggiungi una nuova associazione
 				eventPromoterAssociationRepository.save(
-					EventPromoterAssociationMapper.promoterDTOToEntity(promoterDTO, eventDTO.getId())
+					EventPromoterAssociationMapper.promoterDTOToEntity(promoterDTO, idEvent)
 				);
 			});
 	}
@@ -101,6 +145,17 @@ public class AdminEventService {
 		}
 		eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
-		eventRepository.findById(id);
+		eventRepository.deleteById(id);
+	}
+
+	public EventDTO moveToState(Long id, Event.EventState state) {
+		Event event = eventRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("Invalid Event ID"));
+
+		EventStateHandler.moveTo(event, state);
+		Event eventDraft = eventRepository.save(event);
+
+		List<Pair<Account, PromoterInfo>> promoters = eventPromoterAssociationRepository.findPromotersByIdEvent(eventDraft.getId());
+		return EventMapper.entityToDTO(eventDraft, promoters);
 	}
 }

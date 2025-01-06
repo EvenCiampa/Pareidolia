@@ -4,8 +4,8 @@ import com.pareidolia.dto.MessageDTO;
 import com.pareidolia.entity.Message;
 import com.pareidolia.mapper.MessageMapper;
 import com.pareidolia.repository.AccountRepository;
-import com.pareidolia.repository.EventDraftPromoterAssociationRepository;
-import com.pareidolia.repository.EventDraftRepository;
+import com.pareidolia.repository.EventPromoterAssociationRepository;
+import com.pareidolia.repository.EventRepository;
 import com.pareidolia.repository.MessageRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +25,8 @@ public class PromoterMessageService {
 	private final PromoterService promoterService;
 	private final MessageRepository messageRepository;
 	private final AccountRepository accountRepository;
-	private final EventDraftRepository eventDraftRepository;
-	private final EventDraftPromoterAssociationRepository eventDraftPromoterAssociationRepository;
+	private final EventRepository eventRepository;
+	private final EventPromoterAssociationRepository eventPromoterAssociationRepository;
 
 
 	public Page<MessageDTO> getEventDraftMessages(Long idEventDraft, Integer page, Integer size) {
@@ -36,15 +36,15 @@ public class PromoterMessageService {
 		// Controlla se il promoter autenticato è tra i promoter dell'evento
 		Long promoterId = promoterService.getData().getId();
 
-		if (eventDraftRepository.findById(idEventDraft).isEmpty()) {
+		if (eventRepository.findById(idEventDraft).isEmpty()) {
 			throw new IllegalArgumentException("Invalid EventDraft ID");
 		}
-		if (eventDraftPromoterAssociationRepository.findByIdEventDraftAndIdPromoter(idEventDraft, promoterId).isEmpty()) {
+		if (eventPromoterAssociationRepository.findByIdEventAndIdPromoter(idEventDraft, promoterId).isEmpty()) {
 			throw new IllegalArgumentException("Invalid EventDraft ID");
 		}
 
 		// ricerca messaggi relativi a una draft e paginali
-		Page<Message> messages = messageRepository.findMessagesByIdEventDraft(idEventDraft,
+		Page<Message> messages = messageRepository.findByIdEvent(idEventDraft,
 			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(10, Optional.ofNullable(size).orElse(10)), Sort.by(Sort.Order.asc("m.id")))
 		);
 		return messages.map(MessageMapper::entityToDTO);
@@ -54,7 +54,7 @@ public class PromoterMessageService {
 	public MessageDTO create(MessageDTO createMessageDTO) {
 		Message message = MessageMapper.dtoToEntity(createMessageDTO);
 		message.setId(null);
-		if (message.getIdEventDraft() == null) {
+		if (message.getIdEvent() == null) {
 			throw new IllegalArgumentException("Invalid EventDraft ID");
 		}
 		// controlla che il promoter autenticato sia il creatore del messaggio
@@ -67,10 +67,10 @@ public class PromoterMessageService {
 		}
 
 		// Controlla se il promoter autenticato è tra i promoter dell'evento
-		if (eventDraftRepository.findById(message.getIdEventDraft()).isEmpty()) {
+		if (eventRepository.findById(message.getIdEvent()).isEmpty()) {
 			throw new IllegalArgumentException("Invalid EventDraft ID");
 		}
-		if (eventDraftPromoterAssociationRepository.findByIdEventDraftAndIdPromoter(message.getIdEventDraft(), accountId).isEmpty()) {
+		if (eventPromoterAssociationRepository.findByIdEventAndIdPromoter(message.getIdEvent(), accountId).isEmpty()) {
 			throw new IllegalArgumentException("Invalid EventDraft ID");
 		}
 

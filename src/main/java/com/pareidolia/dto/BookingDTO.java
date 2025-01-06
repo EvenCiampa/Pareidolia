@@ -1,20 +1,17 @@
 package com.pareidolia.dto;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
-
 @Getter
 @Setter
-@AllArgsConstructor
+@ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class BookingDTO implements Serializable {
-	private Long id;
-	private EventDTO event;
-	private ConsumerDTO consumer;
+	public Long id;
+	public PublishedEventDTO event;
+	public ConsumerDTO consumer;
 }

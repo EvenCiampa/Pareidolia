@@ -17,7 +17,7 @@ public class BookingMapper implements Serializable {
 		BookingDTO dto = new BookingDTO();
 		dto.setId(entity.getId());
 		dto.setConsumer(AccountMapper.entityToConsumerDTO(consumer));
-		dto.setEvent(EventMapper.entityToDTO(event, promoters));
+		dto.setEvent(PublishedEventMapper.entityToDTO(event, promoters));
 		return dto;
 	}
 

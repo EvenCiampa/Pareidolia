@@ -95,7 +95,7 @@ public class EventValidator {
 		validateEventDate(eventDTO.getDate(), eventDTO.getTime());
 		durationValidation(eventDTO.getDuration());
 		maxNumberOfParticipantsValidation(eventDTO.getMaxNumberOfParticipants());
-		eventDTO.getPromoters().forEach(accountValidator::getPromoterAndValidateUpdate);
+		eventDTO.getPromoters().forEach(accountValidator::getPromoterAndValidate);
 		return event;
 	}
 }

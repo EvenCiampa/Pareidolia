@@ -6,8 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class Mapper {
-
+public class MapperConfiguration {
 	@Bean
 	public ObjectMapper mapper() {
 		ObjectMapper mapperJson = new ObjectMapper();

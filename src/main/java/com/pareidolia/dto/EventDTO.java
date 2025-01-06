@@ -1,9 +1,7 @@
 package com.pareidolia.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.pareidolia.entity.Event;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -13,18 +11,18 @@ import java.util.List;
 
 @Getter
 @Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventDTO implements Serializable {
-	private Long id;
-	private String title;
-	private String description;
-	private String place;
-	private LocalDate date;
-	private LocalTime time;
-	private Duration duration;
-	//private Long idPromoter;
-	private List<PromoterDTO> promoters;
-	private Long maxNumberOfParticipants;
-	private Double score;
+	public Long id;
+	public String title;
+	public String description;
+	public String place;
+	public LocalDate date;
+	public LocalTime time;
+	public Duration duration;
+	public List<PromoterDTO> promoters;
+	public Long maxNumberOfParticipants;
+	public Event.EventState state;
 }

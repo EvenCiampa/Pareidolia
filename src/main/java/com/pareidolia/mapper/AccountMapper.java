@@ -1,14 +1,23 @@
 package com.pareidolia.mapper;
 
 
-import com.pareidolia.dto.AdminDTO;
-import com.pareidolia.dto.ConsumerDTO;
-import com.pareidolia.dto.PromoterDTO;
-import com.pareidolia.dto.RegistrationDTO;
+import com.pareidolia.dto.*;
 import com.pareidolia.entity.Account;
 import com.pareidolia.entity.PromoterInfo;
 
 public class AccountMapper {
+
+	public static AccountDTO entityToAccountDTO(Account entity) {
+		if (entity == null) return null;
+		AccountDTO dto = new AccountDTO();
+		dto.setId(entity.getId());
+		dto.setName(entity.getName());
+		dto.setSurname(entity.getSurname());
+		dto.setPhone(entity.getPhone());
+		dto.setEmail(entity.getEmail());
+		dto.setReferenceType(entity.getReferenceType().toString());
+		return dto;
+	}
 
 	public static AdminDTO entityToAdminDTO(Account entity) {
 		if (entity == null) return null;
@@ -18,6 +27,7 @@ public class AccountMapper {
 		dto.setSurname(entity.getSurname());
 		dto.setPhone(entity.getPhone());
 		dto.setEmail(entity.getEmail());
+		dto.setReferenceType(entity.getReferenceType().toString());
 		return dto;
 	}
 
@@ -29,6 +39,7 @@ public class AccountMapper {
 		dto.setSurname(entity.getSurname());
 		dto.setPhone(entity.getPhone());
 		dto.setEmail(entity.getEmail());
+		dto.setReferenceType(entity.getReferenceType().toString());
 		return dto;
 	}
 
@@ -40,6 +51,7 @@ public class AccountMapper {
 		dto.setSurname(entity.getSurname());
 		dto.setPhone(entity.getPhone());
 		dto.setEmail(entity.getEmail());
+		dto.setReferenceType(entity.getReferenceType().toString());
 		dto.setPhoto(promoterInfo.getPhoto());
 		dto.setPresentation(promoterInfo.getPresentation());
 		return dto;
@@ -57,7 +69,7 @@ public class AccountMapper {
 		return entity;
 	}
 
-	public static void updateEntityWithAdminDTO(Account entity, AdminDTO dto) {
+	public static void updateEntityWithAccountDTO(Account entity, AccountDTO dto) {
 		entity.setEmail(dto.getEmail());
 		entity.setName(dto.getName());
 		entity.setSurname(dto.getSurname());
