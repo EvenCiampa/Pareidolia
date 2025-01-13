@@ -14,7 +14,7 @@
     <name>Pareidolia</name>
     <description>Demo project for Spring Boot</description>
     <properties>
-        <java.vermsion>17</java.vermsion>
+        <java.version>17</java.version>
     </properties>
     <dependencies>
         <dependency>
@@ -112,6 +112,7 @@
 	</dependencies>
 
     <build>
+		<finalName>Pareidolia</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

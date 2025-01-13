@@ -2,7 +2,7 @@ volumes:
     pareidolia_db:
 
 services:
-    db:
+    pareidolia_db:
         image: mysql:8.0.40
         restart: always
         environment:
@@ -11,4 +11,9 @@ services:
         ports:
             - "3306:3306"
         volumes:
-            - pareidolia_db:/var/lib/mysql
+            - pareidolia_db:/var/lib/
+        healthcheck:
+            test: "/usr/bin/mysql --user=root --password=rootroot --execute \"SHOW DATABASES;\""
+            interval: 2s
+            timeout: 20s
+            retries: 10
