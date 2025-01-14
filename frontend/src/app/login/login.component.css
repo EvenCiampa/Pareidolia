@@ -6,7 +6,6 @@
 .wrap-login{
 	min-height: 100vh;
 	display: flex;
-	flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
 	background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
@@ -14,10 +13,7 @@
 }
 .container{
 	width: 100%;
-	display: flex;
-	height: calc(100% - (65px + 65px));
-	justify-content: center;
-	align-items: center;
+	max-width: 400px;
 }
 .login-box{
 	background: white;
@@ -26,13 +22,6 @@
 	padding: 24px;
 }
 .login-box mat-card-header {
-	width: 128px;
-	height: 128px;
-	padding: 0;
-	margin-bottom: 16px;
-	margin-left: auto;
-	margin-right: auto;
-	display: block;
 	justify-content: center;
 	margin-bottom: 24px;
 }
