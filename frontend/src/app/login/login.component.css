@@ -4,24 +4,15 @@
 	--mdc-outlined-card-outline-width:2px;
 }
 .wrap-login{
-	height: 100vh;
-	display: -webkit-box;
-	display: -webkit-flex;
-	display: -moz-box;
-	display: -ms-flexbox;
+	min-height: 100vh;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
 	align-items: center;
-	background: #EFEFEF;
-	margin: 0 auto;
+	background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+	padding: 20px;
 }
 .container{
-	background: #FFFFFF;
-	box-shadow: 0px 3px 6px #00000029;
-	border-radius: 4px;
-	max-width: 768px;
-	margin: 0 auto;
 	width: 100%;
 	display: flex;
 	height: calc(100% - (65px + 65px));
@@ -29,12 +20,10 @@
 	align-items: center;
 }
 .login-box{
-	display: flex;
-	justify-content: center;
-	width: 328px;
-	border-color: inherit;
-	box-shadow: inherit;
-	/* height: 100vh; */
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	padding: 24px;
 }
 .login-box mat-card-header {
 	width: 128px;
@@ -44,11 +33,13 @@
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
+	justify-content: center;
+	margin-bottom: 24px;
 }
 .login-box mat-card-header img{
-	width: 128px;
-	height: 128px;
-	border-radius: inherit;
+	width: 120px;
+	height: 120px;
+	object-fit: contain;
 }
 .mat-mdc-card-content {
 	padding:0;
@@ -73,6 +64,7 @@
 }
 mat-form-field {
 	width: 100%;
+	margin-bottom: 16px;
 }
 .mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-floating-label {
 	color: #B00020;
@@ -110,30 +102,23 @@ mat-form-field .form-field{
 mat-card-actions {
 	display: flex;
 	justify-content: flex-end;
+	padding: 8px 0 0;
 }
-@media(max-width:768px) {
-	.wrap-login{
-		background: #EFEFEF;
-		padding: 0 30px;
-	}
-	.container{
-		background: #FFFFFF;
-		height: auto;
-		padding:22px 21px;
-		width: auto;
-		max-width: inherit;
-	}
+button[type="submit"] {
+	min-width: 120px;
 }
-@media(max-width:430px) {
-	.container{
-		background: #FFFFFF;
-		box-shadow: inherit;
-		display: block;
-		justify-content: inherit;
-		align-items: inherit;
+.mat-mdc-raised-button.mat-primary {
+	background-color: #C3001E;
+}
+.mat-mdc-raised-button.mat-primary:disabled {
+	background-color: rgba(195, 0, 30, 0.5);
+}
+@media(max-width:600px) {
+	.container {
+		max-width: 100%;
 	}
-	.login-box{
-		width: 100%;
+	.login-box {
+		padding: 16px;
 	}
 }
 

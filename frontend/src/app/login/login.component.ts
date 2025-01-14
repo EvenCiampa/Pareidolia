@@ -23,7 +23,8 @@ import { ImageLoaderService } from '../image-loader.service';
 })
 export class LoginComponent implements OnInit {
 	loginForm: FormGroup;
-	logoUrl: string = '';
+	hidePassword = true;
+	logoUrl: string = 'assets/images/logo.png';
 
 	constructor(private formBuilder: FormBuilder,private imageLoader: ImageLoaderService) {
 		this.loginForm = this.formBuilder.group({
@@ -32,20 +33,40 @@ export class LoginComponent implements OnInit {
 		});
 	}
 
-	ngOnInit(): void {
-		this.loadLogo();
-	}
-	loadLogo() {
-		const logoUrl = 'https://avatars.githubusercontent.com/u/124091983';
-		this.imageLoader.loadImage(logoUrl).subscribe((blob: Blob) => {
-			this.logoUrl = URL.createObjectURL(blob);
-		});
-	}
+	ngOnInit(): void {}
+
 	onSubmit(): void {
 		if (this.loginForm.valid) {
-			console.log('Login form submitted');
-		} else {
-			return;
+			const credentials = {
+				email: this.loginForm.get('email')?.value,
+				password: this.loginForm.get('password')?.value
+			};
+
+			this.authService.login(credentials.email, credentials.password)
+				.subscribe({
+					next: (response) => {
+						console.log('Login successful', response);
+						this.router.navigate(['/dashboard']);
+					},
+					error: (error) => {
+						console.error('Login failed', error);
+						// Gestisci l'errore (es. mostra un messaggio all'utente)
+					}
+				});
 		}
+	}
+
+	getErrorMessage(controlName: string): string {
+		const control = this.loginForm.get(controlName);
+		if (control?.hasError('required')) {
+			return `${controlName.charAt(0).toUpperCase() + controlName.slice(1)} is required`;
+		}
+		if (control?.hasError('email')) {
+			return 'Invalid email format';
+		}
+		if (control?.hasError('minlength')) {
+			return 'Password must be at least 6 characters';
+		}
+		return '';
 	}
 }
