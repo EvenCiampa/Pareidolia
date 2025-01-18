@@ -1,0 +1,43 @@
+<div class="home-container">
+  <h1>Eventi Disponibili</h1>
+
+  <div class="events-grid" *ngIf="!loading; else loadingSpinner">
+    <mat-card class="event-card" *ngFor="let event of events">
+      <mat-card-header>
+        <mat-card-title>{{ event.title }}</mat-card-title>
+        <mat-card-subtitle>{{ event.place }}</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <p class="description">{{ event.description }}</p>
+        <div class="event-details">
+          <p><strong>Data:</strong> {{ formatDate(event.date) }}</p>
+          <p><strong>Ora:</strong> {{ event.time }}</p>
+          <p><strong>Durata:</strong> {{ event.duration }} minuti</p>
+          <p><strong>Posti disponibili:</strong> {{ event.maxNumberOfParticipants }}</p>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <button mat-raised-button 
+                color="primary" 
+                [routerLink]="['/events', event.id]">
+          Dettagli
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <ng-template #loadingSpinner>
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  </ng-template>
+
+  <mat-paginator [length]="totalEvents"
+                 [pageSize]="pageSize"
+                 [pageSizeOptions]="[5, 10, 25, 50]"
+                 (page)="onPageChange($event)"
+                 aria-label="Seleziona pagina">
+  </mat-paginator>
+</div>

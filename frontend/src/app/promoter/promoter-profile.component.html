@@ -1,0 +1,83 @@
+<div class="profile-container">
+	<ng-container *ngIf="!loading && !error && promoter; else loadingTemplate">
+		<div class="profile-header">
+			<mat-card class="header-card">
+				<div class="cover-image"></div>
+				<div class="profile-info">
+					<div class="profile-image">
+						<img [src]="promoter.account.imageUrl || 'assets/images/default-profile.png'"
+							 [alt]="promoter.account.name">
+					</div>
+					<div class="profile-text">
+						<h1>{{ promoter.account.name }} {{ promoter.account.surname }}</h1>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+
+		<div class="profile-content">
+			<mat-card class="info-card">
+				<mat-card-header>
+					<mat-card-title>Contatti</mat-card-title>
+				</mat-card-header>
+				<mat-card-content>
+					<div class="contact-info">
+						<p>
+							<mat-icon>email</mat-icon>
+							{{ promoter.account.email }}
+						</p>
+						<p *ngIf="promoter.account.phoneNumber">
+							<mat-icon>phone</mat-icon>
+							{{ promoter.account.phoneNumber }}
+						</p>
+						<p *ngIf="promoter.promoterInfo.website">
+							<mat-icon>language</mat-icon>
+							<a [href]="promoter.promoterInfo.website" target="_blank">
+								{{ promoter.promoterInfo.website }}
+							</a>
+						</p>
+					</div>
+
+					<!--
+					<div class="social-links" *ngIf="promoter.promoterInfo.socialLinks">
+					  <a *ngFor="let link of promoter.promoterInfo.socialLinks | keyvalue"
+						 [href]="link.value"
+						 target="_blank"
+						 class="social-link"
+						 [attr.aria-label]="'Visit ' + link.key"
+						 *ngIf="link.value">
+						<mat-icon>{{ getSocialIcon(link.key) }}</mat-icon>
+					  </a>
+					</div>
+					-->
+				</mat-card-content>
+			</mat-card>
+
+			<mat-card class="info-card">
+				<mat-card-header>
+					<mat-card-title>Presentazione</mat-card-title>
+				</mat-card-header>
+				<mat-card-content>
+					<p class="presentation">{{ promoter.promoterInfo.presentation }}</p>
+				</mat-card-content>
+			</mat-card>
+		</div>
+	</ng-container>
+
+	<ng-template #loadingTemplate>
+		<div class="loading-container" *ngIf="loading">
+			<mat-spinner></mat-spinner>
+		</div>
+		<div class="error-container" *ngIf="error">
+			<mat-card class="error-card">
+				<mat-card-content>
+					<mat-icon color="warn">error</mat-icon>
+					<p>Si è verificato un errore nel caricamento del profilo.</p>
+					<button mat-raised-button color="primary" (click)="ngOnInit()">
+						Riprova
+					</button>
+				</mat-card-content>
+			</mat-card>
+		</div>
+	</ng-template>
+</div>

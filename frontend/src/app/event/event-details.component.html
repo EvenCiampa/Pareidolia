@@ -1,0 +1,63 @@
+<div class="event-container">
+	<ng-container *ngIf="!loading && !error && event; else loadingTemplate">
+		<mat-card class="event-card">
+			<mat-card-header>
+				<mat-card-title>{{ event.title }}</mat-card-title>
+				<mat-card-subtitle>{{ event.place }}</mat-card-subtitle>
+			</mat-card-header>
+
+			<mat-card-content>
+				<div class="event-info">
+					<div class="info-row">
+						<mat-icon>calendar_today</mat-icon>
+						<span>{{ formatDate(event.date) }} - {{ event.time }}</span>
+					</div>
+
+					<div class="info-row">
+						<mat-icon>schedule</mat-icon>
+						<span>{{ event.duration }} minuti</span>
+					</div>
+
+					<div class="info-row">
+						<mat-icon>group</mat-icon>
+						<span>{{ event.currentParticipants || 0 }}/{{ event.maxNumberOfParticipants }} partecipanti</span>
+					</div>
+				</div>
+
+				<div class="description">
+					<h3>Descrizione</h3>
+					<p>{{ event.description }}</p>
+				</div>
+			</mat-card-content>
+
+			<mat-card-actions>
+				<button mat-raised-button
+						color="primary"
+						[routerLink]="['/events', event.id, 'edit']"
+						*ngIf="event.state !== 'PUBLISHED'">
+					Modifica
+				</button>
+				<button mat-raised-button color="accent">
+					Partecipa
+				</button>
+			</mat-card-actions>
+		</mat-card>
+	</ng-container>
+
+	<ng-template #loadingTemplate>
+		<div class="loading-container" *ngIf="loading">
+			<mat-spinner></mat-spinner>
+		</div>
+		<div class="error-container" *ngIf="error">
+			<mat-card class="error-card">
+				<mat-card-content>
+					<mat-icon color="warn">error</mat-icon>
+					<p>Si è verificato un errore nel caricamento dell'evento.</p>
+					<button mat-raised-button color="primary" (click)="ngOnInit()">
+						Riprova
+					</button>
+				</mat-card-content>
+			</mat-card>
+		</div>
+	</ng-template>
+</div>

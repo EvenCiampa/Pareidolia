@@ -1,0 +1,130 @@
+<div class="edit-profile-container">
+  <mat-card class="edit-form-card">
+    <mat-card-header>
+      <mat-card-title>Modifica Profilo</mat-card-title>
+    </mat-card-header>
+
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+      <mat-card-content>
+        <!-- Sezione Immagine Profilo -->
+        <div class="image-upload-section">
+          <div class="profile-image-preview" 
+               [style.backgroundImage]="imagePreview ? 'url(' + imagePreview + ')' : 'none'">
+            <button type="button" 
+                    mat-mini-fab 
+                    color="primary" 
+                    (click)="fileInput.click()">
+              <mat-icon>photo_camera</mat-icon>
+            </button>
+          </div>
+          <input #fileInput 
+                 type="file" 
+                 hidden 
+                 accept="image/*" 
+                 (change)="onImageSelected($event)">
+        </div>
+
+        <!-- Informazioni Personali -->
+        <div class="form-section">
+          <h3>Informazioni Personali</h3>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Nome</mat-label>
+              <input matInput formControlName="name" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Cognome</mat-label>
+              <input matInput formControlName="surname" required>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" type="email" required>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Telefono</mat-label>
+              <input matInput formControlName="phoneNumber">
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Sezione Promoter Info (visibile solo per i promoter) -->
+        <div class="form-section" *ngIf="isPromoter && promoterForm">
+          <form [formGroup]="promoterForm">
+            <h3>Informazioni Professionali</h3>
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Organizzazione</mat-label>
+                <input matInput formControlName="organization" required>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Posizione</mat-label>
+                <input matInput formControlName="position" required>
+              </mat-form-field>
+            </div>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Descrizione</mat-label>
+              <textarea matInput 
+                        formControlName="description" 
+                        rows="4" 
+                        required></textarea>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Sito Web</mat-label>
+              <input matInput formControlName="website">
+            </mat-form-field>
+          </form>
+        </div>
+
+        <!-- Social Links -->
+        <div class="form-section">
+          <h3>Social Media</h3>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>LinkedIn</mat-label>
+              <input matInput formControlName="linkedin">
+              <mat-icon matSuffix>linkedin</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Facebook</mat-label>
+              <input matInput formControlName="facebook">
+              <mat-icon matSuffix>facebook</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Instagram</mat-label>
+              <input matInput formControlName="instagram">
+              <mat-icon matSuffix>instagram</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Twitter</mat-label>
+              <input matInput formControlName="twitter">
+              <mat-icon matSuffix>twitter</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button type="button" routerLink="/profile">Annulla</button>
+        <button mat-raised-button 
+                color="primary" 
+                type="submit" 
+                [disabled]="!profileForm.valid || loading">
+          {{ loading ? 'Salvataggio...' : 'Salva Modifiche' }}
+        </button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+</div> 

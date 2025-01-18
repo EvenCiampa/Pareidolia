@@ -3,54 +3,32 @@
 		<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 			<mat-card class="login-box">
 				<mat-card-header>
-					<img [src]="logoUrl" alt="Logo">
+					<img [src]="logoUrl" alt="App Logo">
 				</mat-card-header>
 				<mat-card-content>
 					<mat-form-field appearance="outline">
 						<mat-label>Email</mat-label>
-						<input matInput type="email" placeholder="Enter your email" formControlName="email" required>
+						<input matInput type="email" formControlName="email" placeholder="Enter your email" required>
 						<mat-icon matSuffix>email</mat-icon>
-						<mat-error>{{getErrorMessage('email')}}</mat-error>
+						<mat-error>{{ getErrorMessage('email') }}</mat-error>
 					</mat-form-field>
 
 					<mat-form-field appearance="outline">
 						<mat-label>Password</mat-label>
-						<input matInput [type]="hidePassword ? 'password' : 'text'" placeholder="Enter your password" formControlName="password" required>
+						<input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Enter your password" required>
 						<button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
-							<mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+							<mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
 						</button>
-						<mat-error>{{getErrorMessage('password')}}</mat-error>
+						<mat-error>{{ getErrorMessage('password') }}</mat-error>
 					</mat-form-field>
 				</mat-card-content>
 				<mat-card-actions>
 					<button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">Login</button>
 				</mat-card-actions>
+				<mat-card-footer>
+					<p>Don't have an account? <a routerLink="/signup">Sign up here</a></p>
+				</mat-card-footer>
 			</mat-card>
 		</form>
 	</div>
 </div>
-
-<!-- <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-<mat-card class="login-card">
-  <mat-card-header>
-	<img mat-card-avatar src="https://example.com/logo.png" alt="Logo">
-  </mat-card-header>
-  <mat-card-content>
-	<mat-form-field appearance="outline">
-	  <mat-label>Email</mat-label>
-	  <input matInput type="email" placeholder="Enter your email" required>
-	  <mat-error *ngIf="loginForm.get('email')">
-		Invalid email format
-	  </mat-error>
-	</mat-form-field>
-	<mat-form-field appearance="outline">
-	  <mat-label>Password</mat-label>
-	  <input matInput type="password" placeholder="Enter your password" required>
-	</mat-form-field>
-  </mat-card-content>
-  <mat-card-actions>
-	<button mat-raised-button color="primary" type="submit">Login</button>
-  </mat-card-actions>
-</mat-card>
-</form> -->
-
