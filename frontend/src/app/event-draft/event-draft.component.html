@@ -1,0 +1,141 @@
+<div class="edit-event-draft-container">
+	<mat-card class="edit-form-card">
+		<mat-card-header>
+			<mat-card-title>{{ isEdit ? 'Modifica Bozza Evento' : 'Crea Nuova Bozza Evento' }}</mat-card-title>
+		</mat-card-header>
+
+		<form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+			<mat-card-content>
+				<!-- Informazioni Base -->
+				<div class="form-section">
+					<h3>Informazioni Base</h3>
+					<mat-form-field appearance="outline" class="full-width">
+						<mat-label>Titolo</mat-label>
+						<input matInput formControlName="title" required>
+						<mat-error *ngIf="eventForm.get('title')?.hasError('required')">
+							Il titolo è obbligatorio
+						</mat-error>
+						<mat-error *ngIf="eventForm.get('title')?.hasError('minlength')">
+							Il titolo deve essere di almeno 3 caratteri
+						</mat-error>
+					</mat-form-field>
+
+					<mat-form-field appearance="outline" class="full-width">
+						<mat-label>Descrizione</mat-label>
+						<textarea matInput
+								  formControlName="description"
+								  rows="4"
+								  required></textarea>
+						<mat-error *ngIf="eventForm.get('description')?.hasError('required')">
+							La descrizione è obbligatoria
+						</mat-error>
+						<mat-error *ngIf="eventForm.get('description')?.hasError('minlength')">
+							La descrizione deve essere di almeno 20 caratteri
+						</mat-error>
+					</mat-form-field>
+
+					<mat-form-field appearance="outline" class="full-width">
+						<mat-label>Luogo</mat-label>
+						<input matInput formControlName="place" required>
+						<mat-error *ngIf="eventForm.get('place')?.hasError('required')">
+							Il luogo è obbligatorio
+						</mat-error>
+					</mat-form-field>
+				</div>
+
+				<!-- Data e Ora -->
+				<div class="form-section">
+					<h3>Data e Ora</h3>
+					<div class="form-row">
+						<mat-form-field appearance="outline">
+							<mat-label>Data</mat-label>
+							<input matInput [matDatepicker]="picker" formControlName="date" required>
+							<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+							<mat-datepicker #picker></mat-datepicker>
+							<mat-error *ngIf="eventForm.get('date')?.hasError('required')">
+								La data è obbligatoria
+							</mat-error>
+						</mat-form-field>
+
+						<mat-form-field appearance="outline">
+							<mat-label>Ora</mat-label>
+							<input matInput type="time" formControlName="time" required>
+							<mat-error *ngIf="eventForm.get('time')?.hasError('required')">
+								L'ora è obbligatoria
+							</mat-error>
+						</mat-form-field>
+					</div>
+
+					<div class="form-row">
+						<mat-form-field appearance="outline">
+							<mat-label>Durata (minuti)</mat-label>
+							<input matInput type="number" formControlName="duration" required min="15">
+							<mat-error *ngIf="eventForm.get('duration')?.hasError('required')">
+								La durata è obbligatoria
+							</mat-error>
+							<mat-error *ngIf="eventForm.get('duration')?.hasError('min')">
+								La durata minima è di 15 minuti
+							</mat-error>
+						</mat-form-field>
+
+						<mat-form-field appearance="outline">
+							<mat-label>Numero massimo partecipanti</mat-label>
+							<input matInput type="number" formControlName="maxNumberOfParticipants" required min="1">
+							<mat-error *ngIf="eventForm.get('maxNumberOfParticipants')?.hasError('required')">
+								Il numero di partecipanti è obbligatorio
+							</mat-error>
+							<mat-error *ngIf="eventForm.get('maxNumberOfParticipants')?.hasError('min')">
+								Deve essere almeno 1 partecipante
+							</mat-error>
+						</mat-form-field>
+					</div>
+				</div>
+
+				<!-- Sezione Stato e Promoter -->
+				<div class="form-section">
+					<h3>Stato e Promoter</h3>
+					<div class="state-actions">
+						<mat-chip-list>
+							<mat-chip [selected]="eventForm.get('state')?.value === 'DRAFT'"
+									  (click)="onStateChange('DRAFT')"
+									  [disabled]="userRole !== 'ADMIN'"
+									  [class.admin-only]="userRole !== 'ADMIN'">
+								Bozza
+							</mat-chip>
+							<mat-chip [selected]="eventForm.get('state')?.value === 'REVIEW'"
+									  (click)="submitForReview(eventForm.get('id')?.value)"
+									  [disabled]="userRole !== 'PROMOTER'">
+								In Revisione
+							</mat-chip>
+						</mat-chip-list>
+					</div>
+
+					<div class="promoter-actions">
+						<mat-form-field appearance="outline" class="full-width">
+							<mat-label>Aggiungi Promoter</mat-label>
+							<mat-select #promoterSelect>
+								<mat-option *ngFor="let promoter of availablePromoters" [value]="promoter.id">
+									{{ promoter.name }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+						<button mat-raised-button color="primary"
+								(click)="addPromoterToEventDraft(eventForm.get('id')?.value, promoterSelect.value)">
+							Aggiungi Promoter
+						</button>
+					</div>
+				</div>
+			</mat-card-content>
+
+			<mat-card-actions>
+				<button mat-button type="button" [routerLink]="['/events']">Annulla</button>
+				<button mat-raised-button
+						color="primary"
+						type="submit"
+						[disabled]="!eventForm.valid || loading">
+					{{ loading ? 'Salvataggio...' : (isEdit ? 'Aggiorna' : 'Crea') }}
+				</button>
+			</mat-card-actions>
+		</form>
+	</mat-card>
+</div>

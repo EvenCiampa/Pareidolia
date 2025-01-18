@@ -1,0 +1,19 @@
+mat-card {
+	max-width: 400px;
+	margin: 2rem auto;
+	text-align: center;
+	padding: 2rem;
+}
+
+.logo {
+	width: 100px;
+	margin-bottom: 1rem;
+}
+
+.full-width {
+	width: 100%;
+}
+
+button {
+	margin-top: 1rem;
+}
