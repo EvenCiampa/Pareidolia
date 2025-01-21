@@ -30,10 +30,10 @@
 							<mat-icon>phone</mat-icon>
 							{{ promoter.account.phoneNumber }}
 						</p>
-						<p *ngIf="promoter.promoterInfo.website">
+						<p *ngIf="promoter.promoterInfo?.website">
 							<mat-icon>language</mat-icon>
-							<a [href]="promoter.promoterInfo.website" target="_blank">
-								{{ promoter.promoterInfo.website }}
+							<a [href]="promoter.promoterInfo!.website" target="_blank">
+								{{ promoter.promoterInfo!.website }}
 							</a>
 						</p>
 					</div>
@@ -53,12 +53,14 @@
 				</mat-card-content>
 			</mat-card>
 
-			<mat-card class="info-card">
+			<mat-card class="info-card" *ngIf="promoter.promoterInfo?.presentation">
 				<mat-card-header>
 					<mat-card-title>Presentazione</mat-card-title>
 				</mat-card-header>
 				<mat-card-content>
-					<p class="presentation">{{ promoter.promoterInfo.presentation }}</p>
+					<p class="presentation">
+						{{ promoter.promoterInfo!.presentation }}
+					</p>
 				</mat-card-content>
 			</mat-card>
 		</div>
