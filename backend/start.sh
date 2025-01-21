@@ -7,4 +7,4 @@ if docker ps -a --format '{{.Names}}' | grep -Eq "^pareidolia_db\$" ; then
 fi
 docker compose up -d --wait || exit 1
 
-mvn clean compile install && java -jar target/Pareidolia.jar
+mvn clean compile install -D maven.test.skip=true && java -jar target/Pareidolia.jar

@@ -10,6 +10,7 @@ import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.validator.AccountValidator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,13 +30,11 @@ public class AccessService {
 		Account account = AccountMapper.registrationDTOToEntity(registrationDTO, Account.Type.CONSUMER);
 		accountRepository.save(account);
 
-		return jwtService.create(account.getReferenceType(), registrationDTO.getEmail(), registrationDTO.getPassword());
+		return jwtService.create(account.getReferenceType(), account.getEmail(), account.getPassword());
 	}
 
 	public String login(LoginDTO loginDTO) {
-		return accountRepository.findByEmailAndPassword(loginDTO.getEmail(), loginDTO.getPassword())
-			.map(account -> jwtService.create(account.getReferenceType(), loginDTO.getEmail(), loginDTO.getPassword()))
-			.orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+		return jwtAuthenticationService.login(loginDTO.getEmail(), DigestUtils.sha3_256Hex(loginDTO.getPassword()));
 	}
 
 	public void forgotPassword(String email) {

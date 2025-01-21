@@ -24,7 +24,7 @@ public class JWTAuthenticationService {
 	public String login(String username, String password) throws BadCredentialsException {
 		return accountRepository
 			.findByEmailAndPassword(username, password)
-			.map(user -> jwtService.create(user.getReferenceType(), username, password))
+			.map(account -> jwtService.create(account.getReferenceType(), username, password))
 			.orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
 	}
 
@@ -33,7 +33,7 @@ public class JWTAuthenticationService {
 			.findByEmail(email)
 			.ifPresentOrElse(
 				account -> {
-					String newPassword = RandomStringUtils.random(8);
+					String newPassword = RandomStringUtils.secureStrong().nextAlphanumeric(8);
 					account.setPassword(DigestUtils.sha3_256Hex(newPassword));
 					accountRepository.save(account);
 					if (List.of(Account.Type.CONSUMER, Account.Type.PROMOTER).contains(account.getReferenceType())) {
@@ -52,12 +52,12 @@ public class JWTAuthenticationService {
 	public Account authenticateByToken(String token) {
 		try {
 			Map<String, Object> data = jwtService.verify(token);
-			Account.Type role = Account.Type.valueOf(String.valueOf(data.get("role")));
+			Account.Type referenceType = Account.Type.valueOf(String.valueOf(data.get("referenceType")));
 			String username = String.valueOf(data.get("username"));
 			String password = String.valueOf(data.get("password"));
 			Account account = accountRepository.findByEmailAndPassword(username, password)
 				.orElseThrow(() -> new UsernameNotFoundException("Authentication fail"));
-			if (role != account.getReferenceType()) {
+			if (referenceType != account.getReferenceType()) {
 				throw new BadCredentialsException("Invalid token");
 			}
 			return account;

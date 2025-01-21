@@ -23,11 +23,11 @@ public class JWTService {
 		this.algorithm = Algorithm.HMAC256(secret);
 	}
 
-	public String create(Account.Type role, String username, String password) {
+	public String create(Account.Type referenceType, String username, String password) {
 		LocalDateTime issuedAt = LocalDateTime.now();
 		return JWT.create()
 			.withIssuedAt(Date.from(issuedAt.atZone(ZoneOffset.systemDefault()).toInstant()))
-			.withClaim("role", role.name())
+			.withClaim("referenceType", referenceType.name())
 			.withClaim("username", username)
 			.withClaim("password", password)
 			.sign(algorithm);

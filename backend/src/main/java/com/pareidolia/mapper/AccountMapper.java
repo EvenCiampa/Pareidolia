@@ -4,6 +4,7 @@ package com.pareidolia.mapper;
 import com.pareidolia.dto.*;
 import com.pareidolia.entity.Account;
 import com.pareidolia.entity.PromoterInfo;
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class AccountMapper {
 
@@ -61,7 +62,7 @@ public class AccountMapper {
 		if (dto == null) return null;
 		Account entity = new Account();
 		entity.setEmail(dto.getEmail());
-		entity.setPassword(dto.getPassword());
+		entity.setPassword(DigestUtils.sha3_256Hex(dto.getPassword()));
 		entity.setName(dto.getName());
 		entity.setSurname(dto.getSurname());
 		entity.setPhone(dto.getPhone());
