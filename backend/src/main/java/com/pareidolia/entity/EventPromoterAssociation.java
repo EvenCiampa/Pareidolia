@@ -36,10 +36,10 @@ public class EventPromoterAssociation {
 	private LocalDateTime lastUpdate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_event", insertable = false, updatable = false)
+	@JoinColumn(name = "id_event", referencedColumnName = "id", insertable = false, updatable = false)
 	private Event event;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_promoter", insertable = false, updatable = false)
+	@JoinColumn(name = "id_promoter", referencedColumnName = "id", insertable = false, updatable = false)
 	private Account promoter;
 
 	@Override

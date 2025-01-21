@@ -72,7 +72,7 @@ public class Event {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "Event_Promoter_Association", joinColumns = {
-		@JoinColumn(name = "id_event", insertable = false, updatable = false)
+		@JoinColumn(name = "id", insertable = false, updatable = false)
 	})
 	private List<PromoterInfo> promoters;
 

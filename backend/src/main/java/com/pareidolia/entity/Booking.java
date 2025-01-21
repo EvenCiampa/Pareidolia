@@ -37,10 +37,10 @@ public class Booking {
 	private LocalDateTime lastUpdate;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_account", insertable = false, updatable = false)
+	@JoinColumn(name = "id_account", referencedColumnName = "id", insertable = false, updatable = false)
 	private Account account;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_event", insertable = false, updatable = false)
+	@JoinColumn(name = "id_event", referencedColumnName = "id", insertable = false, updatable = false)
 	private Event event;
 
 	@Override
