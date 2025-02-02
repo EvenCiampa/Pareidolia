@@ -1,0 +1,64 @@
+@use '@angular/material' as mat;
+@use 'mat-palette-gen.scss' as mat-palette-gen;
+
+@include mat.core();
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet');
+
+$heading-font-family: "Roboto, 'Helvetica Neue', sans-serif";
+$regular-font-family: "Roboto, 'Helvetica Neue', sans-serif";
+
+$primary-color: #3f51b5;
+$accent-color: #2196f3;
+
+$primary-palette: mat-palette-gen.createPalette($primary-color);
+$accent-palette: mat-palette-gen.createPalette($accent-color);
+
+$warn: mat.m2-define-palette(mat.$m2-red-palette);
+$primary: mat.m2-define-palette($primary-palette);
+$accent: mat.m2-define-palette($accent-palette);
+
+$theme: mat.m2-define-light-theme((
+        color: (
+                primary: $primary,
+                accent: $accent,
+                warn: $warn,
+        )
+));
+
+@include mat.all-component-themes($theme);
+/*
+@use '@angular/material' as mat;
+
+@include mat.core();
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet');
+
+$heading-font-family: "Roboto, 'Helvetica Neue', sans-serif";
+$regular-font-family: "Roboto, 'Helvetica Neue', sans-serif";
+
+$myapp-theme-primary: mat.m2-define-palette(mat.$m2-light-blue-palette, "#3f51b5", A100, A700);
+$myapp-theme-accent: mat.m2-define-palette(mat.$m2-light-blue-palette);
+$myapp-theme-warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+$myapp-theme: mat.m2-define-light-theme((
+        color: (
+                primary: $myapp-theme-primary,
+                accent: $myapp-theme-accent,
+                warn: $myapp-theme-warn,
+        )
+));
+
+@include mat.all-component-themes($myapp-theme);
+*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}

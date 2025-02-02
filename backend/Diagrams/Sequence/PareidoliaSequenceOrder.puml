@@ -1,0 +1,81 @@
+@startuml
+actor Consumer
+boundary RestUI #DodgerBlue
+participant JWTAuthentication #DodgerBlue
+participant OrderController #Orange
+participant OrderService #Salmon
+participant OrderRepository #MediumSeaGreen
+participant AccountRepository #MediumSeaGreen
+participant ConsumerRepository #MediumSeaGreen
+participant ProductRepository #MediumSeaGreen
+participant PackageRepository #MediumSeaGreen
+participant OrderItemRepository #MediumSeaGreen
+participant StripeService #Salmon
+database Database #Salmon
+
+group Consumer place order
+	Consumer -> RestUI ++ #gold : POST /consumer/booking/create
+	RestUI -> JWTAuthentication ++ : JWT
+	JWTAuthentication -> RestUI -- : UserData
+	RestUI -> OrderController ++ #gold : place(PlaceOrderDTO)
+	OrderController -> OrderService ++ #gold : place(PlaceOrderDTO)
+	OrderService -> OrderService ++ : getConsumer
+	OrderService -> AccountRepository ++ : findByReferenceTypeAndEmail
+	AccountRepository -> Database ++ : connection and retrieve data
+	Database --> AccountRepository -- : Account
+	AccountRepository --> OrderService -- : Account
+	OrderService -> ConsumerRepository ++ : findById
+	ConsumerRepository -> Database ++ : connection and retrieve data
+	Database --> ConsumerRepository -- : Consumer
+	ConsumerRepository --> OrderService -- : Consumer
+	OrderService --> OrderService -- : Consumer
+	loop for each element of PlaceOrderDTO.items
+		OrderService -> ProductRepository ++ : findById
+		ProductRepository -> Database ++ : connection and retrieve data
+		Database --> ProductRepository -- : ProductEntity
+		ProductRepository --> OrderService -- : ProductEntity
+	end
+	OrderService -> PackageRepository ++ : findByCode
+	PackageRepository -> Database ++ : connection and retrieve data
+	Database --> PackageRepository -- : PackageEntity
+	PackageRepository --> OrderService -- : PackageEntity
+	loop for each element of PlaceOrderDTO.items grouped by productId
+		OrderService -> ProductRepository ++ : findById
+		ProductRepository -> Database ++ : connection and retrieve data
+		Database --> ProductRepository -- : ProductEntity
+		ProductRepository --> OrderService -- : ProductEntity
+		OrderService -> ProductRepository ++ : save
+		ProductRepository -> Database ++ : connection and save data
+		Database --> ProductRepository -- : ProductEntity
+		ProductRepository --> OrderService -- : ProductEntity
+	end
+	OrderService -> StripeService ++ #gold : pay(amount, paymentId, isIntentId)
+	note left
+		Here I call StripeService to effectuate the payment.
+		It can fail, in this case it will stop the place order
+		execution returning the exception throwed, otherwise
+		it will continue the place order execution.
+	end note
+		alt Payment Failure
+			StripeService --> OrderService : Payment (Failure)
+			OrderService --> OrderController : Payment (Failure)
+			OrderController --> RestUI : Payment (Failure)
+			RestUI --> Consumer : 400 Bad Request - JSON Response (Payment Failure)
+		else Payment Success
+			StripeService -> OrderService -- : Payment (Success)
+		end
+	OrderService -> OrderRepository ++ : save
+	OrderRepository -> Database ++ : connection and save data
+	Database --> OrderRepository -- : OrderEntity
+	OrderRepository --> OrderService -- : OrderEntity
+	loop for each element of OrderEntity.orderItems
+		OrderService -> OrderItemRepository ++ : save
+		OrderItemRepository -> Database ++ : connection and save data
+		Database --> OrderItemRepository -- : OrderItemEntity
+		OrderItemRepository --> OrderService -- : OrderItemEntity
+	end
+	OrderService --> OrderController -- : OrderDTO
+	OrderController --> RestUI -- : OrderDTO
+	RestUI --> Consumer -- : 200 OK - JSON Response (OrderDTO)
+end
+@enduml

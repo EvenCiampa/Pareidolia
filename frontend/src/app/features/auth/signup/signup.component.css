@@ -1,0 +1,220 @@
+@import '../auth.styles.css';
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
+
+.container {
+  width: 100%;
+  max-width: 500px;
+}
+
+.signup-box {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  width: 100%;
+}
+
+.signup-box mat-card-header {
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.signup-box mat-card-header img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.mat-mdc-card-content {
+  padding: 0;
+}
+
+.signup-box mat-form-field {
+  border-color: #0000001F !important;
+  border-radius: 4px;
+}
+
+.mdc-text-field--invalid .mdc-text-field__input, .mdc-text-field .mdc-text-field__input, .form-field {
+  caret-color: #B00020 !important;
+}
+
+.form-field {
+  font-size: 16px;
+  letter-spacing: 0.15px !important;
+  color: #000000BC !important;
+}
+
+.mat-mdc-form-field-error-wrapper {
+  height: 18px;
+}
+
+.mat-mdc-form-field-error {
+  color: #B00020 !important;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-floating-label {
+  color: #B00020;
+  text-align: left;
+  font-family: 'Roboto';
+  letter-spacing: 0.15px;
+  border: 2px solid #B00020;
+}
+
+.mdc-text-field--focused {
+  border: 2px solid #B00020;
+}
+
+.signup-box .mat-form-field-invalid .mat-form-field-outline {
+  border-color: #B00020 !important;
+}
+
+.mdc-card__actions {
+  padding: 0;
+  min-height: 36px;
+}
+
+.mat-mdc-raised-button:not(:disabled) {
+  background-color: #C3001E;
+  box-shadow: 0px 3px 6px #00000029;
+  border-radius: 4px;
+  width: 98px;
+  text-align: left;
+  font-family: Roboto, Medium;
+  letter-spacing: 1.25px;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+mat-form-field .form-field {
+  color: #000000BC !important;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 0 0;
+}
+
+button[type="submit"] {
+  min-width: 120px;
+}
+
+.mat-mdc-raised-button.mat-primary {
+  background-color: #C3001E;
+}
+
+.mat-mdc-raised-button.mat-primary:disabled {
+  background-color: rgba(195, 0, 30, 0.5);
+}
+
+@media (max-width: 600px) {
+  .container {
+    max-width: 100%;
+  }
+
+  .signup-box {
+    padding: 16px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+::ng-deep .mdc-text-field {
+  display: inline-flex !important;
+}
+
+::ng-deep .mat-mdc-form-field {
+  display: inline-flex !important;
+}
+
+::ng-deep .mdc-text-field--outlined {
+  --mdc-outlined-text-field-container-height: 56px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+/* Hint styling */
+.hint-container {
+  margin: 8px 0 16px;
+  padding: 12px 16px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.hint-container mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+  vertical-align: middle;
+  margin-right: 8px;
+  color: #666;
+}
+
+.phone-hint {
+  display: flex;
+  align-items: center;
+}
+
+.password-hint {
+  margin-bottom: 24px;
+}
+
+.hint-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.password-hints {
+  list-style: none;
+  padding-left: 26px;
+  margin: 0;
+}
+
+.password-hints li {
+  display: flex;
+  align-items: center;
+  margin: 4px 0;
+  transition: color 0.2s ease;
+}
+
+.password-hints li mat-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+  margin-right: 8px;
+}
+
+.password-hints li.valid {
+  color: #43a047;
+}
+
+.password-hints li.valid mat-icon {
+  color: #43a047;
+}
+
+/* Adjust spacing for form fields */
+mat-form-field.password-field {
+  margin-top: 0;
+}
+
+.phone-field {
+  margin-top: 0;
+}

@@ -1,0 +1,30 @@
+<mat-sidenav-container>
+	<mat-sidenav class="admin-sidenav" mode="side" opened="true">
+		<div class="sidenav-header">
+			<span class="header-title">Admin Panel</span>
+		</div>
+
+		<mat-nav-list>
+			<a mat-list-item routerLink="events" routerLinkActive="active">
+				<mat-icon matListItemIcon>event</mat-icon>
+				<span matListItemTitle>Events</span>
+			</a>
+			<a mat-list-item routerLink="promoters" routerLinkActive="active">
+				<mat-icon matListItemIcon>people</mat-icon>
+				<span matListItemTitle>Promoters</span>
+			</a>
+			<a mat-list-item routerLink="consumers" routerLinkActive="active">
+				<mat-icon matListItemIcon>group</mat-icon>
+				<span matListItemTitle>Consumers</span>
+			</a>
+			<a mat-list-item routerLink="admins" routerLinkActive="active">
+				<mat-icon matListItemIcon>security</mat-icon>
+				<span matListItemTitle>Admins</span>
+			</a>
+		</mat-nav-list>
+	</mat-sidenav>
+
+	<mat-sidenav-content>
+		<router-outlet></router-outlet>
+	</mat-sidenav-content>
+</mat-sidenav-container>

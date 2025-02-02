@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
+@import '../auth.styles.css';
+
+mat-card {
+  max-width: 400px;
+  margin: 2rem auto;
+  text-align: center;
+  padding: 24px;
+}
+
+.mat-mdc-card-content {
+  padding: 0;
+}
+
+.logo {
+  width: 100px;
+  margin-bottom: 1rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+button {
+  margin-top: 1rem;
+}
+
+.forgot-box {
+  width: 100%;
+}
+
+::ng-deep .mdc-text-field {
+  display: inline-flex !important;
+}
+
+::ng-deep .mat-mdc-form-field {
+  display: inline-flex !important;
+}

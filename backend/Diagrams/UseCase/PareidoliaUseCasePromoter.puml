@@ -1,0 +1,19 @@
+@startuml
+left to right direction
+actor "Promoter"
+
+
+rectangle System{
+	Promoter -down->  (Login promoter)
+	Promoter -down-> (Display/Delete Booking)
+	(Display/Delete Booking) ..> (Login promoter): <<include>>
+	Promoter -down-> (Display/Update Promoter)
+	(Display/Update Promoter) ..> (Login promoter): <<include>>
+	Promoter -down-> (Display Review)
+	(Display Review) ..> (Login promoter): <<include>>
+	Promoter -down-> (Display/Add/Update EventDraft)
+    (Display/Add/Update EventDraft) ..> (Login promoter): <<include>>
+    Promoter -down-> (Display/Add Message)
+    (Display/Add Message) ..> (Login promoter): <<include>>
+}
+@enduml

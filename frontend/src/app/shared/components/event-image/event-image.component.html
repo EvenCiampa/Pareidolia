@@ -1,0 +1,14 @@
+<div (click)="openImagePreview()"
+	 [class.clickable]="displayUrl || originalUrl"
+	 class="event-image-container">
+	<div [style.background-image]="originalUrl ? 'url(' + originalUrl + ')' : displayUrl ? 'url(' + displayUrl + ')' : 'none'"
+		 class="image-wrapper">
+		<div *ngIf="!originalUrl && !displayUrl" class="placeholder">
+			<mat-icon>event</mat-icon>
+		</div>
+	</div>
+	<mat-progress-bar *ngIf="loading"
+					  class="loading-progress"
+					  mode="indeterminate">
+	</mat-progress-bar>
+</div>

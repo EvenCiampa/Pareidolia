@@ -1,0 +1,15 @@
+@startuml
+left to right direction
+actor "Generic"
+
+
+rectangle System{
+	Generic -down-> (Register)
+	Generic -down-> (Login)
+	Generic -down-> (Forgot password)
+	Generic -down-> (Display Event)
+	Generic -down-> (Display Promoter)
+	Generic -down-> (Display Proposal)
+    'PromoteToFriends the Event'
+}
+@enduml

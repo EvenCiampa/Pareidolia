@@ -1,0 +1,9 @@
+<div class="empty-container">
+	<mat-icon class="empty-icon">{{ icon }}</mat-icon>
+	<h2>{{ title }}</h2>
+	<p>{{ message }}</p>
+	<button *ngIf="createRoute" [routerLink]="createRoute" color="primary" mat-raised-button>
+		<mat-icon>add</mat-icon>
+		{{ createButtonText }}
+	</button>
+</div>

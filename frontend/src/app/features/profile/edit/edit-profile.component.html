@@ -1,0 +1,194 @@
+<div class="edit-profile-container">
+	<mat-card>
+		<mat-card-header>
+			<mat-card-title>Modifica Profilo</mat-card-title>
+		</mat-card-header>
+
+		<mat-card-content>
+			<mat-tab-group *ngIf="!mainLoading; else loadingSpinner">
+				<!-- Tab Informazioni Base -->
+				<mat-tab label="Informazioni Personali">
+					<form (ngSubmit)="onProfileSubmit()" [formGroup]="profileForm">
+						<div class="form-section">
+							<div class="form-row">
+								<mat-form-field appearance="outline">
+									<mat-label>Nome</mat-label>
+									<input formControlName="name" matInput required>
+									<mat-error>{{ getProfileErrorMessage('name') }}</mat-error>
+								</mat-form-field>
+
+								<mat-form-field appearance="outline">
+									<mat-label>Cognome</mat-label>
+									<input formControlName="surname" matInput required>
+									<mat-error>{{ getProfileErrorMessage('surname') }}</mat-error>
+								</mat-form-field>
+							</div>
+
+							<div class="form-row">
+								<mat-form-field appearance="outline">
+									<mat-label>Email</mat-label>
+									<input formControlName="email" matInput required type="email">
+									<mat-error>{{ getProfileErrorMessage('email') }}</mat-error>
+								</mat-form-field>
+
+								<mat-form-field appearance="outline">
+									<mat-label>Telefono</mat-label>
+									<input formControlName="phone" matInput>
+									<mat-error>{{ getProfileErrorMessage('phone') }}</mat-error>
+								</mat-form-field>
+							</div>
+
+							<div class="form-row">
+								<mat-form-field *ngIf="isPromoter" appearance="outline">
+									<mat-label>Presentazione</mat-label>
+									<textarea formControlName="presentation"
+											  matInput
+											  rows="4"></textarea>
+									<mat-error>{{ getProfileErrorMessage('presentation') }}</mat-error>
+								</mat-form-field>
+							</div>
+
+							<mat-error *ngIf="profileFormError" class="form-error">
+								{{ profileFormError }}
+							</mat-error>
+
+							<div class="actions">
+								<button (click)="resetProfileForm()" [disabled]="!profileForm.valid || loading" mat-button type="button">Annulla</button>
+								<button [disabled]="!profileForm.valid || loading"
+										color="primary"
+										mat-raised-button
+										type="submit">
+									{{ loading ? 'Salvataggio...' : 'Salva Modifiche' }}
+								</button>
+							</div>
+						</div>
+					</form>
+				</mat-tab>
+
+				<!-- Tab Cambio Password -->
+				<mat-tab label="Cambio Password">
+					<form (ngSubmit)="onPasswordSubmit()" [formGroup]="passwordForm">
+						<div class="form-section">
+							<div class="form-row">
+								<mat-form-field appearance="outline">
+									<mat-label>Current Password</mat-label>
+									<input [type]="hideCurrentPassword ? 'password' : 'text'"
+										   formControlName="currentPassword"
+										   matInput
+										   required>
+									<button (click)="hideCurrentPassword = !hideCurrentPassword" [attr.aria-label]="'Nascondi password'"
+											mat-icon-button
+											matSuffix
+											type="button">
+										<mat-icon>{{ hideCurrentPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+									</button>
+									<mat-error>{{ getProfileErrorMessage('currentPassword') }}</mat-error>
+								</mat-form-field>
+							</div>
+
+							<div class="form-row">
+								<mat-form-field appearance="outline">
+									<mat-label>New Password</mat-label>
+									<input [type]="hideNewPassword ? 'password' : 'text'"
+										   formControlName="newPassword"
+										   matInput
+										   required>
+									<button (click)="hideNewPassword = !hideNewPassword" [attr.aria-label]="'Nascondi password'"
+											mat-icon-button
+											matSuffix
+											type="button">
+										<mat-icon>{{ hideNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+									</button>
+									<mat-error>{{ getProfileErrorMessage('newPassword') }}</mat-error>
+								</mat-form-field>
+
+								<mat-form-field appearance="outline">
+									<mat-label>Confirm New Password</mat-label>
+									<input [type]="hideConfirmPassword ? 'password' : 'text'"
+										   formControlName="confirmPassword"
+										   matInput
+										   required>
+									<button (click)="hideConfirmPassword = !hideConfirmPassword" [attr.aria-label]="'Nascondi password'"
+											mat-icon-button
+											matSuffix
+											type="button">
+										<mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+									</button>
+									<mat-error>{{ getProfileErrorMessage('confirmPassword') }}</mat-error>
+								</mat-form-field>
+							</div>
+
+							<div class="hint-container password-hint">
+								<div class="hint-header">
+									<mat-icon>info</mat-icon>
+									<span>Password must contain:</span>
+								</div>
+								<ul class="password-hints">
+									<li [class.valid]="passwordValidations.minLength">
+										<mat-icon>{{ passwordValidations.minLength ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+										At least 8 characters
+									</li>
+									<li [class.valid]="passwordValidations.hasUpper">
+										<mat-icon>{{ passwordValidations.hasUpper ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+										One uppercase letter
+									</li>
+									<li [class.valid]="passwordValidations.hasLower">
+										<mat-icon>{{ passwordValidations.hasLower ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+										One lowercase letter
+									</li>
+									<li [class.valid]="passwordValidations.hasNumber">
+										<mat-icon>{{ passwordValidations.hasNumber ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+										One number
+									</li>
+									<li [class.valid]="passwordValidations.hasSpecial">
+										<mat-icon>{{ passwordValidations.hasSpecial ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+										One special character (&commat;#$%^&+=-)
+									</li>
+									<li [class.valid]="passwordValidations.noSpaces">
+										<mat-icon>{{ passwordValidations.noSpaces ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+										No spaces
+									</li>
+								</ul>
+							</div>
+
+							<mat-error *ngIf="passwordFormError" class="form-error">
+								{{ passwordFormError }}
+							</mat-error>
+
+							<div class="actions">
+								<button (click)="resetPasswordForm()" [disabled]="!profileForm.valid || loading" mat-button type="button">Annulla</button>
+								<button [disabled]="!passwordForm.valid || loading"
+										color="primary"
+										mat-raised-button
+										type="submit">
+									{{ loading ? 'Aggiornamento...' : 'Aggiorna Password' }}
+								</button>
+							</div>
+						</div>
+					</form>
+				</mat-tab>
+
+				<!-- Tab Info Promoter (solo per promoter) -->
+				<mat-tab *ngIf="isPromoter" label="Photo">
+					<div class="form-section">
+						<!-- Sezione Immagine Profilo -->
+						<div class="image-section">
+							<app-photo-upload
+									(fileSelected)="onImageSelected($event)"
+									(removeImage)="removeImage()"
+									[imagePreview]="imagePreview"
+									[loading]="imageLoading"
+									[originalImage]="originalImage">
+							</app-photo-upload>
+						</div>
+					</div>
+				</mat-tab>
+			</mat-tab-group>
+			<ng-template #loadingSpinner>
+				<div class="loading-container">
+					<mat-spinner style="margin: 30px auto;"></mat-spinner>
+				</div>
+			</ng-template>
+		</mat-card-content>
+	</mat-card>
+</div>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg height="512" viewBox="0 0 32 32" width="512" xmlns="http://www.w3.org/2000/svg">
+	<defs id="defs1"/>
+	<rect fill="#3f51b5" height="32" id="rect1" rx="8" width="32" x="0.012843941" y="0.14128336"/>
+	<path d="m 11,8 v 8 3.5 4.5 l 6,-4.5 V 16 h 2 c 2.2,0 4,-1.8 4,-4 0,-2.2 -1.8,-4 -4,-4 z" id="path2-3-1" style="fill:#ffffff;fill-opacity:1;stroke-width:0.749998"/>
+	<path d="m 12,9 v 6 4 3 l 4,-3 v -4 h 2.666016 C 20.499349,15 22,13.65 22,12 22,10.350001 20.499349,9 18.666016,9 Z" id="path2-3" style="fill:#3f51b5;fill-opacity:1;stroke-width:0.499999"/>
+</svg>

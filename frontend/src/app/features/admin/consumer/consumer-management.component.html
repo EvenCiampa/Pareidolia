@@ -1,0 +1,71 @@
+<div class="admin-container">
+	<div class="header">
+		<h2>Consumer Management</h2>
+		<button color="primary" mat-raised-button routerLink="/admin/consumers/new">
+			<mat-icon>add</mat-icon>
+			New Consumer
+		</button>
+	</div>
+
+	<ng-container *ngIf="!loading; else loadingSpinner">
+		<ng-container *ngIf="consumers.length > 0; else noData">
+			<mat-table [dataSource]="consumers">
+				<ng-container matColumnDef="name">
+					<mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+					<mat-cell *matCellDef="let consumer">{{ consumer.name }} {{ consumer.surname }}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="email">
+					<mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+					<mat-cell *matCellDef="let consumer">{{ consumer.email }}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="phone">
+					<mat-header-cell *matHeaderCellDef>Phone</mat-header-cell>
+					<mat-cell *matCellDef="let consumer">{{ consumer.phone }}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+					<mat-cell *matCellDef="let consumer">
+						<button [routerLink]="['/admin/consumers', consumer.id]" mat-icon-button>
+							<mat-icon>edit</mat-icon>
+						</button>
+						<button (click)="deleteConsumer(consumer.id)" color="warn" mat-icon-button>
+							<mat-icon>delete</mat-icon>
+						</button>
+					</mat-cell>
+				</ng-container>
+
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+			</mat-table>
+
+			<mat-paginator
+					#paginator
+					(page)="onPageChange($event)"
+					[length]="totalConsumers"
+					[pageIndex]="pageIndex"
+					[pageSizeOptions]="[25, 50, 100]"
+					[pageSize]="pageSize"
+					showFirstLastButtons>
+			</mat-paginator>
+		</ng-container>
+	</ng-container>
+
+	<ng-template #loadingSpinner>
+		<div class="loading-container">
+			<mat-spinner></mat-spinner>
+		</div>
+	</ng-template>
+
+	<ng-template #noData>
+		<app-empty-table
+				createButtonText="Create Consumer"
+				createRoute="/admin/consumers/new"
+				icon="group_off"
+				message="There are no consumers available. Create one to get started."
+				title="No Consumers">
+		</app-empty-table>
+	</ng-template>
+</div>
