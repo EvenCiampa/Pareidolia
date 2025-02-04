@@ -11,8 +11,8 @@ rectangle System{
 	(Display/Update Promoter) ..> (Login promoter): <<include>>
 	Promoter -down-> (Display Review)
 	(Display Review) ..> (Login promoter): <<include>>
-	Promoter -down-> (Display/Add/Update EventDraft)
-    (Display/Add/Update EventDraft) ..> (Login promoter): <<include>>
+	Promoter -down-> (Display/Add/Update Event)
+    (Display/Add/Update Event) ..> (Login promoter): <<include>>
     Promoter -down-> (Display/Add Message)
     (Display/Add Message) ..> (Login promoter): <<include>>
 }
