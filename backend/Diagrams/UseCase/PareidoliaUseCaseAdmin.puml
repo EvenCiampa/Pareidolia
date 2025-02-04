@@ -14,10 +14,8 @@ rectangle System{
 	' eliminato: Booking configurations, gift, order, Package, Product, Treatment, ServiceComment '
 	Admin -down-> (Display/Add/Delete Booking)
 	(Display/Add/Delete Booking) ..>  (Login admin): <<include>>
-	Admin -down-> (Update/Delete Event)
-	(Add/Update/Delete Event) ..>  (Login admin): <<include>>
-	Admin -down-> (Display/Add/Update/Delete/Publish EventDraft)
-    (Display/Add/Update/Delete/Publish EventDraft) ..> (Login admin): <<include>>
+	Admin -down-> (Display/Add/Update/Delete/Publish Event)
+    (Display/Add/Update/Delete/Publish Event) ..> (Login admin): <<include>>
     Admin -down-> (Display/Add/Delete Message)
    	(Display/Add/Delete Message) ..> (Login admin): <<include>>
 }

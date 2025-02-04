@@ -41,7 +41,7 @@ import java.util.TimeZone;
 public class PareidoliaApplication {
 
 	public static void main(String[] args) {
-		TimeZone.setDefault(TimeZone.getTimeZone("Europe/Rome"));
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 		SpringApplication.run(PareidoliaApplication.class, args);
 	}
 
