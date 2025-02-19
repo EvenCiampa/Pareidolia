@@ -16,7 +16,6 @@ import com.pareidolia.repository.EventRepository;
 import com.pareidolia.repository.PromoterInfoRepository;
 import com.pareidolia.repository.model.EventWithInfoForAccount;
 import com.pareidolia.service.ImageService;
-import com.pareidolia.state.EventStateHandler;
 import com.pareidolia.validator.EventDraftValidator;
 import com.pareidolia.validator.EventValidator;
 import com.pareidolia.validator.ImageValidator;
@@ -51,6 +50,10 @@ public class AdminEventService {
 	private final PromoterInfoRepository promoterInfoRepository;
 	private final EventPromoterAssociationRepository eventPromoterAssociationRepository;
 
+	/**
+	 * Recupera un evento specifico per un amministratore basandosi sull'ID dell'evento.
+	 * @return EventDTO Il DTO dell'evento, includendo informazioni sulla prenotazione e i dettagli dei promotori.
+	 */
 	public EventDTO getEvent(Long id) {
 		Event eventDraft = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Event ID"));
 		Long currentParticipants = bookingRepository.countByIdEvent(id);
@@ -62,6 +65,11 @@ public class AdminEventService {
 		return EventMapper.entityToDTO(eventDraft, booked, currentParticipants, promoters);
 	}
 
+	/**
+	 * Ottiene una pagina di eventi basata sullo stato fornito e sulla pagina richiesta, filtrati per l'account dell'amministratore.
+	 * @param state Stato degli eventi da filtrare, se fornito.
+	 * @return Page<EventDTO> Una pagina di DTO degli eventi.
+	 */
 	public Page<EventDTO> getEvents(Integer page, Integer size, Event.EventState state) {
 		AdminDTO admin = adminService.getData();
 		Page<EventWithInfoForAccount> eventPage;
@@ -87,6 +95,12 @@ public class AdminEventService {
 		});
 	}
 
+	/**
+	 * Recupera una pagina di eventi associati a un promotore specifico e filtrati per stato, se fornito.
+	 * @param idPromoter ID del promotore.
+	 * @param state Stato degli eventi per il filtraggio.
+	 * @return Page<EventDTO> Una pagina di eventi sotto forma di DTO.
+	 */
 	public Page<EventDTO> getPromoterEvents(Long idPromoter, Integer page, Integer size, Event.EventState state) {
 		AdminDTO admin = adminService.getData();
 		Page<EventWithInfoForAccount> eventPage;
@@ -111,6 +125,11 @@ public class AdminEventService {
 		});
 	}
 
+	/**
+	 * Crea un nuovo evento basandosi su un DTO di aggiornamento, validando i promotori inclusi.
+	 * @param eventUpdateDraftDTO DTO contenente i dettagli dell'evento da creare.
+	 * @return EventDTO Il DTO dell'evento creato.
+	 */
 	public EventDTO create(EventUpdateDTO eventUpdateDraftDTO) {
 		List<PromoterInfo> promoterInfoList = promoterInfoRepository.findAllByEmailIn(eventUpdateDraftDTO.promoterEmails);
 		if (eventUpdateDraftDTO.promoterEmails != null && promoterInfoList.size() != eventUpdateDraftDTO.promoterEmails.size()) {
@@ -141,6 +160,11 @@ public class AdminEventService {
 		return EventMapper.entityToDTO(savedEventDraft, false, 0L, promoters);
 	}
 
+	/**
+	 * Aggiorna un evento esistente, verificando l'accuratezza delle informazioni del promotore.
+	 * @param eventUpdateDraftDTO DTO contenente le modifiche da applicare all'evento.
+	 * @return EventDTO Il DTO dell'evento aggiornato.
+	 */
 	public EventDTO update(EventUpdateDTO eventUpdateDraftDTO) {
 		List<PromoterInfo> promoterInfoList = promoterInfoRepository.findAllByEmailIn(eventUpdateDraftDTO.promoterEmails);
 		if (eventUpdateDraftDTO.promoterEmails != null && promoterInfoList.size() != eventUpdateDraftDTO.promoterEmails.size()) {
@@ -173,6 +197,15 @@ public class AdminEventService {
 		return EventMapper.entityToDTO(event, booked, bookingRepository.countByIdEvent(eventDTO.getId()), promoters);
 	}
 
+	/**
+	 * Aggiorna le associazioni tra un evento e i suoi promotori. Rimuove le associazioni per i promotori non più associati all'evento
+	 * e aggiunge nuove associazioni per i nuovi promotori.
+	 * @param idEvent L'ID dell'evento per cui aggiornare le associazioni dei promotori.
+	 * @param promoters Lista dei DTO dei promotori che dovrebbero essere attualmente associati all'evento.
+	 * @throws IllegalArgumentException Se l'ID dell'evento non è valido o se uno degli ID dei promotori non esiste.
+	 * Questo metodo garantisce che solo i promotori attualmente specificati nel DTO siano associati all'evento, riflettendo
+	 * qualsiasi aggiunta o rimozione effettuata dall'utente.
+	 */
 	private void updateEventPromoters(Long idEvent, List<PromoterDTO> promoters) {
 		// Recupera le associazioni esistenti per l'evento
 		List<Pair<Account, PromoterInfo>> existingPromoters =
@@ -205,6 +238,10 @@ public class AdminEventService {
 			});
 	}
 
+	/**
+	 * Elimina un evento basato sull'ID fornito.
+	 * @param id L'ID dell'evento da eliminare.
+	 */
 	public void delete(Long id) {
 		if (id == null) {
 			throw new IllegalArgumentException("Invalid Event ID");
@@ -214,11 +251,16 @@ public class AdminEventService {
 		eventRepository.deleteById(id);
 	}
 
-	public EventDTO moveToState(Long id, Event.EventState state) {
+	/**
+	 * Cambia lo stato di un evento a uno stato precedente.
+	 * @param id L'ID dell'evento da modificare.
+	 * @return EventDTO Il DTO dell'evento con il nuovo stato.
+	 */
+	public EventDTO moveBackwards(Long id) {
 		Event event = eventRepository.findById(id)
 			.orElseThrow(() -> new IllegalArgumentException("Invalid Event ID"));
 
-		EventStateHandler.moveTo(event, state);
+		event.getState().moveBackwards();
 		Event eventDraft = eventRepository.save(event);
 
 		List<Pair<Account, PromoterInfo>> promoters = eventPromoterAssociationRepository.findPromotersByIdEvent(eventDraft.getId());
@@ -226,6 +268,29 @@ public class AdminEventService {
 		return EventMapper.entityToDTO(eventDraft, booked, bookingRepository.countByIdEvent(id), promoters);
 	}
 
+	/**
+	 * Cambia lo stato di un evento a uno stato successivo.
+	 * @param id L'ID dell'evento da modificare.
+	 * @return EventDTO Il DTO dell'evento con il nuovo stato.
+	 */
+	public EventDTO moveForward(Long id) {
+		Event event = eventRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("Invalid Event ID"));
+
+		event.getState().moveForward();
+		Event eventDraft = eventRepository.save(event);
+
+		List<Pair<Account, PromoterInfo>> promoters = eventPromoterAssociationRepository.findPromotersByIdEvent(eventDraft.getId());
+		boolean booked = bookingRepository.findByIdEventAndIdAccount(id, adminService.getData().getId()).isPresent();
+		return EventMapper.entityToDTO(eventDraft, booked, bookingRepository.countByIdEvent(id), promoters);
+	}
+
+	/**
+	 * Aggiorna l'immagine di un evento, validando l'immagine.
+	 * @param id ID dell'evento di cui aggiornare l'immagine.
+	 * @param file File contenente l'immagine da caricare.
+	 * @return EventDTO Rappresentazione DTO dell'evento con l'immagine aggiornata.
+	 */
 	public EventDTO updateEventImage(Long id, MultipartFile file) {
 		imageValidator.validateEventImage(file);
 
@@ -246,6 +311,11 @@ public class AdminEventService {
 		}
 	}
 
+	/**
+	 * Rimuove l'immagine da un evento specifico.
+	 * @param id L'ID dell'evento da cui rimuovere l'immagine.
+	 * @return EventDTO Il DTO dell'evento senza l'immagine.
+	 */
 	public EventDTO deleteEventImage(Long id) {
 		Event event = eventRepository.findById(id)
 			.orElseThrow(() -> new IllegalArgumentException("Event not found"));

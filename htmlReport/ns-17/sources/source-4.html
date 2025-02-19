@@ -1,0 +1,169 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EventRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.pareidolia.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: EventRepository (com.pareidolia.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">EventRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.pareidolia.repository;
+&nbsp;
+&nbsp;import com.pareidolia.entity.Event;
+&nbsp;import com.pareidolia.repository.model.EventWithInfo;
+&nbsp;import com.pareidolia.repository.model.EventWithInfoForAccount;
+&nbsp;import org.hibernate.annotations.Parameter;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Modifying;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface EventRepository extends JpaRepository&lt;Event, Long&gt; {
+&nbsp;	@Query(value = &quot;&quot;&quot;
+&nbsp;			SELECT new com.pareidolia.repository.model.EventWithInfoForAccount(
+&nbsp;				e,
+&nbsp;				(SELECT COUNT(b) &gt; 0 FROM Booking b INNER JOIN Account a ON a.id = b.idAccount WHERE b.idEvent = e.id AND a.id = :accountId),
+&nbsp;				(SELECT COUNT(b) FROM Booking b WHERE b.idEvent = e.id)
+&nbsp;			)
+&nbsp;			FROM Event e
+&nbsp;			INNER JOIN EventPromoterAssociation epa ON epa.idEvent = e.id
+&nbsp;			WHERE epa.idPromoter = :idPromoter AND e.state = :state
+&nbsp;		&quot;&quot;&quot;, countQuery = &quot;&quot;&quot;
+&nbsp;			SELECT COUNT(e)
+&nbsp;			FROM Event e
+&nbsp;			INNER JOIN EventPromoterAssociation epa ON epa.idEvent = e.id
+&nbsp;			WHERE epa.idPromoter = :idPromoter AND e.state = :state
+&nbsp;		&quot;&quot;&quot;)
+&nbsp;	Page&lt;EventWithInfoForAccount&gt; findAllByAccountIdAndStateAndPromoterId(@Param(&quot;accountId&quot;) Long accountId, Event.EventState state, Long idPromoter, Pageable pageable);
+&nbsp;
+&nbsp;	@Query(&quot;&quot;&quot;
+&nbsp;			SELECT new com.pareidolia.repository.model.EventWithInfo(e, (SELECT COUNT(*) FROM Booking b WHERE b.idEvent = e.id))
+&nbsp;			FROM Event e
+&nbsp;			INNER JOIN EventPromoterAssociation epa ON epa.idEvent = e.id
+&nbsp;			WHERE epa.idPromoter = :idPromoter AND e.state = :state
+&nbsp;		&quot;&quot;&quot;)
+&nbsp;	Page&lt;EventWithInfo&gt; findAllByStateAndPromoterId(Event.EventState state, Long idPromoter, Pageable pageable);
+&nbsp;
+&nbsp;	@Query(value = &quot;&quot;&quot;
+&nbsp;			SELECT new com.pareidolia.repository.model.EventWithInfoForAccount(
+&nbsp;				e,
+&nbsp;				(SELECT COUNT(b) &gt; 0 FROM Booking b INNER JOIN Account a ON a.id = b.idAccount WHERE b.idEvent = e.id AND a.id = :accountId),
+&nbsp;				(SELECT COUNT(b) FROM Booking b WHERE b.idEvent = e.id)
+&nbsp;			)
+&nbsp;			FROM Event e
+&nbsp;			INNER JOIN EventPromoterAssociation epa ON epa.idEvent = e.id
+&nbsp;			WHERE epa.idPromoter = :idPromoter
+&nbsp;		&quot;&quot;&quot;, countQuery = &quot;&quot;&quot;
+&nbsp;			SELECT COUNT(e)
+&nbsp;			FROM Event e
+&nbsp;			INNER JOIN EventPromoterAssociation epa ON epa.idEvent = e.id
+&nbsp;			WHERE epa.idPromoter = :idPromoter
+&nbsp;		&quot;&quot;&quot;)
+&nbsp;	Page&lt;EventWithInfoForAccount&gt; findAllByAccountIdAndPromoterId(@Param(&quot;accountId&quot;) Long accountId, Long idPromoter, Pageable pageable);
+&nbsp;
+&nbsp;	@Query(value = &quot;&quot;&quot;
+&nbsp;			SELECT new com.pareidolia.repository.model.EventWithInfoForAccount(
+&nbsp;				e,
+&nbsp;				(SELECT COUNT(b) &gt; 0 FROM Booking b INNER JOIN Account a ON a.id = b.idAccount WHERE b.idEvent = e.id AND a.id = :accountId),
+&nbsp;				(SELECT COUNT(b) FROM Booking b WHERE b.idEvent = e.id)
+&nbsp;			)
+&nbsp;			FROM Event e
+&nbsp;			WHERE e.state = :state
+&nbsp;		&quot;&quot;&quot;, countQuery = &quot;&quot;&quot;
+&nbsp;			SELECT COUNT(e)
+&nbsp;			FROM Event e
+&nbsp;			WHERE e.state = :state
+&nbsp;		&quot;&quot;&quot;)
+&nbsp;	Page&lt;EventWithInfoForAccount&gt; findAllByAccountIdAndState(@Param(&quot;accountId&quot;) Long accountId, Event.EventState state, Pageable pageable);
+&nbsp;
+&nbsp;	@Query(&quot;&quot;&quot;
+&nbsp;			SELECT new com.pareidolia.repository.model.EventWithInfo(e, (SELECT COUNT(*) FROM Booking b WHERE b.idEvent = e.id))
+&nbsp;			FROM Event e
+&nbsp;			WHERE e.state = :state
+&nbsp;		&quot;&quot;&quot;)
+&nbsp;	Page&lt;EventWithInfo&gt; findAllByState(Event.EventState state, Pageable pageable);
+&nbsp;
+&nbsp;	@Query(value = &quot;&quot;&quot;
+&nbsp;			SELECT new com.pareidolia.repository.model.EventWithInfoForAccount(
+&nbsp;				e,
+&nbsp;				(SELECT COUNT(b) &gt; 0 FROM Booking b INNER JOIN Account a ON a.id = b.idAccount WHERE b.idEvent = e.id AND a.id = :accountId),
+&nbsp;				(SELECT COUNT(b) FROM Booking b WHERE b.idEvent = e.id)
+&nbsp;			)
+&nbsp;			FROM Event e
+&nbsp;		&quot;&quot;&quot;, countQuery = &quot;&quot;&quot;
+&nbsp;			SELECT COUNT(e)
+&nbsp;			FROM Event e
+&nbsp;		&quot;&quot;&quot;)
+&nbsp;	Page&lt;EventWithInfoForAccount&gt; findAllByAccountIdWithCount(@Param(&quot;accountId&quot;) Long accountId, Pageable pageable);
+&nbsp;
+&nbsp;	@Modifying
+&nbsp;	@Query(&quot;&quot;&quot;
+&nbsp;			UPDATE Event e
+&nbsp;			SET e.averageScore = (SELECT AVG(r.score) FROM Review r WHERE r.idEvent = e.id)
+&nbsp;			WHERE e.id = :id
+&nbsp;		&quot;&quot;&quot;)
+&nbsp;	void updateAverageScore(Long id);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-11 13:30</div>
+</div>
+</body>
+</html>

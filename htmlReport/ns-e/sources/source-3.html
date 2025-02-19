@@ -1,0 +1,201 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EventMapper</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.pareidolia.mapper</a>
+</div>
+
+<h1>Coverage Summary for Class: EventMapper (com.pareidolia.mapper)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EventMapper</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83,3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98,1%
+  </span>
+  <span class="absValue">
+    (53/54)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.pareidolia.mapper;
+&nbsp;
+&nbsp;import com.pareidolia.dto.EventDTO;
+&nbsp;import com.pareidolia.dto.EventUpdateDTO;
+&nbsp;import com.pareidolia.dto.PromoterDTO;
+&nbsp;import com.pareidolia.entity.Account;
+&nbsp;import com.pareidolia.entity.Event;
+&nbsp;import com.pareidolia.entity.EventPromoterAssociation;
+&nbsp;import com.pareidolia.entity.PromoterInfo;
+&nbsp;import com.pareidolia.repository.EventPromoterAssociationRepository;
+&nbsp;import org.springframework.data.util.Pair;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+<b class="nc">&nbsp;public class EventMapper {</b>
+&nbsp;
+&nbsp;	public static EventDTO entityToDTO(Event entity, Boolean booked, Long currentParticipants, List&lt;Pair&lt;Account, PromoterInfo&gt;&gt; promoters) {
+<b class="fc">&nbsp;		EventDTO dto = new EventDTO();</b>
+<b class="fc">&nbsp;		dto.setId(entity.getId());</b>
+<b class="fc">&nbsp;		dto.setTitle(entity.getTitle());</b>
+<b class="fc">&nbsp;		dto.setDescription(entity.getDescription());</b>
+<b class="fc">&nbsp;		dto.setImage(entity.getImage());</b>
+<b class="fc">&nbsp;		dto.setPlace(entity.getPlace());</b>
+<b class="fc">&nbsp;		dto.setDate(entity.getDate());</b>
+<b class="fc">&nbsp;		dto.setTime(entity.getTime());</b>
+<b class="fc">&nbsp;		dto.setDuration(entity.getDuration());</b>
+<b class="fc">&nbsp;		dto.setPromoters(promoters.stream().map(promoter -&gt; AccountMapper.entityToPromoterDTO(promoter.getFirst(), promoter.getSecond())).toList());</b>
+<b class="fc">&nbsp;		dto.setMaxNumberOfParticipants(entity.getMaxNumberOfParticipants());</b>
+<b class="fc">&nbsp;		dto.setCurrentParticipants(currentParticipants);</b>
+<b class="fc">&nbsp;		dto.setState(entity.getState());</b>
+<b class="fc">&nbsp;		dto.setScore(entity.getAverageScore());</b>
+<b class="fc">&nbsp;		dto.setBooked(booked);</b>
+<b class="fc">&nbsp;		dto.setCreationTime(entity.getCreationTime());</b>
+<b class="fc">&nbsp;		return dto;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public static Event dtoToEntity(EventDTO dto) {
+<b class="fc">&nbsp;		Event entity = new Event();</b>
+<b class="fc">&nbsp;		entity.setId(dto.getId());</b>
+<b class="fc">&nbsp;		entity.setTitle(dto.getTitle());</b>
+<b class="fc">&nbsp;		entity.setDescription(dto.getDescription());</b>
+<b class="fc">&nbsp;		entity.setPlace(dto.getPlace());</b>
+<b class="fc">&nbsp;		entity.setDate(dto.getDate());</b>
+<b class="fc">&nbsp;		entity.setTime(dto.getTime());</b>
+<b class="fc">&nbsp;		entity.setDuration(dto.getDuration());</b>
+<b class="fc">&nbsp;		entity.setMaxNumberOfParticipants(dto.getMaxNumberOfParticipants());</b>
+<b class="fc">&nbsp;		entity.setState(dto.getState());</b>
+<b class="fc">&nbsp;		return entity;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public static void updateEntitiesWithEventDTO(Event entity, EventDTO dto) {
+<b class="fc">&nbsp;		entity.setTitle(dto.getTitle());</b>
+<b class="fc">&nbsp;		entity.setDescription(dto.getDescription());</b>
+<b class="fc">&nbsp;		entity.setPlace(dto.getPlace());</b>
+<b class="fc">&nbsp;		entity.setDate(dto.getDate());</b>
+<b class="fc">&nbsp;		entity.setTime(dto.getTime());</b>
+<b class="fc">&nbsp;		entity.setDuration(dto.getDuration());</b>
+<b class="fc">&nbsp;		entity.setMaxNumberOfParticipants(dto.getMaxNumberOfParticipants());</b>
+<b class="fc">&nbsp;		entity.setState(dto.getState());</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public static void createPromoterAssociations(Event savedEvent, List&lt;PromoterDTO&gt; promoterDTOs, EventPromoterAssociationRepository eventPromoterAssociationRepository) {
+<b class="fc">&nbsp;		for (PromoterDTO promoterDTO : promoterDTOs) {</b>
+<b class="fc">&nbsp;			EventPromoterAssociation association = new EventPromoterAssociation();</b>
+<b class="fc">&nbsp;			association.setIdEvent(savedEvent.getId());</b>
+<b class="fc">&nbsp;			association.setIdPromoter(promoterDTO.getId());</b>
+<b class="fc">&nbsp;			eventPromoterAssociationRepository.save(association);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	public static EventDTO updateDTOtoDTO(EventUpdateDTO updateDTO, List&lt;PromoterDTO&gt; promoters) {
+<b class="fc">&nbsp;		EventDTO dto = new EventDTO();</b>
+<b class="fc">&nbsp;		dto.setId(updateDTO.getId());</b>
+<b class="fc">&nbsp;		dto.setTitle(updateDTO.getTitle());</b>
+<b class="fc">&nbsp;		dto.setDescription(updateDTO.getDescription());</b>
+<b class="fc">&nbsp;		dto.setPlace(updateDTO.getPlace());</b>
+<b class="fc">&nbsp;		dto.setDate(updateDTO.getDate());</b>
+<b class="fc">&nbsp;		dto.setTime(updateDTO.getTime());</b>
+<b class="fc">&nbsp;		dto.setDuration(updateDTO.getDuration());</b>
+<b class="fc">&nbsp;		dto.setPromoters(promoters);</b>
+<b class="fc">&nbsp;		dto.setMaxNumberOfParticipants(updateDTO.getMaxNumberOfParticipants());</b>
+<b class="fc">&nbsp;		dto.setState(updateDTO.getState());</b>
+<b class="fc">&nbsp;		return dto;</b>
+&nbsp;	}
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-11 13:30</div>
+</div>
+</body>
+</html>

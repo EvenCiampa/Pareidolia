@@ -79,6 +79,15 @@ public class EventValidator {
 		}
 	}
 
+	/**
+	 * Recupera e valida un evento esistente dal database usando l'ID fornito nel DTO dell'evento.
+	 * Questo metodo esegue una serie di validazioni per assicurare che le informazioni aggiornate siano corrette e complete prima di procedere con l'aggiornamento dell'evento.
+	 * Inoltre, valida i promotori associati all'evento per garantire che rispettino i criteri necessari. Questo metodo è cruciale per garantire l'integrità
+	 * e la coerenza dei dati dell'evento prima di qualsiasi operazione di salvataggio o aggiornamento nel database.
+	 * @param eventDTO DTO dell'evento con le informazioni aggiornate.
+	 * @return Event L'entità dell'evento aggiornata e validata pronta per il salvataggio.
+	 * @throws IllegalArgumentException Se l'evento non è trovato nel database o se qualsiasi validazione fallisce.
+	 */
 	public Event getEventAndValidateUpdate(EventDTO eventDTO) {
 		Event event = eventRepository.findById(eventDTO.getId())
 			.orElseThrow(() -> new IllegalArgumentException("Event not found"));

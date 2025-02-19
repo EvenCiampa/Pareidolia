@@ -29,6 +29,12 @@ public class PromoterReviewService {
 	private final ReviewRepository reviewRepository;
 	private final AccountRepository accountRepository;
 
+	/**
+	 * Recupera le recensioni associate a un evento specifico, paginate e ordinate.
+	 * @param idEvent L'ID dell'evento per cui recuperare le recensioni.
+	 * @return Page<ReviewDTO> Una pagina contenente le recensioni sotto forma di DTO.
+	 * @throws IllegalArgumentException Se l'ID dell'evento non è valido o se l'evento non è ancora concluso.
+	 */
 	public Page<ReviewDTO> getEventReviews(Long idEvent, Integer page, Integer size) {
 		if (idEvent == null) {
 			throw new IllegalArgumentException("Invalid Event ID");
@@ -46,6 +52,12 @@ public class PromoterReviewService {
 		return reviews.map(ReviewMapper::entityToDTO);
 	}
 
+	/**
+	 * Crea una nuova recensione per un evento, assicurandosi che l'evento sia concluso e che i campi della recensione siano validi.
+	 * @param reviewDTO DTO della recensione da creare.
+	 * @return ReviewDTO Il DTO della recensione appena creata.
+	 * @throws IllegalArgumentException Se il conto dell'utente non è valido, se l'ID del consumatore non corrisponde all'ID del promotore autenticato, o se i dati della recensione non sono validi.
+	 */
 	public ReviewDTO create(ReviewDTO reviewDTO) {
 		PromoterDTO promoterDTO = promoterService.getData();
 

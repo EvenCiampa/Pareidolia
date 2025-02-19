@@ -3,7 +3,9 @@ package com.pareidolia.repository;
 import com.pareidolia.entity.Event;
 import com.pareidolia.repository.model.EventWithInfo;
 import com.pareidolia.repository.model.EventWithInfoForAccount;
-import org.hibernate.annotations.Parameter;
+import com.pareidolia.state.State;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +15,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EventRepository extends JpaRepository<Event, Long> {
+public interface EventRepository extends JpaRepository<Event, Long>, CustomEventRepository {
 	@Query(value = """
 			SELECT new com.pareidolia.repository.model.EventWithInfoForAccount(
 				e,
@@ -29,7 +31,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 			INNER JOIN EventPromoterAssociation epa ON epa.idEvent = e.id
 			WHERE epa.idPromoter = :idPromoter AND e.state = :state
 		""")
-	Page<EventWithInfoForAccount> findAllByAccountIdAndStateAndPromoterId(@Param("accountId") Long accountId, Event.EventState state, Long idPromoter, Pageable pageable);
+	Page<EventWithInfoForAccount> findAllByAccountIdAndStateAndPromoterId(@Param("accountId") Long accountId, State state, Long idPromoter, Pageable pageable);
 
 	@Query("""
 			SELECT new com.pareidolia.repository.model.EventWithInfo(e, (SELECT COUNT(*) FROM Booking b WHERE b.idEvent = e.id))
@@ -37,7 +39,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 			INNER JOIN EventPromoterAssociation epa ON epa.idEvent = e.id
 			WHERE epa.idPromoter = :idPromoter AND e.state = :state
 		""")
-	Page<EventWithInfo> findAllByStateAndPromoterId(Event.EventState state, Long idPromoter, Pageable pageable);
+	Page<EventWithInfo> findAllByStateAndPromoterId(State state, Long idPromoter, Pageable pageable);
 
 	@Query(value = """
 			SELECT new com.pareidolia.repository.model.EventWithInfoForAccount(
@@ -69,14 +71,14 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 			FROM Event e
 			WHERE e.state = :state
 		""")
-	Page<EventWithInfoForAccount> findAllByAccountIdAndState(@Param("accountId") Long accountId, Event.EventState state, Pageable pageable);
+	Page<EventWithInfoForAccount> findAllByAccountIdAndState(@Param("accountId") Long accountId, State state, Pageable pageable);
 
 	@Query("""
 			SELECT new com.pareidolia.repository.model.EventWithInfo(e, (SELECT COUNT(*) FROM Booking b WHERE b.idEvent = e.id))
 			FROM Event e
 			WHERE e.state = :state
 		""")
-	Page<EventWithInfo> findAllByState(Event.EventState state, Pageable pageable);
+	Page<EventWithInfo> findAllByState(State state, Pageable pageable);
 
 	@Query(value = """
 			SELECT new com.pareidolia.repository.model.EventWithInfoForAccount(
@@ -98,4 +100,39 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 			WHERE e.id = :id
 		""")
 	void updateAverageScore(Long id);
+}
+
+interface CustomEventRepository {
+	Page<EventWithInfoForAccount> findAllByAccountIdAndStateAndPromoterId(Long accountId, Event.EventState state, Long idPromoter, Pageable pageable);
+
+	Page<EventWithInfo> findAllByStateAndPromoterId(Event.EventState state, Long idPromoter, Pageable pageable);
+
+	Page<EventWithInfoForAccount> findAllByAccountIdAndState(Long accountId, Event.EventState state, Pageable pageable);
+
+	Page<EventWithInfo> findAllByState(Event.EventState state, Pageable pageable);
+}
+
+@Repository
+class CustomEventRepositoryImpl implements CustomEventRepository {
+	final EventRepository eventRepository;
+
+	public CustomEventRepositoryImpl(@Autowired @Lazy EventRepository eventRepository) {
+		this.eventRepository = eventRepository;
+	}
+
+	public Page<EventWithInfoForAccount> findAllByAccountIdAndStateAndPromoterId(Long accountId, Event.EventState state, Long idPromoter, Pageable pageable) {
+		return eventRepository.findAllByAccountIdAndStateAndPromoterId(accountId, State.fromString(state.name(), null), idPromoter, pageable);
+	}
+
+	public Page<EventWithInfo> findAllByStateAndPromoterId(Event.EventState state, Long idPromoter, Pageable pageable) {
+		return eventRepository.findAllByStateAndPromoterId(State.fromString(state.name(), null), idPromoter, pageable);
+	}
+
+	public Page<EventWithInfoForAccount> findAllByAccountIdAndState(Long accountId, Event.EventState state, Pageable pageable) {
+		return eventRepository.findAllByAccountIdAndState(accountId, State.fromString(state.name(), null), pageable);
+	}
+
+	public Page<EventWithInfo> findAllByState(Event.EventState state, Pageable pageable) {
+		return eventRepository.findAllByState(State.fromString(state.name(), null), pageable);
+	}
 }

@@ -18,6 +18,15 @@ public class ReviewValidator {
 	private final EventRepository eventRepository;
 	private final ReviewRepository reviewRepository;
 
+	/**
+	 * Valida che un evento specificato dal suo ID sia concluso prima di permettere l'invio di una recensione.
+	 * Questo metodo verifica l'esistenza dell'evento e calcola se l'evento è finito basandosi sulla combinazione
+	 * di data, ora e durata dell'evento. È essenziale per garantire che le recensioni vengano inviate solo dopo
+	 * il termine dell'evento.
+	 *
+	 * @param idEvent ID dell'evento da validare.
+	 * @throws IllegalArgumentException Se l'ID dell'evento non è valido, l'evento non è trovato, o l'evento non è ancora terminato.
+	 */
 	public void validateEventIsOver(Long idEvent) {
 		if (idEvent == null) {
 			throw new IllegalArgumentException("Invalid Event ID");
@@ -34,7 +43,16 @@ public class ReviewValidator {
 		}
 	}
 
-	// Verifica la validità dei campi della recensione
+	/**
+	 * Valida i campi di una nuova recensione ricevuta tramite un DTO. Questa validazione include il controllo
+	 * del titolo, della descrizione e del punteggio della recensione. Assicura che il titolo e la descrizione
+	 * non siano vuoti o troppo lunghi, e che il punteggio rientri nei limiti stabiliti. Inoltre, verifica che
+	 * non esista già una recensione dello stesso consumatore per lo stesso evento, prevenendo duplicazioni.
+	 *
+	 * @param reviewDTO DTO della recensione da validare.
+	 * @throws IllegalArgumentException Se i dati della recensione sono mancanti, se il titolo o la descrizione sono vuoti o troppo lunghi,
+	 * o se il punteggio non è compreso tra 1 e 5, o se una recensione da parte dello stesso consumatore per lo stesso evento esiste già.
+	 */
 	public void validateNewReviewFields(ReviewDTO reviewDTO) {
 		if (reviewDTO == null) {
 			throw new IllegalArgumentException("Review data is missing.");

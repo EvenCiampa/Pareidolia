@@ -215,8 +215,16 @@ export class AdminService {
     }).pipe(catchError(err => this.errorService.handleError(err)));
   }
 
-  moveToState(eventId: number, state: string): Observable<EventDTO> {
-    return this.http.post<EventDTO>(`${this.apiUrl}/event/${eventId}/${state}`, {}, {
+  moveBackwards(eventId: number): Observable<EventDTO> {
+    return this.http.post<EventDTO>(`${this.apiUrl}/event/${eventId}/backwards`, {}, {
+      headers: {
+        "Authorization": `Bearer ${this.authService.getToken()}`
+      }
+    }).pipe(catchError(err => this.errorService.handleError(err)));
+  }
+
+  moveForward(eventId: number): Observable<EventDTO> {
+    return this.http.post<EventDTO>(`${this.apiUrl}/event/${eventId}/forward`, {}, {
       headers: {
         "Authorization": `Bearer ${this.authService.getToken()}`
       }

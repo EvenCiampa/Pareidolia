@@ -177,7 +177,7 @@
 
 						<div class="status-actions">
 							<!-- DRAFT state actions -->
-							<button (click)="changeStatus('REVIEW')"
+							<button (click)="moveForward()"
 									*ngIf="event?.state === 'DRAFT'"
 									class="review-button"
 									mat-raised-button
@@ -188,14 +188,14 @@
 
 							<!-- REVIEW state actions -->
 							<ng-container *ngIf="event?.state === 'REVIEW'">
-								<button (click)="changeStatus('DRAFT')"
+								<button (click)="moveBackwards()"
 										class="draft-button"
 										mat-raised-button
 										style="width: auto; height: auto;">
 									<mat-icon>edit</mat-icon>
 									Back to Draft
 								</button>
-								<button (click)="changeStatus('PUBLISHED')"
+								<button (click)="moveForward()"
 										class="publish-button"
 										mat-raised-button
 										style="width: auto; height: auto;">
@@ -205,7 +205,7 @@
 							</ng-container>
 
 							<!-- PUBLISHED state actions -->
-							<button (click)="changeStatus('DRAFT')"
+							<button (click)="moveBackwards()"
 									*ngIf="event?.state === 'PUBLISHED'"
 									class="draft-button"
 									mat-raised-button

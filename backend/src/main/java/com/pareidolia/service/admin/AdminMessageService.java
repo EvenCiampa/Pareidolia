@@ -27,6 +27,11 @@ public class AdminMessageService {
 	private final AccountRepository accountRepository;
 	private final EventRepository eventRepository;
 
+	/**
+	 * Recupera i messaggi associati a una bozza di evento specifica, paginandoli.
+	 * @param idEventDraft L'ID della bozza di evento per cui recuperare i messaggi.
+	 * @return Page<MessageDTO> Una pagina contenente i messaggi sotto forma di DTO.
+	 */
 	public Page<MessageDTO> getEventDraftMessages(Long idEventDraft, Integer page, Integer size) {
 		// ricerca messaggi relativi a una draft e paginali
 		if (idEventDraft == null) {
@@ -41,6 +46,12 @@ public class AdminMessageService {
 		return messages.map(MessageMapper::entityToDTO);
 	}
 
+	/**
+	 * Crea un nuovo messaggio associato a una bozza di evento specifica, verificando la validità dell'ID e la lunghezza del messaggio.
+	 * @param idEventDraft L'ID della bozza di evento a cui associare il nuovo messaggio.
+	 * @param message Il testo del messaggio da creare.
+	 * @return MessageDTO Il DTO del messaggio appena creato.
+	 */
 	public MessageDTO create(Long idEventDraft, String message) {
 		// verifica che l'id della draft sia corretto
 		if (idEventDraft == null) {
@@ -72,6 +83,10 @@ public class AdminMessageService {
 		return MessageMapper.entityToDTO(newMessage);
 	}
 
+	/**
+	 * Elimina un messaggio specifico basato sull'ID fornito.
+	 * @param id L'ID del messaggio da eliminare.
+	 */
 	public void delete(Long id) {
 		if (id == null) {
 			throw new IllegalArgumentException("Invalid Message ID");

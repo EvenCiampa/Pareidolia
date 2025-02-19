@@ -53,6 +53,12 @@ public class PromoterService {
 		throw new JWTService.TokenVerificationException();
 	}
 
+	/**
+	 * Ottiene i dati del promoter autenticato.
+	 * @return PromoterDTO Il DTO del promoter contenente le informazioni del conto e del promoter.
+	 * @throws JWTService.TokenVerificationException Se la verifica del token fallisce o l'account non è trovato.
+	 * @throws IllegalArgumentException Se le informazioni del promoter non sono trovate.
+	 */
 	public PromoterDTO getData() {
 		Account account = getAccountAndValidate();
 		PromoterInfo promoterInfo = promoterInfoRepository.findByIdPromoter(account.getId())
@@ -60,6 +66,12 @@ public class PromoterService {
 		return AccountMapper.entityToPromoterDTO(account, promoterInfo);
 	}
 
+	/**
+	 * Aggiorna i dati del promoter autenticato.
+	 * @param promoterDTO DTO del promoter con i dati aggiornati.
+	 * @return AccountLoginDTO DTO del conto aggiornato, includendo un nuovo token di autenticazione se l'email è stata modificata.
+	 * @throws IllegalArgumentException Se l'ID nel DTO non corrisponde all'ID del promoter autenticato o se i dati non sono validi.
+	 */
 	public AccountLoginDTO update(PromoterDTO promoterDTO) {
 		if (promoterDTO.getId() == null || !promoterDTO.getId().equals(getAccountAndValidate().getId())) {
 			throw new IllegalArgumentException("Invalid ID");
@@ -83,6 +95,12 @@ public class PromoterService {
 		return AccountMapper.entityToAccountLoginDTO(account, authToken);
 	}
 
+	/**
+	 * Aggiorna la password del conto del promoter autenticato.
+	 * @param passwordUpdateDTO DTO contenente la password attuale e la nuova password.
+	 * @return AccountLoginDTO DTO del conto con il nuovo token di autenticazione.
+	 * @throws IllegalArgumentException Se la password attuale non è corretta o se la nuova password non è valida.
+	 */
 	public AccountLoginDTO updatePassword(PasswordUpdateDTO passwordUpdateDTO) {
 		Account account = getAccountAndValidate();
 
@@ -110,6 +128,12 @@ public class PromoterService {
 		return AccountMapper.entityToAccountLoginDTO(account, authToken);
 	}
 
+	/**
+	 * Aggiorna l'immagine del profilo del promoter autenticato.
+	 * @param file Il file dell'immagine da caricare.
+	 * @return PromoterDTO DTO del promoter con l'immagine aggiornata.
+	 * @throws IllegalArgumentException Se il salvataggio dell'immagine fallisce o se il file non è valido.
+	 */
 	public PromoterDTO updateImage(MultipartFile file) {
 		imageValidator.validateAccountImage(file);
 
@@ -127,6 +151,10 @@ public class PromoterService {
 		}
 	}
 
+	/**
+	 * Rimuove l'immagine del profilo del promoter autenticato.
+	 * @return PromoterDTO DTO del promoter con l'immagine rimossa.
+	 */
 	public PromoterDTO deleteImage() {
 		Account account = getAccountAndValidate();
 		PromoterInfo promoterInfo = promoterInfoRepository.findByIdPromoter(account.getId())

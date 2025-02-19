@@ -20,6 +20,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -31,10 +32,15 @@ public class ConsumerEventService {
 	private final BookingRepository bookingRepository;
 	private final EventPromoterAssociationRepository eventPromoterAssociationRepository;
 
+	/**
+	 * Recupera un evento specifico per un consumatore basandosi sull'ID dell'evento, verificando che l'evento sia pubblicato.
+	 * Include dettagli se il consumatore ha prenotato l'evento e il numero attuale di partecipanti.
+	 * @return EventDTO Il DTO dell'evento, includendo informazioni sulla prenotazione del consumatore e dettagli dei promotori.
+	 */
 	public EventDTO getEvent(Long id) {
 		Event event = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Event ID"));
 
-		if (event.getState() != Event.EventState.PUBLISHED) {
+		if (!Objects.equals(event.getState().getStateName(), Event.EventState.PUBLISHED.name())) {
 			throw new IllegalArgumentException("Event not found");
 		}
 
@@ -47,6 +53,11 @@ public class ConsumerEventService {
 		return EventMapper.entityToDTO(event, booked, currentParticipants, promoters);
 	}
 
+	/**
+	 * Ottiene una pagina di eventi pubblicati associati al consumatore autenticato, ordinati per ID decrescente.
+	 * Includono dettagli sulle prenotazioni e sui partecipanti attuali.
+	 * @return Page<EventDTO> Una pagina di eventi sotto forma di DTO, che mostra anche se il consumatore ha prenotato l'evento e i dettagli dei promotori.
+	 */
 	public Page<EventDTO> getEvents(Integer page, Integer size) {
 		ConsumerDTO consumerDTO = consumerService.getData();
 		Page<EventWithInfoForAccount> eventPage = eventRepository.findAllByAccountIdAndState(

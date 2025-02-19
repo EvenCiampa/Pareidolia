@@ -10,6 +10,7 @@ import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.repository.EventPromoterAssociationRepository;
 import com.pareidolia.repository.EventRepository;
 import com.pareidolia.repository.PromoterInfoRepository;
+import com.pareidolia.state.State;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,7 +87,7 @@ public class ConsumerEventServiceTest {
 			.build());
 
 		// Create test event
-		testEvent = eventRepository.save(Event.builder()
+		Event event = Event.builder()
 			.title("Test Event")
 			.description("Test Description")
 			.place("Test Place")
@@ -94,8 +95,11 @@ public class ConsumerEventServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(Event.EventState.PUBLISHED)
-			.build());
+			.state(State.fromString(Event.EventState.PUBLISHED.name(), null))
+			.build();
+		testEvent = eventRepository.save(event);
+		testEvent.setState(State.fromString(Event.EventState.PUBLISHED.name(), testEvent));
+		testEvent = eventRepository.save(testEvent);
 
 		// Create association
 		EventPromoterAssociation association = new EventPromoterAssociation();

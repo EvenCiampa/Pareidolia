@@ -29,6 +29,13 @@ public class ConsumerReviewService {
 	private final ReviewRepository reviewRepository;
 	private final AccountRepository accountRepository;
 
+	/**
+	 * Recupera tutte le recensioni associate a un evento specifico, paginandole.
+	 * Verifica che l'evento sia concluso prima di consentire l'accesso alle recensioni.
+	 * @param idEvent L'ID dell'evento per cui recuperare le recensioni.
+	 * @return Page<ReviewDTO> Una pagina contenente le recensioni sotto forma di DTO.
+	 * @throws IllegalArgumentException Se l'ID dell'evento non è valido o se l'evento non è concluso.
+	 */
 	public Page<ReviewDTO> getEventReviews(Long idEvent, Integer page, Integer size) {
 		if (idEvent == null) {
 			throw new IllegalArgumentException("Invalid Event ID");
@@ -46,6 +53,12 @@ public class ConsumerReviewService {
 		return reviews.map(ReviewMapper::entityToDTO);
 	}
 
+	/**
+	 * Crea una nuova recensione per un evento, verificando che l'evento sia concluso e che il consumatore sia autorizzato a lasciare una recensione.
+	 * Imposta il consumatore che lascia la recensione in base ai dati dell'utente autenticato.
+	 * @param reviewDTO DTO contenente i dati della recensione da creare.
+	 * @return ReviewDTO Il DTO della recensione appena creata.
+	 */
 	public ReviewDTO create(ReviewDTO reviewDTO) {
 		ConsumerDTO consumerDTO = consumerService.getData();
 

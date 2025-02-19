@@ -29,6 +29,11 @@ public class AdminReviewService {
 	private final ReviewRepository reviewRepository;
 	private final AccountRepository accountRepository;
 
+	/**
+	 * Recupera tutte le recensioni associate a un evento specifico, paginandole.
+	 * @param idEvent L'ID dell'evento per cui recuperare le recensioni.
+	 * @return Page<ReviewDTO> Una pagina contenente le recensioni sotto forma di DTO.
+	 */
 	public Page<ReviewDTO> getEventReviews(Long idEvent, Integer page, Integer size) {
 		if (idEvent == null) {
 			throw new IllegalArgumentException("Invalid Event ID");
@@ -47,6 +52,11 @@ public class AdminReviewService {
 		return reviews.map(ReviewMapper::entityToDTO);
 	}
 
+	/**
+	 * Crea una nuova recensione per un evento, associando la recensione all'account dell'amministratore.
+	 * @param reviewDTO DTO della recensione contenente i dati per la creazione.
+	 * @return ReviewDTO Il DTO della recensione appena creata.
+	 */
 	public ReviewDTO create(ReviewDTO reviewDTO) {
 		AdminDTO adminDTO = adminService.getData();
 
@@ -73,6 +83,10 @@ public class AdminReviewService {
 		return ReviewMapper.entityToDTO(newReview);
 	}
 
+	/**
+	 * Elimina una recensione specifica basata sull'ID fornito e aggiorna il punteggio medio delle recensioni dell'evento associato.
+	 * @param id L'ID della recensione da eliminare.
+	 */
 	public void delete(Long id) {
 		if (id == null) {
 			throw new IllegalArgumentException("Invalid ID");

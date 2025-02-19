@@ -1,0 +1,170 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ConsumerBookingController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.pareidolia.controller.consumer</a>
+</div>
+
+<h1>Coverage Summary for Class: ConsumerBookingController (com.pareidolia.controller.consumer)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ConsumerBookingController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ConsumerBookingController$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.pareidolia.controller.consumer;
+&nbsp;
+&nbsp;import com.pareidolia.dto.BookingDTO;
+&nbsp;import com.pareidolia.service.consumer.ConsumerBookingService;
+&nbsp;import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.http.MediaType;
+&nbsp;import org.springframework.security.access.prepost.PreAuthorize;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;@CrossOrigin
+&nbsp;@RestController
+&nbsp;@SecurityRequirement(name = &quot;JWT_Consumer&quot;)
+&nbsp;@PreAuthorize(&quot;hasAnyAuthority(&#39;CONSUMER&#39;)&quot;)
+&nbsp;@RequestMapping(path = &quot;/consumer/booking&quot;)
+&nbsp;@RequiredArgsConstructor(onConstructor_ = @Autowired)
+&nbsp;@Tag(name = &quot;Consumer&quot;, description = &quot;The Consumer APIs&quot;)
+&nbsp;public class ConsumerBookingController {
+&nbsp;
+&nbsp;	private final ConsumerBookingService consumerBookingService;
+&nbsp;
+&nbsp;	//ritorna una prenotazione passando id del booking
+&nbsp;	@GetMapping(value = &quot;/{id}&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+&nbsp;	public BookingDTO getBooking(@PathVariable(&quot;id&quot;) Long id) {
+<b class="fc">&nbsp;		return consumerBookingService.getBooking(id);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	//ritorna lista di prenotazioni
+&nbsp;	@GetMapping(value = &quot;/list&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+&nbsp;	public Page&lt;BookingDTO&gt; getBookings(@RequestParam(value = &quot;page&quot;, required = false) Integer page,
+&nbsp;		@RequestParam(value = &quot;size&quot;, required = false) Integer size) {
+<b class="fc">&nbsp;		return consumerBookingService.getBookings(page, size);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	// crea una nuova prenotazione, passo id evento, l&#39;id utente lo ricavo con getData in ConsumerService
+&nbsp;	@PostMapping(value = &quot;/{id}&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+&nbsp;	public BookingDTO create(@PathVariable(&quot;id&quot;) Long id) {
+<b class="fc">&nbsp;		return consumerBookingService.create(id);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	//elimina una prenotazione
+&nbsp;	@DeleteMapping(value = &quot;/{id}&quot;)
+&nbsp;	public void delete(@PathVariable(&quot;id&quot;) Long id) {
+<b class="fc">&nbsp;		consumerBookingService.delete(id);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	//elimina una prenotazione
+&nbsp;	@DeleteMapping(value = &quot;/event/{id}&quot;)
+&nbsp;	public void deleteFromEvent(@PathVariable(&quot;id&quot;) Long eventId) {
+<b class="fc">&nbsp;		consumerBookingService.deleteFromEvent(eventId);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-11 13:30</div>
+</div>
+</body>
+</html>

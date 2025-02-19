@@ -15,7 +15,7 @@ import com.pareidolia.repository.EventRepository;
 import com.pareidolia.repository.PromoterInfoRepository;
 import com.pareidolia.repository.model.EventWithInfoForAccount;
 import com.pareidolia.service.ImageService;
-import com.pareidolia.state.EventStateHandler;
+import com.pareidolia.state.DraftState;
 import com.pareidolia.validator.EventDraftValidator;
 import com.pareidolia.validator.ImageValidator;
 import jakarta.transaction.Transactional;
@@ -48,6 +48,9 @@ public class PromoterEventService {
 	private final PromoterInfoRepository promoterInfoRepository;
 	private final EventPromoterAssociationRepository eventPromoterAssociationRepository;
 
+	/**
+	 * Recupera una bozza di evento per un determinato ID, verificando che il promoter autenticato abbia il permesso di accedervi.
+	 */
 	public EventDTO getEventDraft(Long id) {
 		Long promoterId = promoterService.getData().getId();
 		Event eventDraft = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid EventDraft ID"));
@@ -63,6 +66,10 @@ public class PromoterEventService {
 		return EventMapper.entityToDTO(eventDraft, booked, bookingRepository.countByIdEvent(id), promoters);
 	}
 
+	/**
+	 * Ottiene una pagina di eventi in base allo stato fornito e alla pagina richiesta, filtrati per il promoter autenticato.
+	 * @param state Stato degli eventi da filtrare, se fornito.
+	 */
 	public Page<EventDTO> getEvents(Integer page, Integer size, Event.EventState state) {
 		Long promoterId = promoterService.getData().getId();
 		Page<EventWithInfoForAccount> eventPage;
@@ -86,6 +93,12 @@ public class PromoterEventService {
 		});
 	}
 
+	/**
+	 * Crea un nuovo evento basato su un DTO di aggiornamento dell'evento, validando i dati del promoter.
+	 * @param eventUpdateDraftDTO DTO contenente i dettagli dell'evento da creare.
+	 * @return EventDTO Rappresentazione DTO dell'evento creato.
+	 * @throws IllegalArgumentException Se gli email dei promotori forniti non esistono.
+	 */
 	public EventDTO create(EventUpdateDTO eventUpdateDraftDTO) {
 		List<PromoterInfo> promoterInfoList = promoterInfoRepository.findAllByEmailIn(eventUpdateDraftDTO.promoterEmails);
 		if (eventUpdateDraftDTO.promoterEmails != null && promoterInfoList.size() != eventUpdateDraftDTO.promoterEmails.size()) {
@@ -108,7 +121,7 @@ public class PromoterEventService {
 		Long promoterId = promoterService.getData().getId();
 
 		// Salva l'evento
-		eventDraft.setState(Event.EventState.DRAFT);
+		eventDraft.setState(new DraftState(eventDraft));
 		Event savedEventDraft = eventRepository.save(eventDraft);
 
 		// Crea l'associazione tra l'evento e il promotore che lo ha creato
@@ -124,6 +137,13 @@ public class PromoterEventService {
 		return EventMapper.entityToDTO(savedEventDraft, false, 0L, promoters);
 	}
 
+	/**
+	 * Aggiunge un promoter a una bozza di evento, validando che l'evento e il promoter esistano e siano corretti.
+	 * @param eventDraftId ID dell'evento a cui aggiungere il promoter.
+	 * @param accountId ID del promoter da aggiungere all'evento.
+	 * @return EventDTO Rappresentazione DTO dell'evento aggiornato con il nuovo promoter.
+	 * @throws IllegalArgumentException Se l'ID dell'evento o del promoter non è valido.
+	 */
 	public EventDTO addPromoterToEventDraft(Long eventDraftId, Long accountId) {
 		Long promoterId = promoterService.getData().getId();
 		// Chiamata al validator
@@ -148,6 +168,12 @@ public class PromoterEventService {
 		return EventMapper.entityToDTO(eventDraft, booked, bookingRepository.countByIdEvent(eventDraftId), promoters);
 	}
 
+	/**
+	 * Aggiorna una bozza di evento esistente basandosi su un DTO di aggiornamento dell'evento.
+	 * @param eventUpdateDraftDTO DTO contenente le modifiche da applicare all'evento.
+	 * @return EventDTO Rappresentazione DTO dell'evento aggiornato.
+	 * @throws IllegalArgumentException Se l'ID dell'evento non è valido o se il promoter non ha i permessi per aggiornare l'evento.
+	 */
 	public EventDTO update(EventUpdateDTO eventUpdateDraftDTO) {
 		PromoterDTO promoterData = promoterService.getData();
 		Long promoterId = promoterData.getId();
@@ -198,6 +224,12 @@ public class PromoterEventService {
 		return EventMapper.entityToDTO(eventDraft, booked, bookingRepository.countByIdEvent(eventDraftDTO.getId()), promoters);
 	}
 
+	/**
+	 * Sottomette una bozza di evento per la revisione, spostando lo stato dell'evento a "REVIEW".
+	 * @param id ID dell'evento da sottomettere per la revisione.
+	 * @return EventDTO Rappresentazione DTO dell'evento ora in revisione.
+	 * @throws IllegalArgumentException Se l'ID dell'evento non è valido o se il promoter non ha i permessi per modificare l'evento.
+	 */
 	public EventDTO submitForReview(Long id) {
 		Long promoterId = promoterService.getData().getId();
 		Event eventDraft = eventRepository.findById(id)
@@ -207,7 +239,13 @@ public class PromoterEventService {
 		eventPromoterAssociationRepository.findByIdEventAndIdPromoter(eventDraft.getId(), promoterId)
 			.orElseThrow(() -> new IllegalArgumentException("Invalid EventDraft ID"));
 
-		EventStateHandler.moveToReview(eventDraft);
+		// prima: EventStateHandler.moveToReview(eventDraft);
+		// Utilizza il nuovo sistema di gestione degli stati per spostare l'evento in review
+		if (eventDraft.getState() instanceof DraftState) {
+			eventDraft.getState().moveForward();
+		} else {
+			throw new IllegalArgumentException("Event state " + eventDraft.getState().getStateName() + " is not DRAFT");
+		}
 
 		eventDraft = eventRepository.save(eventDraft);
 
@@ -218,6 +256,12 @@ public class PromoterEventService {
 		return EventMapper.entityToDTO(eventDraft, booked, bookingRepository.countByIdEvent(id), promoters);
 	}
 
+	/**
+	 * Aggiorna l'immagine di un evento, validando l'immagine e assicurandosi che il promoter abbia accesso all'evento.
+	 * @param id ID dell'evento di cui aggiornare l'immagine.
+	 * @param file File contenente l'immagine da caricare.
+	 * @return EventDTO Rappresentazione DTO dell'evento con l'immagine aggiornata.
+	 */
 	public EventDTO updateEventImage(Long id, MultipartFile file) {
 		imageValidator.validateEventImage(file);
 
@@ -246,6 +290,11 @@ public class PromoterEventService {
 		}
 	}
 
+	/**
+	 * Rimuove l'immagine associata a un evento, verificando che il promoter abbia accesso all'evento.
+	 * @param id ID dell'evento di cui rimuovere l'immagine.
+	 * @return EventDTO Rappresentazione DTO dell'evento senza l'immagine.
+	 */
 	public EventDTO deleteEventImage(Long id) {
 		PromoterDTO promoterDTO = promoterService.getData();
 		Event event = eventRepository.findById(id)

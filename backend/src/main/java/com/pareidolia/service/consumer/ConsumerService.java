@@ -29,6 +29,12 @@ public class ConsumerService {
 	private final AccountValidator accountValidator;
 	private final AccountRepository accountRepository;
 
+	/**
+	 * Recupera e convalida l'account del consumatore autenticato attualmente. Questo metodo verifica che l'utente autenticato possieda
+	 * l'autorità appropriata di consumatore e recupera il suo account dal database.
+	 * @return Account L'account del consumatore convalidato.
+	 * @throws JWTService.TokenVerificationException Se l'autenticazione è mancante, invalida o se l'account non esiste.
+	 */
 	private Account getAccountAndValidate() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null) {
@@ -43,10 +49,21 @@ public class ConsumerService {
 		throw new JWTService.TokenVerificationException();
 	}
 
+	/**
+	 * Recupera i dati del consumatore per l'utente attualmente autenticato. Questo metodo utilizza `getAccountAndValidate`
+	 * per assicurare che il consumatore sia correttamente autenticato e che le informazioni del suo account siano aggiornate.
+	 * @return ConsumerDTO Il DTO contenente i dati del consumatore.
+	 */
 	public ConsumerDTO getData() {
 		return AccountMapper.entityToConsumerDTO(getAccountAndValidate());
 	}
 
+	/**
+	 * Aggiorna le informazioni dell'account del consumatore basandosi sul DTO fornito. Questo metodo controlla la coerenza dell'identità e
+	 * aggiorna campi come l'email, emettendo potenzialmente un nuovo token di autenticazione se l'email viene modificata.
+	 * @param consumerDTO Il data transfer object del consumatore contenente informazioni aggiornate.
+	 * @return AccountLoginDTO Il DTO che include le informazioni aggiornate dell'account con un nuovo o esistente token di autenticazione.
+	 */
 	public AccountLoginDTO update(ConsumerDTO consumerDTO) {
 		if (consumerDTO.getId() == null || !consumerDTO.getId().equals(getAccountAndValidate().getId())) {
 			throw new IllegalArgumentException("Invalid ID");
@@ -67,6 +84,11 @@ public class ConsumerService {
 		return AccountMapper.entityToAccountLoginDTO(account, authToken);
 	}
 
+	/**
+	 * Aggiorna la password per l'account del consumatore autenticato. Convalida la password attuale e applica la nuova password se valida.
+	 * @param passwordUpdateDTO Il DTO contenente le password attuale e nuova.
+	 * @return AccountLoginDTO Il DTO che include le credenziali dell'account con un nuovo token di autenticazione che riflette il cambiamento della password.
+	 */
 	public AccountLoginDTO updatePassword(PasswordUpdateDTO passwordUpdateDTO) {
 		Account account = getAccountAndValidate();
 

@@ -1,5 +1,7 @@
 package com.pareidolia.entity;
 
+import com.pareidolia.state.State;
+import com.pareidolia.state.StateConverter;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
@@ -56,10 +58,11 @@ public class Event {
 	@Basic
 	@Column(name = "average_score")
 	private Double averageScore;
+
 	@Builder.Default
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private EventState state = EventState.DRAFT;
+	@Column(name = "state", nullable = false)
+	@Convert(converter = StateConverter.class)
+	private State state = State.fromString(EventState.DRAFT.name(), null);
 
 	@ColumnDefault("CURRENT_TIMESTAMP(6)")
 	@CreationTimestamp(source = SourceType.DB)
@@ -77,6 +80,11 @@ public class Event {
 		inverseJoinColumns = @JoinColumn(name = "id_promoter", referencedColumnName = "id_promoter", insertable = false, updatable = false),
 		foreignKey = @ForeignKey(name = "event_to_event_promoter_association"))
 	private List<PromoterInfo> promoters;
+
+	@PostLoad
+	private void initializeState() {
+		this.state = State.fromString(state.getStateName(), this);
+	}
 
 	public enum EventState {
 		DRAFT,

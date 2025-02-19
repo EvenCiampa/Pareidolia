@@ -31,6 +31,9 @@ public class AdminBookingService {
 	private final AccountRepository accountRepository;
 	private final BookingRepository bookingRepository;
 
+	/**
+	 * Recupera una specifica prenotazione basata sull'ID fornito, verificando che la prenotazione appartenga al consumatore autenticato.
+	 */
 	public BookingDTO getBooking(Long id) {
 		Booking booking = bookingRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid booking ID"));
 
@@ -44,6 +47,9 @@ public class AdminBookingService {
 		return BookingMapper.entityToDTO(booking, account, event, currentParticipants, promoterPairs);
 	}
 
+	/**
+	 * Recupera una pagina di tutte le prenotazioni esistenti, filtrate per pagina e dimensione.
+	 */
 	public Page<BookingDTO> getBookings(Long idEvent, Integer page, Integer size) {
 		Event event = eventRepository.findById(idEvent).orElseThrow(() -> new IllegalArgumentException("Invalid Event ID"));
 		Long currentParticipants = bookingRepository.countByIdEvent(event.getId());
@@ -59,6 +65,10 @@ public class AdminBookingService {
 		});
 	}
 
+	/**
+	 * Elimina una prenotazione, verificando che la prenotazione esista.
+	 * @param id della prenotazione.
+	 */
 	public void delete(Long id) {
 		Booking booking = bookingRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid booking ID"));
 

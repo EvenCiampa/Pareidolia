@@ -11,6 +11,8 @@ import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.repository.EventPromoterAssociationRepository;
 import com.pareidolia.repository.EventRepository;
 import com.pareidolia.repository.PromoterInfoRepository;
+import com.pareidolia.state.PublishedState;
+import com.pareidolia.state.State;
 import com.pareidolia.util.TestImageGenerator;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -105,7 +107,7 @@ public class AdminEventServiceTest {
 			.build());
 
 		// Create test event
-		testEvent = eventRepository.save(Event.builder()
+		Event event = Event.builder()
 			.title("Test Event")
 			.description("Test Description")
 			.place("Test Place")
@@ -113,8 +115,11 @@ public class AdminEventServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(Event.EventState.DRAFT)
-			.build());
+			.state(State.fromString(Event.EventState.DRAFT.name(), null))
+			.build();
+		testEvent = eventRepository.save(event);
+		testEvent.setState(State.fromString(Event.EventState.DRAFT.name(), testEvent));
+		testEvent = eventRepository.save(testEvent);
 
 		// Create association
 		EventPromoterAssociation association = new EventPromoterAssociation();
@@ -235,16 +240,34 @@ public class AdminEventServiceTest {
 
 	@Test
 	@WithMockUser(username = adminEmail, authorities = {"ADMIN"})
-	void testMoveToState() {
+	void testMoveBackwards() {
+		// Arrange
+		testEvent.setState(new PublishedState(testEvent));
+		testEvent = eventRepository.save(testEvent);
+
 		// Act
-		EventDTO movedEventDTO = adminEventService.moveToState(testEvent.getId(), Event.EventState.REVIEW);
+		EventDTO movedEventDTO = adminEventService.moveBackwards(testEvent.getId());
+
+		// Assert
+		assertNotNull(movedEventDTO);
+		assertEquals(Event.EventState.DRAFT, movedEventDTO.getState());
+
+		Event updatedEvent = eventRepository.findById(testEvent.getId()).orElseThrow();
+		assertEquals(Event.EventState.DRAFT.name(), updatedEvent.getState().getStateName());
+	}
+
+	@Test
+	@WithMockUser(username = adminEmail, authorities = {"ADMIN"})
+	void testMoveForward() {
+		// Act
+		EventDTO movedEventDTO = adminEventService.moveForward(testEvent.getId());
 
 		// Assert
 		assertNotNull(movedEventDTO);
 		assertEquals(Event.EventState.REVIEW, movedEventDTO.getState());
 
 		Event updatedEvent = eventRepository.findById(testEvent.getId()).orElseThrow();
-		assertEquals(Event.EventState.REVIEW, updatedEvent.getState());
+		assertEquals(Event.EventState.REVIEW.name(), updatedEvent.getState().getStateName());
 	}
 
 	@Test
@@ -284,10 +307,20 @@ public class AdminEventServiceTest {
 
 	@Test
 	@WithMockUser(username = adminEmail, authorities = {"ADMIN"})
-	void testMoveToStateWithInvalidId() {
+	void testMoveBackwardsWithInvalidId() {
 		// Act & Assert
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-			adminEventService.moveToState(999L, Event.EventState.REVIEW)
+			adminEventService.moveBackwards(999L)
+		);
+		assertEquals("Invalid Event ID", exception.getMessage());
+	}
+
+	@Test
+	@WithMockUser(username = adminEmail, authorities = {"ADMIN"})
+	void testMoveForwardWithInvalidId() {
+		// Act & Assert
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+			adminEventService.moveForward(999L)
 		);
 		assertEquals("Invalid Event ID", exception.getMessage());
 	}

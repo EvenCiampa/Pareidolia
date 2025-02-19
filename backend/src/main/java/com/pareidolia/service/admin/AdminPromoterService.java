@@ -27,6 +27,11 @@ public class AdminPromoterService {
 	private final AccountRepository accountRepository;
 	private final PromoterInfoRepository promoterInfoRepository;
 
+	/**
+	 * Crea un nuovo promotore nel sistema a partire dai dati di registrazione forniti.
+	 * @param registrationDTO DTO di registrazione contenente le informazioni del promotore.
+	 * @return PromoterDTO DTO del promotore appena creato con informazioni dell'account.
+	 */
 	public PromoterDTO create(RegistrationDTO registrationDTO) {
 		accountValidator.createAccountValidator(registrationDTO);
 
@@ -40,6 +45,11 @@ public class AdminPromoterService {
 		return AccountMapper.entityToPromoterDTO(account, promoterInfo);
 	}
 
+	/**
+	 * Aggiorna le informazioni di un promotore esistente nel sistema.
+	 * @param promoterDTO DTO del promotore con le informazioni aggiornate.
+	 * @return PromoterDTO DTO del promotore aggiornato.
+	 */
 	public PromoterDTO update(PromoterDTO promoterDTO) {
 		if (promoterDTO.getId() == null) {
 			throw new IllegalArgumentException("Invalid ID");
@@ -57,6 +67,12 @@ public class AdminPromoterService {
 		return AccountMapper.entityToPromoterDTO(account, promoterInfo);
 	}
 
+	/**
+	 * Aggiorna l'immagine di profilo di un promotore specificato dall'ID.
+	 * @param id ID del promotore per cui aggiornare l'immagine.
+	 * @param file File contenente la nuova immagine da caricare.
+	 * @return PromoterDTO DTO del promotore con l'immagine aggiornata.
+	 */
 	public PromoterDTO updateImage(Long id, MultipartFile file) {
 		if (id == null) {
 			throw new IllegalArgumentException("Invalid ID");
@@ -84,6 +100,11 @@ public class AdminPromoterService {
 		}
 	}
 
+	/**
+	 * Rimuove l'immagine di profilo di un promotore.
+	 * @param id ID del promotore da cui rimuovere l'immagine.
+	 * @return PromoterDTO DTO del promotore con l'immagine rimossa.
+	 */
 	public PromoterDTO deleteImage(Long id) {
 		if (id == null) {
 			throw new IllegalArgumentException("Invalid ID");
@@ -107,6 +128,10 @@ public class AdminPromoterService {
 		return AccountMapper.entityToPromoterDTO(account, promoterInfo);
 	}
 
+	/**
+	 * Elimina un promotore dal sistema insieme alle sue informazioni correlate.
+	 * @param id ID del promotore da eliminare.
+	 */
 	public void delete(Long id) {
 		if (id == null) {
 			throw new IllegalArgumentException("Invalid ID");

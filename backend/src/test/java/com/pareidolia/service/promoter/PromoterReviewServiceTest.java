@@ -4,6 +4,7 @@ import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.digest.Dige
 import com.pareidolia.dto.ReviewDTO;
 import com.pareidolia.entity.*;
 import com.pareidolia.repository.*;
+import com.pareidolia.state.State;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +70,7 @@ public class PromoterReviewServiceTest {
 			.build());
 
 		// Create test event with past date (for review validation)
-		testEvent = eventRepository.save(Event.builder()
+		Event event = Event.builder()
 			.title("Test Event")
 			.description("Test Description")
 			.place("Test Place")
@@ -77,8 +78,11 @@ public class PromoterReviewServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(Event.EventState.PUBLISHED)
-			.build());
+			.state(State.fromString(Event.EventState.PUBLISHED.name(), null))
+			.build();
+		testEvent = eventRepository.save(event);
+		testEvent.setState(State.fromString(Event.EventState.PUBLISHED.name(), testEvent));
+		testEvent = eventRepository.save(testEvent);
 
 		// Create association
 		EventPromoterAssociation association = new EventPromoterAssociation();
@@ -160,7 +164,7 @@ public class PromoterReviewServiceTest {
 	@WithMockUser(username = promoterEmail, authorities = {"PROMOTER"})
 	void testCreateReviewForFutureEvent() {
 		// Arrange
-		Event futureEvent = eventRepository.save(Event.builder()
+		Event futureEvent = Event.builder()
 			.title("Future Event")
 			.description("Future Event Description")
 			.place("Test Place")
@@ -168,8 +172,11 @@ public class PromoterReviewServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(Event.EventState.PUBLISHED)
-			.build());
+			.state(State.fromString(Event.EventState.PUBLISHED.name(), null))
+			.build();
+		futureEvent = eventRepository.save(futureEvent);
+		futureEvent.setState(State.fromString(Event.EventState.PUBLISHED.name(), futureEvent));
+		futureEvent = eventRepository.save(futureEvent);
 
 		ReviewDTO newReviewDTO = new ReviewDTO();
 		newReviewDTO.setTitle("Invalid Review");

@@ -28,6 +28,14 @@ public class PromoterMessageService {
 	private final EventRepository eventRepository;
 	private final EventPromoterAssociationRepository eventPromoterAssociationRepository;
 
+	/**
+	 * Recupera i messaggi associati a una bozza di evento, paginati e ordinati.
+	 * @param idEventDraft L'ID della bozza di evento per cui recuperare i messaggi.
+	 * @param page Il numero della pagina da recuperare.
+	 * @param size La dimensione della pagina.
+	 * @return Page<MessageDTO> Una pagina contenente i messaggi sotto forma di DTO.
+	 * @throws IllegalArgumentException Se l'ID della bozza di evento non è valido o non appartiene al promoter autenticato.
+	 */
 	public Page<MessageDTO> getEventDraftMessages(Long idEventDraft, Integer page, Integer size) {
 		if (idEventDraft == null) {
 			throw new IllegalArgumentException("Invalid EventDraft ID");
@@ -49,6 +57,13 @@ public class PromoterMessageService {
 		return messages.map(MessageMapper::entityToDTO);
 	}
 
+	/**
+	 * Crea un nuovo messaggio associato a una bozza di evento, dopo aver verificato che l'ID dell'evento e l'account del promoter siano validi.
+	 * @param idEventDraft L'ID della bozza di evento a cui associare il messaggio.
+	 * @param message Il testo del messaggio da creare.
+	 * @return MessageDTO Il DTO del messaggio creato.
+	 * @throws IllegalArgumentException Se l'ID della bozza di evento non è valido, se il messaggio è vuoto o troppo lungo, o se l'evento non esiste.
+	 */
 	public MessageDTO create(Long idEventDraft, String message) {
 		// verifica che l'id della draft sia corretto
 		if (idEventDraft == null) {

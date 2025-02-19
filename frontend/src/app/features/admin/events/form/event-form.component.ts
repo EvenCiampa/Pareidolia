@@ -130,8 +130,8 @@ export class EventFormComponent implements OnInit {
   onSubmit() {
     if (this.eventForm.valid) {
       const dateTime = new Date(
-        this.eventForm.value.date.getFullYear(), this.eventForm.value.date.getMonth(), this.eventForm.value.date.getDate(),
-        this.eventForm.value.time.getHours(), this.eventForm.value.time.getMinutes()
+              this.eventForm.value.date.getFullYear(), this.eventForm.value.date.getMonth(), this.eventForm.value.date.getDate(),
+              this.eventForm.value.time.getHours(), this.eventForm.value.time.getMinutes()
       );
       const isoDateTimeString = dateTime.toISOString().split("T");
 
@@ -390,9 +390,31 @@ export class EventFormComponent implements OnInit {
     });
   }
 
-  changeStatus(newStatus: string) {
+  moveBackwards() {
     this.mainLoading = true;
-    this.adminService.moveToState(this.eventId!, newStatus).subscribe({
+    this.adminService.moveBackwards(this.eventId!).subscribe({
+      next: (updatedEvent) => {
+        this.event = updatedEvent;
+        this.snackBar.open('Status updated successfully', 'Close', {
+          duration: 5000,
+          panelClass: ['success-snackbar']
+        });
+        this.mainLoading = false;
+      },
+      error: (error) => {
+        console.error('Error updating status:', error);
+        this.snackBar.open('Error updating status', 'Close', {
+          duration: 5000,
+          panelClass: ['error-snackbar']
+        });
+        this.mainLoading = false;
+      }
+    });
+  }
+
+  moveForward() {
+    this.mainLoading = true;
+    this.adminService.moveForward(this.eventId!).subscribe({
       next: (updatedEvent) => {
         this.event = updatedEvent;
         this.snackBar.open('Status updated successfully', 'Close', {

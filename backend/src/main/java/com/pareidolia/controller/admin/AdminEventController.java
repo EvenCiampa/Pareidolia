@@ -67,10 +67,14 @@ public class AdminEventController {
 		adminEventService.delete(id);
 	}
 
-	// moveToState
-	@PostMapping("/{id}/{state}")
-	public EventDTO moveToState(@PathVariable Long id, @PathVariable Event.EventState state) {
-		return adminEventService.moveToState(id, state);
+	@PostMapping("/{id}/backwards")
+	public EventDTO moveBackwards(@PathVariable Long id) {
+		return adminEventService.moveBackwards(id);
+	}
+
+	@PostMapping("/{id}/forward")
+	public EventDTO moveForward(@PathVariable Long id) {
+		return adminEventService.moveForward(id);
 	}
 
 	@PostMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

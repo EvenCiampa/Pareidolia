@@ -224,23 +224,49 @@ public class AdminEventControllerTest {
 	}
 
 	@Test
-	public void moveToState() {
+	public void moveBackwards() {
 		Long eventId = 1L;
 		Event.EventState eventState = Event.EventState.DRAFT;
 		EventDTO eventDTO = new EventDTO();
-		given(adminEventService.moveToState(anyLong(), any(Event.EventState.class))).willReturn(eventDTO);
+		given(adminEventService.moveBackwards(anyLong())).willReturn(eventDTO);
 
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		ResponseEntity<EventDTO> response = restTemplate.exchange(
-			"/admin/event/{id}/{state}",
+			"/admin/event/{id}/backwards",
 			HttpMethod.POST,
 			new HttpEntity<>(eventDTO, headers),
 			EventDTO.class,
 			eventId,
 			eventState);
 
-		verify(adminEventService).moveToState(anyLong(), any(Event.EventState.class));
+		verify(adminEventService).moveBackwards(anyLong());
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertNotNull(response.getBody());
+
+		verify(jwtService).verify(eq(authToken));
+		verify(accountRepository).findByEmailAndPassword(eq(accountEmail), eq(accountPassword));
+		verifyNoMoreInteractions(jwtService, accountRepository, adminEventService);
+	}
+
+	@Test
+	public void moveForward() {
+		Long eventId = 1L;
+		Event.EventState eventState = Event.EventState.DRAFT;
+		EventDTO eventDTO = new EventDTO();
+		given(adminEventService.moveForward(anyLong())).willReturn(eventDTO);
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		ResponseEntity<EventDTO> response = restTemplate.exchange(
+			"/admin/event/{id}/forward",
+			HttpMethod.POST,
+			new HttpEntity<>(eventDTO, headers),
+			EventDTO.class,
+			eventId,
+			eventState);
+
+		verify(adminEventService).moveForward(anyLong());
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 		assertNotNull(response.getBody());
 

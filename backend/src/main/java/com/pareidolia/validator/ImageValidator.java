@@ -25,14 +25,34 @@ public class ImageValidator {
 	@Value("${app.upload.event.allowed-extensions}")
 	private String eventAllowedExtensions;
 
+	/**
+	 * Valida un file immagine destinato a essere utilizzato come immagine dell'account.
+	 * @param file Il file immagine da validare.
+	 */
 	public void validateAccountImage(MultipartFile file) {
 		validateImage(file, accountMaxSize, Arrays.asList(accountAllowedExtensions.split(",")));
 	}
 
+	/**
+	 * Valida un file immagine destinato a essere utilizzato come immagine per un evento.
+	 * @param file Il file immagine da validare.
+	 */
 	public void validateEventImage(MultipartFile file) {
 		validateImage(file, eventMaxSize, Arrays.asList(eventAllowedExtensions.split(",")));
 	}
 
+	/**
+	 * Effettua la validazione generale di un'immagine, controllando se:
+	 * - Il file non è vuoto.
+	 * - La dimensione del file non supera il limite massimo consentito.
+	 * - L'estensione del file rientra tra quelle permesse.
+	 * - Il contenuto del file corrisponde effettivamente a un formato immagine valido.
+	 *
+	 * @param file Il file immagine da validare.
+	 * @param maxSize La dimensione massima consentita per il file.
+	 * @param allowedExtensions Lista delle estensioni di file consentite.
+	 * @throws IllegalArgumentException Se il file non rispetta uno dei criteri di validazione sopra elencati.
+	 */
 	private void validateImage(MultipartFile file, long maxSize, List<String> allowedExtensions) {
 		if (file.isEmpty()) {
 			throw new IllegalArgumentException("File is empty");

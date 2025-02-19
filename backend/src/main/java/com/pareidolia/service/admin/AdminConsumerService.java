@@ -23,6 +23,11 @@ public class AdminConsumerService {
 	private final AccountValidator accountValidator;
 	private final AccountRepository accountRepository;
 
+	/**
+	 * Recupera i dati di un consumatore specifico tramite ID.
+	 * @param id L'ID del consumatore da recuperare.
+	 * @return ConsumerDTO Il DTO contenente i dati del consumatore.
+	 */
 	public ConsumerDTO getData(Long id) {
 		if (id == null) {
 			throw new IllegalArgumentException("Invalid ID");
@@ -38,6 +43,10 @@ public class AdminConsumerService {
 		return AccountMapper.entityToConsumerDTO(account);
 	}
 
+	/**
+	 * Ottiene una pagina di consumatori registrati nel sistema.
+	 * @return Page<ConsumerDTO> Una pagina di DTO dei consumatori.
+	 */
 	public Page<ConsumerDTO> getConsumers(Integer page, Integer size) {
 		return accountRepository.findAllByReferenceType(
 			Account.Type.CONSUMER,
@@ -45,6 +54,11 @@ public class AdminConsumerService {
 		).map(AccountMapper::entityToConsumerDTO);
 	}
 
+	/**
+	 * Aggiorna le informazioni di un consumatore esistente.
+	 * @param consumerDTO Il DTO del consumatore con le informazioni aggiornate.
+	 * @return ConsumerDTO Il DTO aggiornato del consumatore.
+	 */
 	public ConsumerDTO update(ConsumerDTO consumerDTO) {
 		if (consumerDTO.getId() == null) {
 			throw new IllegalArgumentException("Invalid ID");
@@ -57,6 +71,10 @@ public class AdminConsumerService {
 		return AccountMapper.entityToConsumerDTO(accountRepository.save(account));
 	}
 
+	/**
+	 * Elimina l'account di un consumatore specifico dal sistema.
+	 * @param id L'ID del consumatore da eliminare.
+	 */
 	public void delete(Long id) {
 		if (id == null) {
 			throw new IllegalArgumentException("Invalid ID");

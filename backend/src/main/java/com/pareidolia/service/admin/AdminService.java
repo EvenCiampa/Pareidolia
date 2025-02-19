@@ -35,6 +35,9 @@ public class AdminService {
 	private final AccountRepository accountRepository;
 	private final PromoterInfoRepository promoterInfoRepository;
 
+	/**
+	 * Ottiene e valida l'account dell'amministratore autenticato, assicurando che abbia l'autorità appropriata.
+	 */
 	private Account getAccountAndValidate() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null) {
@@ -49,15 +52,28 @@ public class AdminService {
 		throw new JWTService.TokenVerificationException();
 	}
 
+	/**
+	 * Recupera i dati dell'amministratore autenticato.
+	 * @return AdminDTO DTO contenente i dati dell'amministratore.
+	 */
 	public AdminDTO getData() {
 		return AccountMapper.entityToAdminDTO(getAccountAndValidate());
 	}
 
+	/**
+	 * Recupera i dati di un account specifico utilizzando il suo ID.
+	 * @param id ID dell'account da recuperare.
+	 * @return AccountDTO DTO dell'account.
+	 */
 	public AccountDTO getData(Long id) {
 		Account account = accountRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Account not found"));
 		return AccountMapper.entityToAccountDTO(account);
 	}
 
+	/**
+	 * Recupera una pagina di amministratori.
+	 * @return Page<AdminDTO> Pagina contenente i DTO degli amministratori.
+	 */
 	public Page<AdminDTO> getAdmins(Integer page, Integer size) {
 		return accountRepository.findAllByReferenceType(
 			Account.Type.ADMIN,
@@ -65,6 +81,12 @@ public class AdminService {
 		).map(AccountMapper::entityToAdminDTO);
 	}
 
+	/**
+	 * Crea un nuovo account nel sistema.
+	 * @param registrationDTO DTO contenente i dati di registrazione.
+	 * @param referenceType Tipo di account da creare.
+	 * @return AccountDTO DTO dell'account creato.
+	 */
 	public AccountDTO createAccount(RegistrationDTO registrationDTO, Account.Type referenceType) {
 		accountValidator.createAccountValidator(registrationDTO);
 
@@ -80,6 +102,11 @@ public class AdminService {
 		return AccountMapper.entityToAccountDTO(account);
 	}
 
+	/**
+	 * Aggiorna un account esistente nel sistema.
+	 * @param accountDTO DTO contenente le informazioni aggiornate dell'account.
+	 * @return AccountLoginDTO DTO dell'account aggiornato, includendo un token di autenticazione se necessario.
+	 */
 	public AccountLoginDTO updateAccount(AccountDTO accountDTO) {
 		if (accountDTO.getId() == null) {
 			throw new IllegalArgumentException("Invalid ID");
@@ -122,6 +149,11 @@ public class AdminService {
 		return AccountMapper.entityToAccountLoginDTO(account, authToken);
 	}
 
+	/**
+	 * Aggiorna un promotore nel sistema.
+	 * @param promoterDTO DTO del promotore con informazioni aggiornate.
+	 * @return PromoterDTO DTO del promotore aggiornato.
+	 */
 	public PromoterDTO updatePromoter(PromoterDTO promoterDTO) {
 		if (promoterDTO.getId() == null) {
 			throw new IllegalArgumentException("Invalid ID");
@@ -139,6 +171,11 @@ public class AdminService {
 		return AccountMapper.entityToPromoterDTO(account, promoterInfo);
 	}
 
+	/**
+	 * Aggiorna la password di un account.
+	 * @param passwordUpdateDTO DTO contenente la password corrente e la nuova password.
+	 * @return AccountLoginDTO DTO dell'account con la nuova password e un token di autenticazione.
+	 */
 	public AccountLoginDTO updatePassword(PasswordUpdateDTO passwordUpdateDTO) {
 		Account account = getAccountAndValidate();
 
@@ -166,6 +203,10 @@ public class AdminService {
 		return AccountMapper.entityToAccountLoginDTO(account, authToken);
 	}
 
+	/**
+	 * Elimina un account specifico dal sistema.
+	 * @param id ID dell'account da eliminare.
+	 */
 	public void delete(Long id) {
 		if (id == null) {
 			throw new IllegalArgumentException("Invalid ID");

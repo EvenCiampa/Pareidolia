@@ -15,6 +15,12 @@ public class BookingValidator {
 
 	private final BookingRepository bookingRepository;
 
+	/**
+	 * Valida la possibilità di creare una nuova prenotazione per un evento da parte di un account.
+	 * Verifica che non esista già una prenotazione per l'evento da parte dell'account e che l'evento non sia già completamente prenotato.
+	 * @param account L'account che intende effettuare la prenotazione.
+	 * @param event L'evento per cui si intende prenotare.
+	 */
 	public void createBookingValidator(Account account, Event event) {
 		if (bookingRepository.findByIdEventAndIdAccount(event.getId(), account.getId()).isPresent()) {
 			throw new IllegalArgumentException("Booking for this event already exists");

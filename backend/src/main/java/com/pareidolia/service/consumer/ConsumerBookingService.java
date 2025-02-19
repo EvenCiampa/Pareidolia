@@ -36,6 +36,9 @@ public class ConsumerBookingService {
 	private final BookingRepository bookingRepository;
 	private final AccountRepository accountRepository;
 
+	/**
+	 * Recupera una specifica prenotazione basata sull'ID fornito, verificando che la prenotazione appartenga al consumatore autenticato.
+	 */
 	public BookingDTO getBooking(Long id) {
 		Booking booking = bookingRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid booking ID"));
 		if (!Objects.equals(booking.getIdAccount(), consumerService.getData().getId())) {
@@ -52,6 +55,9 @@ public class ConsumerBookingService {
 		return BookingMapper.entityToDTO(booking, account, event, currentParticipants, promoterPairs);
 	}
 
+	/**
+	 * Recupera una pagina di tutte le prenotazioni esistenti, filtrate per pagina e dimensione.
+	 */
 	public Page<BookingDTO> getBookings(Integer page, Integer size) {
 		return bookingRepository.findAll(
 			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(20, Optional.ofNullable(size).orElse(20)))
@@ -64,6 +70,12 @@ public class ConsumerBookingService {
 		});
 	}
 
+	/**
+	 * Crea una nuova prenotazione per un evento, validando i dettagli dell'account e dell'evento.
+	 * @param id L'ID dell'evento per cui effettuare la prenotazione.
+	 * @return BookingDTO Il DTO della nuova prenotazione creata.
+	 * @throws IllegalArgumentException Se l'account o l'ID dell'evento non sono validi.
+	 */
 	public BookingDTO create(Long id) {
 		ConsumerDTO consumerDTO = consumerService.getData();
 		Account account = accountRepository.findById(consumerDTO.getId()).orElseThrow(() -> new IllegalArgumentException("Invalid Account"));
@@ -82,6 +94,11 @@ public class ConsumerBookingService {
 		return BookingMapper.entityToDTO(booking, account, event, currentParticipants, promoters);
 	}
 
+	/**
+	 * Elimina una prenotazione specifica, verificando che la prenotazione appartenga al consumatore autenticato.
+	 * @param id L'ID della prenotazione da eliminare.
+	 * @throws IllegalArgumentException Se l'ID della prenotazione non è valido o se l'account non corrisponde.
+	 */
 	public void delete(Long id) {
 		ConsumerDTO consumerDTO = consumerService.getData();
 		Account account = accountRepository.findById(consumerDTO.getId()).orElseThrow(() -> new IllegalArgumentException("Invalid Account"));
@@ -94,6 +111,11 @@ public class ConsumerBookingService {
 		bookingRepository.deleteById(id);
 	}
 
+	/**
+	 * Elimina la prenotazione di un consumatore per un evento specifico, verificando che la prenotazione esista.
+	 * @param eventId L'ID dell'evento da cui eliminare la prenotazione.
+	 * @throws IllegalArgumentException Se l'account o l'ID dell'evento non sono validi o se non esiste una prenotazione corrispondente.
+	 */
 	public void deleteFromEvent(Long eventId) {
 		ConsumerDTO consumerDTO = consumerService.getData();
 		Account account = accountRepository.findById(consumerDTO.getId()).orElseThrow(() -> new IllegalArgumentException("Invalid Account"));

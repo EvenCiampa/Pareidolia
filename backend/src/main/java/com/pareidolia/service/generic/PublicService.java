@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -47,15 +48,21 @@ public class PublicService {
 	@Value("${app.download.max-age}")
 	private String cacheMaxAge;
 
+	/**
+	 * Recupera un evento pubblicato in base all'ID specificato.
+	 */
 	public EventDTO getEvent(Long id) {
 		Event event = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Event not found"));
-		if (event.getState() != Event.EventState.PUBLISHED) {
+		if (!Objects.equals(event.getState().getStateName(), Event.EventState.PUBLISHED.name())) {
 			throw new IllegalArgumentException("Event not found");
 		}
 		List<Pair<Account, PromoterInfo>> promoters = findPromotersByEventId(id); // Trova i promotori associati all'evento
 		return EventMapper.entityToDTO(event, null, bookingRepository.countByIdEvent(id), promoters);
 	}
 
+	/**
+	 * Recupera una pagina di eventi pubblicati, ordinati per ID decrescente.
+	 */
 	public Page<EventDTO> getEvents(Integer page, Integer size) {
 		return eventRepository.findAllByState(
 			Event.EventState.PUBLISHED,
@@ -66,16 +73,27 @@ public class PublicService {
 		});
 	}
 
+	/**
+	 * Trova i promotori associati a un evento specifico.
+	 * @param eventId L'ID dell'evento.
+	 * @return List<Pair < Account, PromoterInfo>> Lista di coppie contenenti le informazioni degli account e dei promotori.
+	 */
 	public List<Pair<Account, PromoterInfo>> findPromotersByEventId(Long eventId) {
 		return eventPromoterAssociationRepository.findPromotersByIdEvent(eventId);
 	}
 
+	/**
+	 * Recupera le informazioni di un promotore specifico in base all'ID fornito.
+	 */
 	public PromoterDTO getPromoter(Long id) {
 		PromoterInfo promoterInfo = promoterInfoRepository.findByIdPromoter(id).orElseThrow(() -> new IllegalArgumentException("Promoter not found"));
 		Account account = accountRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Account not found"));
 		return AccountMapper.entityToPromoterDTO(account, promoterInfo);
 	}
 
+	/**
+	 * Recupera una pagina di promotori, ordinati per ID decrescente.
+	 */
 	public Page<PromoterDTO> getPromoters(Integer page, Integer size) {
 		return promoterInfoRepository.findAll(
 			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(10, Optional.ofNullable(size).orElse(10)), Sort.by(Sort.Order.desc("id")))
@@ -85,6 +103,10 @@ public class PublicService {
 		});
 	}
 
+	/**
+	 * Recupera una pagina di eventi pubblicati associati a un promotore specifico.
+	 * @param idPromoter L'ID del promotore.
+	 */
 	public Page<EventDTO> getPromoterEvents(Long idPromoter, Integer page, Integer size) {
 		Page<EventWithInfo> events = eventRepository.findAllByStateAndPromoterId(Event.EventState.PUBLISHED, idPromoter,
 			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(10, Optional.ofNullable(size).orElse(10)), Sort.by(Sort.Order.desc("id")))
@@ -92,6 +114,10 @@ public class PublicService {
 		return events.map(event -> EventMapper.entityToDTO(event.getEvent(), null, event.getCurrentParticipants(), findPromotersByEventId(event.getEvent().getId())));
 	}
 
+	/**
+	 * Serve un'immagine da un percorso di archiviazione basato su un nome di file immagine specificato.
+	 * @param imageName Il nome del file immagine da recuperare.
+	 */
 	public ResponseEntity<Resource> getImage(String imageName) {
 		if (!isValidImageFileName(imageName)) {
 			return ResponseEntity.badRequest().build();
@@ -122,6 +148,11 @@ public class PublicService {
 		}
 	}
 
+	/**
+	 * Valida il nome del file immagine per garantire che sia sicuro e conforme alle estensioni consentite.
+	 * @param fileName Il nome del file da validare.
+	 * @return boolean True se il nome del file è valido, altrimenti False.
+	 */
 	private boolean isValidImageFileName(String fileName) {
 		if (fileName == null || fileName.isEmpty()) {
 			return false;
