@@ -64,6 +64,7 @@ public class Account {
 	public enum Type {
 		CONSUMER,
 		PROMOTER,
+		REVIEWER,
 		ADMIN
 	}
 }

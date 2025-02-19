@@ -1,9 +1,6 @@
 package com.pareidolia.validator;
 
-import com.pareidolia.dto.AccountDTO;
-import com.pareidolia.dto.ConsumerDTO;
-import com.pareidolia.dto.PromoterDTO;
-import com.pareidolia.dto.RegistrationDTO;
+import com.pareidolia.dto.*;
 import com.pareidolia.entity.Account;
 import com.pareidolia.entity.PromoterInfo;
 import com.pareidolia.repository.AccountRepository;
@@ -67,6 +64,17 @@ public class AccountValidator {
 			.orElseThrow(() -> new IllegalArgumentException("Account not found"));
 
 		accountTypeValidation(account.getReferenceType(), Account.Type.CONSUMER);
+		phoneValidation(dto.getPhone());
+		emailValidation(dto.getEmail());
+
+		return account;
+	}
+
+	public Account getReviewerAndValidateUpdate(ReviewerDTO dto) {
+		Account account = accountRepository.findById(dto.getId())
+			.orElseThrow(() -> new IllegalArgumentException("Account not found"));
+
+		accountTypeValidation(account.getReferenceType(), Account.Type.REVIEWER);
 		phoneValidation(dto.getPhone());
 		emailValidation(dto.getEmail());
 

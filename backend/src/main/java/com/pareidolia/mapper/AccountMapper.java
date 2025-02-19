@@ -47,6 +47,19 @@ public class AccountMapper {
 		return dto;
 	}
 
+	public static ReviewerDTO entityToReviewerDTO(Account entity) {
+		if (entity == null) return null;
+		ReviewerDTO dto = new ReviewerDTO();
+		dto.setId(entity.getId());
+		dto.setName(entity.getName());
+		dto.setSurname(entity.getSurname());
+		dto.setPhone(entity.getPhone());
+		dto.setEmail(entity.getEmail());
+		dto.setReferenceType(entity.getReferenceType().toString());
+		dto.setCreationTime(entity.getCreationTime());
+		return dto;
+	}
+
 	public static ConsumerDTO entityToConsumerDTO(Account entity) {
 		if (entity == null) return null;
 		ConsumerDTO dto = new ConsumerDTO();
@@ -95,6 +108,13 @@ public class AccountMapper {
 	}
 
 	public static void updateEntityWithConsumerDTO(Account entity, ConsumerDTO dto) {
+		entity.setEmail(dto.getEmail());
+		entity.setName(dto.getName());
+		entity.setSurname(dto.getSurname());
+		entity.setPhone(dto.getPhone());
+	}
+
+	public static void updateEntityWithReviewerDTO(Account entity, ReviewerDTO dto) {
 		entity.setEmail(dto.getEmail());
 		entity.setName(dto.getName());
 		entity.setSurname(dto.getSurname());
