@@ -1,5 +1,6 @@
 package com.pareidolia.entity;
 
+import com.pareidolia.state.DraftState;
 import com.pareidolia.state.State;
 import com.pareidolia.state.StateConverter;
 import jakarta.persistence.ForeignKey;
@@ -62,8 +63,9 @@ public class Event {
 	@Builder.Default
 	@Column(name = "state", nullable = false)
 	@Convert(converter = StateConverter.class)
-	private State state = State.fromString(EventState.DRAFT.name(), null);
+	private State state = State.fromString(DraftState.name, null);
 
+	//TODO: no converter: nota diff
 	@ColumnDefault("CURRENT_TIMESTAMP(6)")
 	@CreationTimestamp(source = SourceType.DB)
 	@Column(name = "creation_time", nullable = false, updatable = false, length = 6)
@@ -84,11 +86,5 @@ public class Event {
 	@PostLoad
 	private void initializeState() {
 		this.state = State.fromString(state.getStateName(), this);
-	}
-
-	public enum EventState {
-		DRAFT,
-		REVIEW,
-		PUBLISHED
 	}
 }

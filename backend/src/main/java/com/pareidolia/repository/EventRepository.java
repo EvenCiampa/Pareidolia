@@ -103,13 +103,13 @@ public interface EventRepository extends JpaRepository<Event, Long>, CustomEvent
 }
 
 interface CustomEventRepository {
-	Page<EventWithInfoForAccount> findAllByAccountIdAndStateAndPromoterId(Long accountId, Event.EventState state, Long idPromoter, Pageable pageable);
+	Page<EventWithInfoForAccount> findAllByAccountIdAndStateAndPromoterId(Long accountId, String state, Long idPromoter, Pageable pageable);
 
-	Page<EventWithInfo> findAllByStateAndPromoterId(Event.EventState state, Long idPromoter, Pageable pageable);
+	Page<EventWithInfo> findAllByStateAndPromoterId(String state, Long idPromoter, Pageable pageable);
 
-	Page<EventWithInfoForAccount> findAllByAccountIdAndState(Long accountId, Event.EventState state, Pageable pageable);
+	Page<EventWithInfoForAccount> findAllByAccountIdAndState(Long accountId, String state, Pageable pageable);
 
-	Page<EventWithInfo> findAllByState(Event.EventState state, Pageable pageable);
+	Page<EventWithInfo> findAllByState(String state, Pageable pageable);
 }
 
 @Repository
@@ -120,19 +120,19 @@ class CustomEventRepositoryImpl implements CustomEventRepository {
 		this.eventRepository = eventRepository;
 	}
 
-	public Page<EventWithInfoForAccount> findAllByAccountIdAndStateAndPromoterId(Long accountId, Event.EventState state, Long idPromoter, Pageable pageable) {
-		return eventRepository.findAllByAccountIdAndStateAndPromoterId(accountId, State.fromString(state.name(), null), idPromoter, pageable);
+	public Page<EventWithInfoForAccount> findAllByAccountIdAndStateAndPromoterId(Long accountId, String state, Long idPromoter, Pageable pageable) {
+		return eventRepository.findAllByAccountIdAndStateAndPromoterId(accountId, State.fromString(state, null), idPromoter, pageable);
 	}
 
-	public Page<EventWithInfo> findAllByStateAndPromoterId(Event.EventState state, Long idPromoter, Pageable pageable) {
-		return eventRepository.findAllByStateAndPromoterId(State.fromString(state.name(), null), idPromoter, pageable);
+	public Page<EventWithInfo> findAllByStateAndPromoterId(String state, Long idPromoter, Pageable pageable) {
+		return eventRepository.findAllByStateAndPromoterId(State.fromString(state, null), idPromoter, pageable);
 	}
 
-	public Page<EventWithInfoForAccount> findAllByAccountIdAndState(Long accountId, Event.EventState state, Pageable pageable) {
-		return eventRepository.findAllByAccountIdAndState(accountId, State.fromString(state.name(), null), pageable);
+	public Page<EventWithInfoForAccount> findAllByAccountIdAndState(Long accountId, String state, Pageable pageable) {
+		return eventRepository.findAllByAccountIdAndState(accountId, State.fromString(state, null), pageable);
 	}
 
-	public Page<EventWithInfo> findAllByState(Event.EventState state, Pageable pageable) {
-		return eventRepository.findAllByState(State.fromString(state.name(), null), pageable);
+	public Page<EventWithInfo> findAllByState(String state, Pageable pageable) {
+		return eventRepository.findAllByState(State.fromString(state, null), pageable);
 	}
 }

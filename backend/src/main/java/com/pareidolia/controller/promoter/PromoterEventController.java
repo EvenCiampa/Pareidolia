@@ -36,7 +36,7 @@ public class PromoterEventController {
 	public Page<EventDTO> getEvents(
 		@RequestParam(value = "page", required = false) Integer page,
 		@RequestParam(value = "size", required = false) Integer size,
-		@RequestParam(value = "state", required = false) Event.EventState state) {
+		@RequestParam(value = "state", required = false) String state) {
 		return promoterEventService.getEvents(page, size, state);
 	}
 

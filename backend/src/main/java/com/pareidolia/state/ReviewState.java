@@ -2,7 +2,10 @@ package com.pareidolia.state;
 
 import com.pareidolia.entity.Event;
 
+import java.util.Objects;
+
 public class ReviewState extends State {
+	public static final String name = "REVIEW";
 
 	public ReviewState(Event event) {
 		super(event);
@@ -10,7 +13,7 @@ public class ReviewState extends State {
 
 	@Override
 	public String getStateName() {
-		return Event.EventState.REVIEW.name();
+		return name;
 	}
 
 	@Override
@@ -26,5 +29,11 @@ public class ReviewState extends State {
 	@Override
 	public boolean canEdit() {
 		return false;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof ReviewState state)) return false;
+		return Objects.equals(event, state.event);
 	}
 }

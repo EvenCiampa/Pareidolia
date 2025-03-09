@@ -4,6 +4,7 @@ import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.digest.Dige
 import com.pareidolia.dto.BookingDTO;
 import com.pareidolia.entity.*;
 import com.pareidolia.repository.*;
+import com.pareidolia.state.PublishedState;
 import com.pareidolia.state.State;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -91,10 +92,10 @@ public class PromoterBookingServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(State.fromString(Event.EventState.PUBLISHED.name(), null))
+			.state(State.fromString(PublishedState.name, null))
 			.build();
 		testEvent = eventRepository.save(event);
-		testEvent.setState(State.fromString(Event.EventState.PUBLISHED.name(), testEvent));
+		testEvent.setState(State.fromString(PublishedState.name, testEvent));
 		testEvent = eventRepository.save(testEvent);
 
 		// Create association

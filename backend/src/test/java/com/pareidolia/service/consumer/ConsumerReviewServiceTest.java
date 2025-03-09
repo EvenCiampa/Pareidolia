@@ -8,6 +8,8 @@ import com.pareidolia.entity.Review;
 import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.repository.EventRepository;
 import com.pareidolia.repository.ReviewRepository;
+import com.pareidolia.state.DraftState;
+import com.pareidolia.state.PublishedState;
 import com.pareidolia.state.State;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -73,10 +75,10 @@ public class ConsumerReviewServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(State.fromString(Event.EventState.DRAFT.name(), null))
+			.state(State.fromString(DraftState.name, null))
 			.build();
 		pastEvent = eventRepository.save(event);
-		pastEvent.setState(State.fromString(Event.EventState.DRAFT.name(), pastEvent));
+		pastEvent.setState(State.fromString(DraftState.name, pastEvent));
 		pastEvent = eventRepository.save(pastEvent);
 
 		// Create test review
@@ -120,10 +122,10 @@ public class ConsumerReviewServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(State.fromString(Event.EventState.PUBLISHED.name(), null))
+			.state(State.fromString(PublishedState.name, null))
 			.build());
 
-		pastEvent.setState(State.fromString(Event.EventState.PUBLISHED.name(), pastEvent));
+		pastEvent.setState(State.fromString(PublishedState.name, pastEvent));
 
 		ReviewDTO newReviewDTO = new ReviewDTO();
 		newReviewDTO.setTitle("New Review");
@@ -165,10 +167,10 @@ public class ConsumerReviewServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(State.fromString(Event.EventState.PUBLISHED.name(), null))
+			.state(State.fromString(PublishedState.name, null))
 			.build());
 
-		pastEvent.setState(State.fromString(Event.EventState.PUBLISHED.name(), pastEvent));
+		pastEvent.setState(State.fromString(PublishedState.name, pastEvent));
 
 		ReviewDTO invalidReviewDTO = new ReviewDTO();
 		invalidReviewDTO.setTitle("Invalid Review");

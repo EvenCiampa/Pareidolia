@@ -1,8 +1,6 @@
 package com.pareidolia.controller.reviewer;
 
 import com.pareidolia.dto.EventDTO;
-import com.pareidolia.dto.EventUpdateDTO;
-import com.pareidolia.entity.Event;
 import com.pareidolia.service.reviewer.ReviewerEventService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,12 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @CrossOrigin
 @RestController
 @SecurityRequirement(name = "JWT_Reviewer")
-@RequestMapping(path = "/admin/event")
+@RequestMapping(path = "/reviewer/event")
 @PreAuthorize("hasAnyAuthority('REVIEWER')")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Tag(name = "Reviewer", description = "The Reviewer APIs")
@@ -37,7 +34,7 @@ public class ReviewerEventController {
 		@PathVariable("idPromoter") Long idPromoter,
 		@RequestParam(value = "page", required = false) Integer page,
 		@RequestParam(value = "size", required = false) Integer size,
-		@RequestParam(value = "state", required = false) Event.EventState state) {
+		@RequestParam(value = "state", required = false) String state) {
 		return reviewerEventService.getPromoterEvents(idPromoter, page, size, state);
 	}
 
@@ -45,7 +42,7 @@ public class ReviewerEventController {
 	public Page<EventDTO> getEvents(
 		@RequestParam(value = "page", required = false) Integer page,
 		@RequestParam(value = "size", required = false) Integer size,
-		@RequestParam(value = "state", required = false) Event.EventState state) {
+		@RequestParam(value = "state", required = false) String state) {
 		return reviewerEventService.getEvents(page, size, state);
 	}
 

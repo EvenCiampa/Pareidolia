@@ -70,7 +70,7 @@ public class PromoterEventService {
 	 * Ottiene una pagina di eventi in base allo stato fornito e alla pagina richiesta, filtrati per il promoter autenticato.
 	 * @param state Stato degli eventi da filtrare, se fornito.
 	 */
-	public Page<EventDTO> getEvents(Integer page, Integer size, Event.EventState state) {
+	public Page<EventDTO> getEvents(Integer page, Integer size, String state) {
 		Long promoterId = promoterService.getData().getId();
 		Page<EventWithInfoForAccount> eventPage;
 		if (state == null) {

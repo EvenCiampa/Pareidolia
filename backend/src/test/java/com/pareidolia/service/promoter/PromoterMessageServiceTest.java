@@ -4,6 +4,7 @@ import com.github.dockerjava.zerodep.shaded.org.apache.commons.codec.digest.Dige
 import com.pareidolia.dto.MessageDTO;
 import com.pareidolia.entity.*;
 import com.pareidolia.repository.*;
+import com.pareidolia.state.DraftState;
 import com.pareidolia.state.State;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -80,10 +81,10 @@ public class PromoterMessageServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(State.fromString(Event.EventState.DRAFT.name(), null))
+			.state(State.fromString(DraftState.name, null))
 			.build();
 		testEvent = eventRepository.save(event);
-		testEvent.setState(State.fromString(Event.EventState.DRAFT.name(), testEvent));
+		testEvent.setState(State.fromString(DraftState.name, testEvent));
 		testEvent = eventRepository.save(testEvent);
 
 		// Create association

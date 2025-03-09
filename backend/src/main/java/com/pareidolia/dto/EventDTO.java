@@ -31,7 +31,7 @@ public class EventDTO implements Serializable {
 	public List<PromoterDTO> promoters;
 	public Long maxNumberOfParticipants;
 	public Long currentParticipants;
-	public Event.EventState state;
+	public String state;
 	public Double score;
 	public Boolean booked;
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", shape = JsonFormat.Shape.STRING)

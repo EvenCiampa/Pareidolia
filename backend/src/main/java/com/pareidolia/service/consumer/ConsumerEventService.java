@@ -10,6 +10,7 @@ import com.pareidolia.repository.BookingRepository;
 import com.pareidolia.repository.EventPromoterAssociationRepository;
 import com.pareidolia.repository.EventRepository;
 import com.pareidolia.repository.model.EventWithInfoForAccount;
+import com.pareidolia.state.PublishedState;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class ConsumerEventService {
 	public EventDTO getEvent(Long id) {
 		Event event = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid Event ID"));
 
-		if (!Objects.equals(event.getState().getStateName(), Event.EventState.PUBLISHED.name())) {
+		if (!Objects.equals(event.getState().getStateName(), PublishedState.name)) {
 			throw new IllegalArgumentException("Event not found");
 		}
 
@@ -61,7 +62,7 @@ public class ConsumerEventService {
 	public Page<EventDTO> getEvents(Integer page, Integer size) {
 		ConsumerDTO consumerDTO = consumerService.getData();
 		Page<EventWithInfoForAccount> eventPage = eventRepository.findAllByAccountIdAndState(
-			consumerDTO.getId(), Event.EventState.PUBLISHED,
+			consumerDTO.getId(), PublishedState.name,
 			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)),
 				Math.max(10, Optional.ofNullable(size).orElse(10)),
 				Sort.by(Sort.Order.desc("id"))));

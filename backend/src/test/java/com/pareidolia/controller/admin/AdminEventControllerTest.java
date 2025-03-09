@@ -7,6 +7,7 @@ import com.pareidolia.entity.Account;
 import com.pareidolia.entity.Event;
 import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.service.admin.AdminEventService;
+import com.pareidolia.state.DraftState;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -226,7 +227,7 @@ public class AdminEventControllerTest {
 	@Test
 	public void moveBackwards() {
 		Long eventId = 1L;
-		Event.EventState eventState = Event.EventState.DRAFT;
+		String eventState = DraftState.name;
 		EventDTO eventDTO = new EventDTO();
 		given(adminEventService.moveBackwards(anyLong())).willReturn(eventDTO);
 
@@ -252,7 +253,7 @@ public class AdminEventControllerTest {
 	@Test
 	public void moveForward() {
 		Long eventId = 1L;
-		Event.EventState eventState = Event.EventState.DRAFT;
+		String eventState = DraftState.name;
 		EventDTO eventDTO = new EventDTO();
 		given(adminEventService.moveForward(anyLong())).willReturn(eventDTO);
 

@@ -37,7 +37,7 @@ public class AdminEventController {
 		@PathVariable("idPromoter") Long idPromoter,
 		@RequestParam(value = "page", required = false) Integer page,
 		@RequestParam(value = "size", required = false) Integer size,
-		@RequestParam(value = "state", required = false) Event.EventState state) {
+		@RequestParam(value = "state", required = false) String state) {
 		return adminEventService.getPromoterEvents(idPromoter, page, size, state);
 	}
 
@@ -45,7 +45,7 @@ public class AdminEventController {
 	public Page<EventDTO> getEvents(
 		@RequestParam(value = "page", required = false) Integer page,
 		@RequestParam(value = "size", required = false) Integer size,
-		@RequestParam(value = "state", required = false) Event.EventState state) {
+		@RequestParam(value = "state", required = false) String state) {
 		return adminEventService.getEvents(page, size, state);
 	}
 

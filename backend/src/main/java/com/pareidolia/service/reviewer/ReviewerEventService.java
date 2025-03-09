@@ -67,7 +67,7 @@ public class ReviewerEventService {
 	 * @param state Stato degli eventi da filtrare, se fornito.
 	 * @return Page<EventDTO> Una pagina di DTO degli eventi.
 	 */
-	public Page<EventDTO> getEvents(Integer page, Integer size, Event.EventState state) {
+	public Page<EventDTO> getEvents(Integer page, Integer size, String state) {
 		ReviewerDTO reviewer = reviewerService.getData();
 		Page<EventWithInfoForAccount> eventPage;
 		if (state == null) {
@@ -98,7 +98,7 @@ public class ReviewerEventService {
 	 * @param state Stato degli eventi per il filtraggio.
 	 * @return Page<EventDTO> Una pagina di eventi sotto forma di DTO.
 	 */
-	public Page<EventDTO> getPromoterEvents(Long idPromoter, Integer page, Integer size, Event.EventState state) {
+	public Page<EventDTO> getPromoterEvents(Long idPromoter, Integer page, Integer size, String state) {
 		ReviewerDTO reviewer = reviewerService.getData();
 		Page<EventWithInfoForAccount> eventPage;
 		if (state == null) {

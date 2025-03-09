@@ -8,6 +8,7 @@ import com.pareidolia.entity.Review;
 import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.repository.EventRepository;
 import com.pareidolia.repository.ReviewRepository;
+import com.pareidolia.state.DraftState;
 import com.pareidolia.state.State;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -75,10 +76,10 @@ public class AdminReviewServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(State.fromString(Event.EventState.DRAFT.name(), null))
+			.state(State.fromString(DraftState.name, null))
 			.build();
 		testEvent = eventRepository.save(event);
-		testEvent.setState(State.fromString(Event.EventState.DRAFT.name(), testEvent));
+		testEvent.setState(State.fromString(DraftState.name, testEvent));
 		testEvent = eventRepository.save(testEvent);
 
 		// Create test message

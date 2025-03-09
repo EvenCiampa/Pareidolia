@@ -11,7 +11,9 @@ import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.repository.EventPromoterAssociationRepository;
 import com.pareidolia.repository.EventRepository;
 import com.pareidolia.repository.PromoterInfoRepository;
+import com.pareidolia.state.DraftState;
 import com.pareidolia.state.PublishedState;
+import com.pareidolia.state.ReviewState;
 import com.pareidolia.state.State;
 import com.pareidolia.util.TestImageGenerator;
 import jakarta.transaction.Transactional;
@@ -115,10 +117,10 @@ public class AdminEventServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(State.fromString(Event.EventState.DRAFT.name(), null))
+			.state(State.fromString(DraftState.name, null))
 			.build();
 		testEvent = eventRepository.save(event);
-		testEvent.setState(State.fromString(Event.EventState.DRAFT.name(), testEvent));
+		testEvent.setState(State.fromString(DraftState.name, testEvent));
 		testEvent = eventRepository.save(testEvent);
 
 		// Create association
@@ -146,7 +148,7 @@ public class AdminEventServiceTest {
 	@WithMockUser(username = adminEmail, authorities = {"ADMIN"})
 	void testGetEvents() {
 		// Act
-		Page<EventDTO> events = adminEventService.getEvents(0, 10, Event.EventState.DRAFT);
+		Page<EventDTO> events = adminEventService.getEvents(0, 10, DraftState.name);
 
 		// Assert
 		assertNotNull(events);
@@ -159,7 +161,7 @@ public class AdminEventServiceTest {
 	@WithMockUser(username = adminEmail, authorities = {"ADMIN"})
 	void testGetPromoterEvents() {
 		// Act
-		Page<EventDTO> events = adminEventService.getPromoterEvents(promoterAccount.getId(), 0, 10, Event.EventState.DRAFT);
+		Page<EventDTO> events = adminEventService.getPromoterEvents(promoterAccount.getId(), 0, 10, DraftState.name);
 
 		// Assert
 		assertNotNull(events);
@@ -180,7 +182,7 @@ public class AdminEventServiceTest {
 		eventUpdateDTO.setTime(LocalTime.of(21, 0));
 		eventUpdateDTO.setDuration(Duration.ofHours(3));
 		eventUpdateDTO.setMaxNumberOfParticipants(200L);
-		eventUpdateDTO.setState(Event.EventState.DRAFT);
+		eventUpdateDTO.setState(DraftState.name);
 
 		List<String> promoters = new ArrayList<>();
 		promoters.add(promoterAccount.getEmail());
@@ -210,7 +212,7 @@ public class AdminEventServiceTest {
 		eventUpdateDTO.setTime(LocalTime.of(22, 0));
 		eventUpdateDTO.setDuration(Duration.ofHours(4));
 		eventUpdateDTO.setMaxNumberOfParticipants(300L);
-		eventUpdateDTO.setState(Event.EventState.DRAFT);
+		eventUpdateDTO.setState(DraftState.name);
 
 		List<String> promoters = new ArrayList<>();
 		promoters.add(promoterAccount.getEmail());
@@ -250,10 +252,10 @@ public class AdminEventServiceTest {
 
 		// Assert
 		assertNotNull(movedEventDTO);
-		assertEquals(Event.EventState.DRAFT, movedEventDTO.getState());
+		assertEquals(DraftState.name, movedEventDTO.getState());
 
 		Event updatedEvent = eventRepository.findById(testEvent.getId()).orElseThrow();
-		assertEquals(Event.EventState.DRAFT.name(), updatedEvent.getState().getStateName());
+		assertEquals(DraftState.name, updatedEvent.getState().getStateName());
 	}
 
 	@Test
@@ -264,10 +266,10 @@ public class AdminEventServiceTest {
 
 		// Assert
 		assertNotNull(movedEventDTO);
-		assertEquals(Event.EventState.REVIEW, movedEventDTO.getState());
+		assertEquals(ReviewState.name, movedEventDTO.getState());
 
 		Event updatedEvent = eventRepository.findById(testEvent.getId()).orElseThrow();
-		assertEquals(Event.EventState.REVIEW.name(), updatedEvent.getState().getStateName());
+		assertEquals(ReviewState.name, updatedEvent.getState().getStateName());
 	}
 
 	@Test

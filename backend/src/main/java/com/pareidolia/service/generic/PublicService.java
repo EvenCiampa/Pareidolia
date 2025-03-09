@@ -9,6 +9,7 @@ import com.pareidolia.mapper.AccountMapper;
 import com.pareidolia.mapper.EventMapper;
 import com.pareidolia.repository.*;
 import com.pareidolia.repository.model.EventWithInfo;
+import com.pareidolia.state.PublishedState;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class PublicService {
 	 */
 	public EventDTO getEvent(Long id) {
 		Event event = eventRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Event not found"));
-		if (!Objects.equals(event.getState().getStateName(), Event.EventState.PUBLISHED.name())) {
+		if (!Objects.equals(event.getState().getStateName(), PublishedState.name)) {
 			throw new IllegalArgumentException("Event not found");
 		}
 		List<Pair<Account, PromoterInfo>> promoters = findPromotersByEventId(id); // Trova i promotori associati all'evento
@@ -65,7 +66,7 @@ public class PublicService {
 	 */
 	public Page<EventDTO> getEvents(Integer page, Integer size) {
 		return eventRepository.findAllByState(
-			Event.EventState.PUBLISHED,
+			PublishedState.name,
 			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(10, Optional.ofNullable(size).orElse(10)), Sort.by(Sort.Order.desc("id")))
 		).map(event -> {
 			List<Pair<Account, PromoterInfo>> promoters = findPromotersByEventId(event.getEvent().getId());
@@ -108,7 +109,7 @@ public class PublicService {
 	 * @param idPromoter L'ID del promotore.
 	 */
 	public Page<EventDTO> getPromoterEvents(Long idPromoter, Integer page, Integer size) {
-		Page<EventWithInfo> events = eventRepository.findAllByStateAndPromoterId(Event.EventState.PUBLISHED, idPromoter,
+		Page<EventWithInfo> events = eventRepository.findAllByStateAndPromoterId(PublishedState.name, idPromoter,
 			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(10, Optional.ofNullable(size).orElse(10)), Sort.by(Sort.Order.desc("id")))
 		);
 		return events.map(event -> EventMapper.entityToDTO(event.getEvent(), null, event.getCurrentParticipants(), findPromotersByEventId(event.getEvent().getId())));

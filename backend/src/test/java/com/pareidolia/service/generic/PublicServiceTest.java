@@ -11,6 +11,8 @@ import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.repository.EventPromoterAssociationRepository;
 import com.pareidolia.repository.EventRepository;
 import com.pareidolia.repository.PromoterInfoRepository;
+import com.pareidolia.state.DraftState;
+import com.pareidolia.state.PublishedState;
 import com.pareidolia.state.State;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -85,10 +87,10 @@ public class PublicServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(State.fromString(Event.EventState.PUBLISHED.name(), null))
+			.state(State.fromString(PublishedState.name, null))
 			.build();
 		publishedEvent = eventRepository.save(event);
-		publishedEvent.setState(State.fromString(Event.EventState.PUBLISHED.name(), publishedEvent));
+		publishedEvent.setState(State.fromString(PublishedState.name, publishedEvent));
 		publishedEvent = eventRepository.save(publishedEvent);
 
 		// Create association
@@ -229,10 +231,10 @@ public class PublicServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(State.fromString(Event.EventState.DRAFT.name(), null))
+			.state(State.fromString(DraftState.name, null))
 			.build());
 
-		publishedEvent.setState(State.fromString(Event.EventState.DRAFT.name(), publishedEvent));
+		publishedEvent.setState(State.fromString(DraftState.name, publishedEvent));
 
 		// Act & Assert
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->

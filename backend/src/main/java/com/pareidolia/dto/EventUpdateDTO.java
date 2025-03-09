@@ -30,6 +30,6 @@ public class EventUpdateDTO implements Serializable {
 	public List<String> promoterEmails;
 	public Long maxNumberOfParticipants;
 	public Long currentParticipants;
-	public Event.EventState state;
+	public String state;
 	public Double score;
 }

@@ -8,6 +8,7 @@ import com.pareidolia.entity.Event;
 import com.pareidolia.entity.EventPromoterAssociation;
 import com.pareidolia.entity.PromoterInfo;
 import com.pareidolia.repository.EventPromoterAssociationRepository;
+import com.pareidolia.state.DraftState;
 import com.pareidolia.state.State;
 import org.springframework.data.util.Pair;
 
@@ -28,7 +29,7 @@ public class EventMapper {
 		dto.setPromoters(promoters.stream().map(promoter -> AccountMapper.entityToPromoterDTO(promoter.getFirst(), promoter.getSecond())).toList());
 		dto.setMaxNumberOfParticipants(entity.getMaxNumberOfParticipants());
 		dto.setCurrentParticipants(currentParticipants);
-		dto.setState(Event.EventState.valueOf(entity.getState().getStateName()));
+		dto.setState(entity.getState().getStateName());
 		dto.setScore(entity.getAverageScore());
 		dto.setBooked(booked);
 		dto.setCreationTime(entity.getCreationTime());
@@ -46,9 +47,9 @@ public class EventMapper {
 		entity.setDuration(dto.getDuration());
 		entity.setMaxNumberOfParticipants(dto.getMaxNumberOfParticipants());
 		if (dto.getState() != null) {
-			entity.setState(State.fromString(dto.getState().name(), entity));
+			entity.setState(State.fromString(dto.getState(), entity));
 		} else {
-			entity.setState(State.fromString(Event.EventState.DRAFT.name(), entity));
+			entity.setState(State.fromString(DraftState.name, entity));
 		}
 		return entity;
 	}
@@ -62,7 +63,7 @@ public class EventMapper {
 		entity.setDuration(dto.getDuration());
 		entity.setMaxNumberOfParticipants(dto.getMaxNumberOfParticipants());
 		if (dto.getState() != null) {
-			entity.setState(State.fromString(dto.getState().name(), entity));
+			entity.setState(State.fromString(dto.getState(), entity));
 		}
 	}
 

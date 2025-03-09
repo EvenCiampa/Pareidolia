@@ -11,6 +11,8 @@ import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.repository.EventPromoterAssociationRepository;
 import com.pareidolia.repository.EventRepository;
 import com.pareidolia.repository.PromoterInfoRepository;
+import com.pareidolia.state.DraftState;
+import com.pareidolia.state.ReviewState;
 import com.pareidolia.state.State;
 import com.pareidolia.util.TestImageGenerator;
 import jakarta.transaction.Transactional;
@@ -100,10 +102,10 @@ public class PromoterEventServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(State.fromString(Event.EventState.DRAFT.name(), null))
+			.state(State.fromString(DraftState.name, null))
 			.build();
 		testEvent = eventRepository.save(event);
-		testEvent.setState(State.fromString(Event.EventState.DRAFT.name(), testEvent));
+		testEvent.setState(State.fromString(DraftState.name, testEvent));
 		testEvent = eventRepository.save(testEvent);
 
 		// Create association
@@ -131,7 +133,7 @@ public class PromoterEventServiceTest {
 	@WithMockUser(username = accountEmail, authorities = {"PROMOTER"})
 	void testGetEvents() {
 		// Act
-		Page<EventDTO> events = promoterEventService.getEvents(0, 10, Event.EventState.DRAFT);
+		Page<EventDTO> events = promoterEventService.getEvents(0, 10, DraftState.name);
 
 		// Assert
 		assertNotNull(events);
@@ -172,10 +174,10 @@ public class PromoterEventServiceTest {
 
 		// Assert
 		assertNotNull(reviewEventDTO);
-		assertEquals(Event.EventState.REVIEW, reviewEventDTO.getState());
+		assertEquals(ReviewState.name, reviewEventDTO.getState());
 
 		Event updatedEvent = eventRepository.findById(testEvent.getId()).orElseThrow();
-		assertEquals(Event.EventState.REVIEW.name(), updatedEvent.getState().getStateName());
+		assertEquals(ReviewState.name, updatedEvent.getState().getStateName());
 	}
 
 	@Test
@@ -260,7 +262,7 @@ public class PromoterEventServiceTest {
 		eventUpdateDTO.setTime(LocalTime.of(22, 0));
 		eventUpdateDTO.setDuration(Duration.ofHours(4));
 		eventUpdateDTO.setMaxNumberOfParticipants(300L);
-		eventUpdateDTO.setState(Event.EventState.DRAFT);
+		eventUpdateDTO.setState(DraftState.name);
 
 		// Act
 		EventDTO updatedDTO = promoterEventService.update(eventUpdateDTO);
@@ -341,10 +343,10 @@ public class PromoterEventServiceTest {
 			.time(LocalTime.of(20, 0))
 			.duration(Duration.ofHours(2))
 			.maxNumberOfParticipants(100L)
-			.state(State.fromString(Event.EventState.DRAFT.name(), null))
+			.state(State.fromString(DraftState.name, null))
 			.build());
 
-		testEvent.setState(State.fromString(Event.EventState.DRAFT.name(), testEvent));
+		testEvent.setState(State.fromString(DraftState.name, testEvent));
 
 		EventPromoterAssociation otherAssociation = new EventPromoterAssociation();
 		otherAssociation.setIdEvent(otherEvent.getId());
