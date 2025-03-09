@@ -65,7 +65,6 @@ public class Event {
 	@Convert(converter = StateConverter.class)
 	private State state = State.fromString(DraftState.name, null);
 
-	//TODO: no converter: nota diff
 	@ColumnDefault("CURRENT_TIMESTAMP(6)")
 	@CreationTimestamp(source = SourceType.DB)
 	@Column(name = "creation_time", nullable = false, updatable = false, length = 6)
