@@ -3,6 +3,7 @@ package com.pareidolia.service.reviewer;
 import com.pareidolia.dto.ReviewDTO;
 import com.pareidolia.entity.Review;
 import com.pareidolia.mapper.ReviewMapper;
+import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.repository.EventRepository;
 import com.pareidolia.repository.ReviewRepository;
 import com.pareidolia.validator.ReviewValidator;
@@ -23,6 +24,7 @@ public class ReviewerReviewService {
 	private final ReviewValidator reviewValidator;
 	private final EventRepository eventRepository;
 	private final ReviewRepository reviewRepository;
+	private final AccountRepository accountRepository;
 
 	/**
 	 * Recupera tutte le recensioni associate a un evento specifico, paginandole.
@@ -44,6 +46,6 @@ public class ReviewerReviewService {
 				Math.max(10, Optional.ofNullable(size).orElse(10)),
 				Sort.by(Sort.Order.desc("id")))
 		);
-		return reviews.map(ReviewMapper::entityToDTO);
+		return reviews.map(review -> ReviewMapper.entityToDTO(review, accountRepository));
 	}
 }

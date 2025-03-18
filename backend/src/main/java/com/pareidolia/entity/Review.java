@@ -37,6 +37,12 @@ public class Review {
 	@Basic
 	@Column(name = "id_event", nullable = false)
 	private Long idEvent;
+	@Basic
+	@Column(name = "tag")
+	private String tag;
+	@Basic
+	@Column(name = "is_anonymous", nullable = false)
+	private boolean isAnonymous;
 
 	@ColumnDefault("CURRENT_TIMESTAMP(6)")
 	@CreationTimestamp(source = SourceType.DB)

@@ -23,4 +23,6 @@ public class ReviewDTO implements Serializable {
 	public String accountReferenceType;
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", shape = JsonFormat.Shape.STRING)
 	public LocalDateTime creationTime;
+	private boolean isAnonymous;
+	private String tag;
 }

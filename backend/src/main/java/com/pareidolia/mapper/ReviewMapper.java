@@ -1,10 +1,12 @@
 package com.pareidolia.mapper;
 
+import Decorator.*;
 import com.pareidolia.dto.ReviewDTO;
 import com.pareidolia.entity.Review;
+import com.pareidolia.repository.AccountRepository;
 
 public class ReviewMapper {
-	public static ReviewDTO entityToDTO(Review entity) {
+	public static ReviewDTO entityToDTO(Review entity, AccountRepository accountRepository) {
 		if (entity == null) return null;
 		ReviewDTO dto = new ReviewDTO();
 		dto.setId(entity.getId());
@@ -16,7 +18,19 @@ public class ReviewMapper {
 		dto.setAccountName(entity.getAccount().getName() + " " + entity.getAccount().getSurname());
 		dto.setAccountReferenceType(entity.getAccount().getReferenceType().name());
 		dto.setCreationTime(entity.getCreationTime());
-		return dto;
+		dto.setAnonymous(entity.isAnonymous());
+		dto.setTag(entity.getTag());
+
+		// Creazione dell'istanza di ReviewComponent tramite la classe concreta BasicReview
+		ReviewComponent review = new BasicReview(dto);
+		// Apply HighlightDecorator based on the Account.Type
+		review = new HighlightDecorator(review, accountRepository);
+		// Apply AnonymousDecorator based on the isAnonymous flag
+		review = new AnonymousDecorator(review);
+		// Apply TaggedReview based on the tag provided
+		review = new TaggedReview(review);
+
+		return review.apply();
 	}
 
 	public static Review dtoToEntity(ReviewDTO dto) {
@@ -28,6 +42,8 @@ public class ReviewMapper {
 		entity.setScore(dto.getScore());
 		entity.setIdConsumer(dto.getIdConsumer());
 		entity.setIdEvent(dto.getIdEvent());
+		entity.setAnonymous(dto.isAnonymous());
+		entity.setTag(dto.getTag());
 		return entity;
 	}
 }

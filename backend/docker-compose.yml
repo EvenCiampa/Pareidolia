@@ -9,7 +9,7 @@ services:
             MYSQL_DATABASE: "pareidolia"
             MYSQL_ROOT_PASSWORD: "rootroot"
         ports:
-            - "3306:3306"
+            - "3307:3306"
         volumes:
             - pareidolia_db:/var/lib/
         healthcheck:

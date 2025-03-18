@@ -49,7 +49,7 @@ public class PromoterReviewService {
 		Page<Review> reviews = reviewRepository.findAllByIdEvent(idEvent,
 			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(10, Optional.ofNullable(size).orElse(10)), Sort.by(Sort.Order.desc("id")))
 		);
-		return reviews.map(ReviewMapper::entityToDTO);
+		return reviews.map(review -> ReviewMapper.entityToDTO(review, accountRepository));
 	}
 
 	/**
@@ -81,6 +81,6 @@ public class PromoterReviewService {
 
 		eventRepository.updateAverageScore(reviewDTO.getIdEvent());
 
-		return ReviewMapper.entityToDTO(newReview);
+		return ReviewMapper.entityToDTO(newReview, accountRepository);
 	}
 }
