@@ -8,4 +8,6 @@ export interface ReviewDTO {
   accountName?: string;
   referenceType?: 'CONSUMER' | 'PROMOTER' | 'ADMIN';
   creationTime?: Date;
+  tag?: string;
+  isAnonymous?: boolean;
 }

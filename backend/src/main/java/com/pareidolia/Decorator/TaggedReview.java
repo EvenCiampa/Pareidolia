@@ -1,4 +1,4 @@
-package Decorator;
+package com.pareidolia.Decorator;
 
 // (agisce come uno dei ConcreteDecorators) estende ReviewDecorator e aggiunge comportamenti specifici.
 

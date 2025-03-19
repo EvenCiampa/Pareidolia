@@ -1,6 +1,6 @@
 package com.pareidolia.mapper;
 
-import Decorator.*;
+import com.pareidolia.Decorator.*;
 import com.pareidolia.dto.ReviewDTO;
 import com.pareidolia.entity.Review;
 import com.pareidolia.repository.AccountRepository;

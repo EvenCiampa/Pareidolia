@@ -1,4 +1,4 @@
-package Decorator;
+package com.pareidolia.Decorator;
 
 import com.pareidolia.dto.ReviewDTO;
 import com.pareidolia.entity.Account;
