@@ -6,17 +6,19 @@ actor "Admin"
 rectangle System{
 	Admin -down->  (Login admin)
 	Admin -down-> (Display/Update/Delete Consumer)
-	(Display/Update/Delete Consumer) ..>  (Login admin): <<include>>
 	Admin -down-> (Display/Add/Update/Delete Admin)
-	(Display/Add/Update/Delete Admin) ..>  (Login admin): <<include>>
 	Admin -down-> (Add/Update/Delete Promoter)
-    (Add/Update/Delete Promoter) ..>  (Login admin): <<include>>
-	' eliminato: Booking configurations, gift, order, Package, Product, Treatment, ServiceComment '
 	Admin -down-> (Display/Add/Delete Booking)
-	(Display/Add/Delete Booking) ..>  (Login admin): <<include>>
 	Admin -down-> (Display/Add/Update/Delete/Publish Event)
-    (Display/Add/Update/Delete/Publish Event) ..> (Login admin): <<include>>
     Admin -down-> (Display/Add/Delete Message)
-   	(Display/Add/Delete Message) ..> (Login admin): <<include>>
+
+
+   	(Display/Update/Delete Consumer) 			..>  (Login admin): <<include>>
+   	(Display/Add/Update/Delete Admin) 			..>  (Login admin): <<include>>
+   	(Add/Update/Delete Promoter) 				..>  (Login admin): <<include>>
+    ' eliminato: Booking configurations, gift, order, Package, Product, Treatment, ServiceComment '
+    (Display/Add/Delete Booking) 				..>  (Login admin): <<include>>
+    (Display/Add/Update/Delete/Publish Event)	..> (Login admin): <<include>>
+    (Display/Add/Delete Message) 				..> (Login admin): <<include>>
 }
 @enduml

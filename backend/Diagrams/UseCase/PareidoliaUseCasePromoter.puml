@@ -6,14 +6,15 @@ actor "Promoter"
 rectangle System{
 	Promoter -down->  (Login promoter)
 	Promoter -down-> (Display/Delete Booking)
-	(Display/Delete Booking) ..> (Login promoter): <<include>>
 	Promoter -down-> (Display/Update Promoter)
-	(Display/Update Promoter) ..> (Login promoter): <<include>>
 	Promoter -down-> (Display Review)
-	(Display Review) ..> (Login promoter): <<include>>
 	Promoter -down-> (Display/Add/Update Event)
-    (Display/Add/Update Event) ..> (Login promoter): <<include>>
     Promoter -down-> (Display/Add Message)
-    (Display/Add Message) ..> (Login promoter): <<include>>
+
+    (Display/Delete Booking) 	..> (Login promoter): <<include>>
+    (Display/Update Promoter) 	..> (Login promoter): <<include>>
+    (Display Review) 			..> (Login promoter): <<include>>
+    (Display/Add/Update Event) 	..> (Login promoter): <<include>>
+    (Display/Add Message) 		..> (Login promoter): <<include>>
 }
 @enduml

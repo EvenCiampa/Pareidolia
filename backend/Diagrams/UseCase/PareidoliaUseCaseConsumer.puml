@@ -6,10 +6,12 @@ actor "Consumer"
 rectangle System{
 	Consumer -down->  (Login consumer)
 	Consumer -down-> (Display/Add/Delete Booking)
-	(Display/Add/Delete Booking) ..> (Login consumer): <<include>>
 	Consumer -down-> (Display/Update Consumer)
-	(Display/Update Consumer) ..> (Login consumer): <<include>>
 	Consumer -down-> (Display/Add Review)
-	(Display/Add Review) ..> (Login consumer): <<include>>
+
+
+	(Display/Add/Delete Booking) 	..> (Login consumer): <<include>>
+	(Display/Update Consumer) 		..> (Login consumer): <<include>>
+	(Display/Add Review) 			..> (Login consumer): <<include>>
 }
 @enduml

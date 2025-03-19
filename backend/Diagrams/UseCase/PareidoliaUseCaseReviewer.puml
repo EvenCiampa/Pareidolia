@@ -1,0 +1,25 @@
+@startuml
+left to right direction
+actor "Reviewer"
+
+rectangle System {
+    Reviewer -down-> (Login reviewer)
+
+    ' Use Cases specifici per Reviewer
+    Reviewer -down-> (Display Booking)
+    Reviewer -down-> (Display/Change_State Event)
+    Reviewer -down-> (Display Review)
+    Reviewer -down-> (Display/Add Message)
+    Reviewer -down-> (Update Reviewer)
+
+
+ 	' Change_State : publish : moveBackwards & moveBackward
+    ' Relazioni di Include
+    (Display Booking) 			 ..> 	(Login reviewer): <<include>>
+    (Display/Change_State Event) ..>	(Login reviewer): <<include>>
+    (Display Review)			 ..> 	(Login reviewer): <<include>>
+    (Display/Add Message) 		 ..> 	(Login reviewer): <<include>>
+    (Update Reviewer)			 ..> 	(Login reviewer): <<include>>
+}
+@enduml
+
