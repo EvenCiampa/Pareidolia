@@ -3,10 +3,10 @@ package com.pareidolia.entity;
 import com.pareidolia.state.DraftState;
 import com.pareidolia.state.State;
 import com.pareidolia.state.StateConverter;
+import jakarta.persistence.*;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
-import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.*;
 
@@ -83,7 +83,7 @@ public class Event {
 	private List<PromoterInfo> promoters;
 
 	@PostLoad
-	private void initializeState() {
+	void initializeState() {
 		this.state = State.fromString(state.getStateName(), this);
 	}
 }

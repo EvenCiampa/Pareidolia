@@ -1,7 +1,9 @@
 package com.pareidolia.service.reviewer;
 
 import com.pareidolia.configuration.security.jwt.JWTService;
-import com.pareidolia.dto.*;
+import com.pareidolia.dto.AccountLoginDTO;
+import com.pareidolia.dto.PasswordUpdateDTO;
+import com.pareidolia.dto.ReviewerDTO;
 import com.pareidolia.entity.Account;
 import com.pareidolia.mapper.AccountMapper;
 import com.pareidolia.repository.AccountRepository;

@@ -1,10 +1,12 @@
 package com.pareidolia.state;
 
 import com.pareidolia.entity.Event;
+import lombok.EqualsAndHashCode;
 
 /**
  * Interfaccia comune per tutti gli stati.
  */
+@EqualsAndHashCode
 public abstract class State {
 	Event event;
 

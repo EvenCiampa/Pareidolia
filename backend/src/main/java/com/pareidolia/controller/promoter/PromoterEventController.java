@@ -2,7 +2,6 @@ package com.pareidolia.controller.promoter;
 
 import com.pareidolia.dto.EventDTO;
 import com.pareidolia.dto.EventUpdateDTO;
-import com.pareidolia.entity.Event;
 import com.pareidolia.service.promoter.PromoterEventService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1,7 +1,6 @@
 package com.pareidolia.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.pareidolia.entity.Event;
 import lombok.*;
 
 import java.io.Serializable;

@@ -1,9 +1,9 @@
 package com.pareidolia.state;
 
 import com.pareidolia.entity.Event;
+import lombok.EqualsAndHashCode;
 
-import java.util.Objects;
-
+@EqualsAndHashCode(callSuper = true)
 public class ReviewState extends State {
 	public static final String name = "REVIEW";
 
@@ -29,11 +29,5 @@ public class ReviewState extends State {
 	@Override
 	public boolean canEdit() {
 		return false;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (!(o instanceof ReviewState state)) return false;
-		return Objects.equals(event, state.event);
 	}
 }

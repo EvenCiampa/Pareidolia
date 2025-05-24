@@ -1,6 +1,8 @@
 package com.pareidolia.controller.reviewer;
 
-import com.pareidolia.dto.*;
+import com.pareidolia.dto.AccountLoginDTO;
+import com.pareidolia.dto.PasswordUpdateDTO;
+import com.pareidolia.dto.ReviewerDTO;
 import com.pareidolia.service.reviewer.ReviewerService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;

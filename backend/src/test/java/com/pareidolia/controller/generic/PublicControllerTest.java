@@ -12,6 +12,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -29,8 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
@@ -160,6 +161,30 @@ public class PublicControllerTest {
 		assertEquals(eventPage.getTotalElements(), response.getBody().getTotalElements());
 		assertEquals(eventPage.getContent(), response.getBody().getContent());
 		assertEquals(eventPage.getPageable(), response.getBody().getPageable());
+
+		verifyNoMoreInteractions(jwtService, accountRepository, publicService);
+	}
+
+	@Test
+	void testGetImage() {
+		// Setup
+		String imageName = "test.jpg";
+		ResponseEntity<Resource> expectedResponse = ResponseEntity.ok(new ByteArrayResource(new byte[1]));
+		when(publicService.getImage(imageName)).thenReturn(expectedResponse);
+
+		// Test
+		ResponseEntity<Resource> response = restTemplate.exchange(
+			"/generic/service/image/{imageName}",
+			HttpMethod.GET,
+			null,
+			Resource.class,
+			imageName);
+
+		// Verify
+		verify(publicService).getImage(any());
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertEquals(expectedResponse.getBody(), response.getBody());
 
 		verifyNoMoreInteractions(jwtService, accountRepository, publicService);
 	}

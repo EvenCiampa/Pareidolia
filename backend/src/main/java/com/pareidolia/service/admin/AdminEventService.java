@@ -1,11 +1,5 @@
 package com.pareidolia.service.admin;
 
-import com.pareidolia.service.SendEmailForEvent;
-import com.pareidolia.strategy.email.event.EmailEventType;
-import com.pareidolia.strategy.email.event.ConsumerInvitationStrategy;
-import com.pareidolia.strategy.email.event.EmailContentStrategy;
-import com.pareidolia.strategy.email.event.PromoterInvitationStrategy;
-import com.pareidolia.strategy.email.event.ReviewerConfirmationStrategy;
 import com.pareidolia.configuration.mail.CustomMailSender;
 import com.pareidolia.dto.AdminDTO;
 import com.pareidolia.dto.EventDTO;
@@ -20,6 +14,8 @@ import com.pareidolia.mapper.EventPromoterAssociationMapper;
 import com.pareidolia.repository.*;
 import com.pareidolia.repository.model.EventWithInfoForAccount;
 import com.pareidolia.service.ImageService;
+import com.pareidolia.service.SendEmailForEvent;
+import com.pareidolia.strategy.email.event.EmailEventType;
 import com.pareidolia.validator.EventDraftValidator;
 import com.pareidolia.validator.EventValidator;
 import com.pareidolia.validator.ImageValidator;
@@ -28,16 +24,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -139,7 +137,7 @@ public class AdminEventService {
 	 */
 	private void scheduleEmailAfterCommit(EmailEventType emailEventType, Event event) {
 		Runnable sendEmailForEvent = new SendEmailForEvent(emailEventType, event, mailSender, accountRepository);
-		
+
 		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
 			@Override
 			public void afterCommit() {
@@ -182,7 +180,7 @@ public class AdminEventService {
 
 		// Notifica gli utenti dopo il commit della transazione
 		scheduleEmailAfterCommit(EmailEventType.CREATED, savedEventDraft);
-		
+
 		return EventMapper.entityToDTO(savedEventDraft, false, 0L, promoters);
 	}
 
@@ -223,7 +221,7 @@ public class AdminEventService {
 
 		// Notifica gli utenti dopo il commit della transazione
 		scheduleEmailAfterCommit(EmailEventType.UPDATED, event);
-		
+
 		return EventMapper.entityToDTO(event, booked, bookingRepository.countByIdEvent(eventDTO.getId()), promoters);
 	}
 

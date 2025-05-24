@@ -76,16 +76,16 @@ public class AdminReviewService {
 
 		// Applica i decoratori alla recensione
 		ReviewComponent review = new BasicReview(reviewDTO);
-		
+
 		// Decora per l'anonimato se richiesto
 		review = new AnonymousDecorator(review);
-		
+
 		// Decora per evidenziare i promoter
 		review = new HighlightDecorator(review, accountRepository);
-		
+
 		// Decora per i tag se presenti
 		review = new TaggedReview(review);
-		
+
 		// Applica tutte le decorazioni
 		ReviewDTO decoratedReviewDTO = review.apply();
 

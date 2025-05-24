@@ -4,7 +4,6 @@ import com.pareidolia.configuration.security.jwt.JWTService;
 import com.pareidolia.dto.EventDTO;
 import com.pareidolia.dto.EventUpdateDTO;
 import com.pareidolia.entity.Account;
-import com.pareidolia.entity.Event;
 import com.pareidolia.repository.AccountRepository;
 import com.pareidolia.service.admin.AdminEventService;
 import com.pareidolia.state.DraftState;

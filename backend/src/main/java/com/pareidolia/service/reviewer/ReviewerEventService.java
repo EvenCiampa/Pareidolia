@@ -1,12 +1,11 @@
 package com.pareidolia.service.reviewer;
 
-import com.pareidolia.dto.*;
+import com.pareidolia.dto.EventDTO;
+import com.pareidolia.dto.ReviewerDTO;
 import com.pareidolia.entity.Account;
 import com.pareidolia.entity.Event;
 import com.pareidolia.entity.PromoterInfo;
-import com.pareidolia.mapper.AccountMapper;
 import com.pareidolia.mapper.EventMapper;
-import com.pareidolia.mapper.EventPromoterAssociationMapper;
 import com.pareidolia.repository.BookingRepository;
 import com.pareidolia.repository.EventPromoterAssociationRepository;
 import com.pareidolia.repository.EventRepository;
@@ -28,10 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional

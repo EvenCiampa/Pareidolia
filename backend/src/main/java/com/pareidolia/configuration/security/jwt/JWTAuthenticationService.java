@@ -26,15 +26,14 @@ public class JWTAuthenticationService {
 			.findByEmail(email)
 			.ifPresentOrElse(
 				account -> {
+					if (!List.of(Account.Type.CONSUMER, Account.Type.PROMOTER).contains(account.getReferenceType())) {
+						throw new RuntimeException("Something went wrong with reset");
+					}
 					String newPassword = RandomStringUtils.secureStrong().nextAlphanumeric(8);
 					account.setPassword(DigestUtils.sha3_256Hex(newPassword));
 					accountRepository.save(account);
-					if (List.of(Account.Type.CONSUMER, Account.Type.PROMOTER).contains(account.getReferenceType())) {
-						if (!customMailSender.sendResetConsumer(email, newPassword)) {
-							throw new RuntimeException("Something went wrong with email");
-						}
-					} else {
-						throw new RuntimeException("Something went wrong with reset");
+					if (!customMailSender.sendResetConsumer(email, newPassword)) {
+						throw new RuntimeException("Something went wrong with email");
 					}
 				},
 				() -> {

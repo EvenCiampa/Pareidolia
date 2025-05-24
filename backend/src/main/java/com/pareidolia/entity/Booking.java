@@ -1,9 +1,9 @@
 package com.pareidolia.entity;
 
+import jakarta.persistence.*;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
-import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.*;
 

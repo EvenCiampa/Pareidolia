@@ -44,7 +44,8 @@ public class SecurityConfiguration {
 	private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
 		new AntPathRequestMatcher("/admin/**"),
 		new AntPathRequestMatcher("/consumer/**"),
-		new AntPathRequestMatcher("/promoter/**")
+		new AntPathRequestMatcher("/promoter/**"),
+		new AntPathRequestMatcher("/reviewer/**")
 	);
 	private final ObjectMapper mapper;
 
@@ -67,15 +68,16 @@ public class SecurityConfiguration {
 			.exceptionHandling(it -> it.authenticationEntryPoint((request, response, authException) -> forbiddenEntryPoint(response))) // enable exception handling
 			.authenticationProvider(authenticationProvider) // authenticator object
 			.addFilterBefore(restAuthenticationFilter(authenticationManager), AnonymousAuthenticationFilter.class)
-			// if not authenticated return this (1st parameter)
+			// if not authenticated, return this (1st parameter)
 			.authorizeHttpRequests(it -> {
 				it.requestMatchers(new AntPathRequestMatcher("/**", HttpMethod.TRACE.name())).denyAll();
 				it.requestMatchers(PROTECTED_URLS).authenticated();
 				it.requestMatchers(new AntPathRequestMatcher("/admin/**")).hasRole(Account.Type.ADMIN.name());
 				it.requestMatchers(new AntPathRequestMatcher("/consumer/**")).hasRole(Account.Type.CONSUMER.name());
 				it.requestMatchers(new AntPathRequestMatcher("/promoter/**")).hasRole(Account.Type.PROMOTER.name());
+				it.requestMatchers(new AntPathRequestMatcher("/reviewer/**")).hasRole(Account.Type.REVIEWER.name());
 				it.requestMatchers(new NegatedRequestMatcher(PROTECTED_URLS)).permitAll();
-			}) // require validation for following paths
+			}) // require validation for the following paths
 			.build();
 	}
 

@@ -2,7 +2,6 @@ package com.pareidolia.controller.admin;
 
 import com.pareidolia.dto.EventDTO;
 import com.pareidolia.dto.EventUpdateDTO;
-import com.pareidolia.entity.Event;
 import com.pareidolia.service.admin.AdminEventService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
