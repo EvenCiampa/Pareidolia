@@ -1,4 +1,4 @@
-package com.pareidolia.Decorator;
+package com.pareidolia.decorator.review;
 
 import com.pareidolia.dto.ReviewDTO;
 

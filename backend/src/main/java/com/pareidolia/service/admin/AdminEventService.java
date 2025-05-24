@@ -1,5 +1,12 @@
 package com.pareidolia.service.admin;
 
+import com.pareidolia.service.SendEmailForEvent;
+import com.pareidolia.strategy.email.event.EmailEventType;
+import com.pareidolia.strategy.email.event.ConsumerInvitationStrategy;
+import com.pareidolia.strategy.email.event.EmailContentStrategy;
+import com.pareidolia.strategy.email.event.PromoterInvitationStrategy;
+import com.pareidolia.strategy.email.event.ReviewerConfirmationStrategy;
+import com.pareidolia.configuration.mail.CustomMailSender;
 import com.pareidolia.dto.AdminDTO;
 import com.pareidolia.dto.EventDTO;
 import com.pareidolia.dto.EventUpdateDTO;
@@ -10,10 +17,7 @@ import com.pareidolia.entity.PromoterInfo;
 import com.pareidolia.mapper.AccountMapper;
 import com.pareidolia.mapper.EventMapper;
 import com.pareidolia.mapper.EventPromoterAssociationMapper;
-import com.pareidolia.repository.BookingRepository;
-import com.pareidolia.repository.EventPromoterAssociationRepository;
-import com.pareidolia.repository.EventRepository;
-import com.pareidolia.repository.PromoterInfoRepository;
+import com.pareidolia.repository.*;
 import com.pareidolia.repository.model.EventWithInfoForAccount;
 import com.pareidolia.service.ImageService;
 import com.pareidolia.validator.EventDraftValidator;
@@ -24,16 +28,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.support.TransactionSynchronization;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,13 +46,16 @@ import java.util.stream.Collectors;
 public class AdminEventService {
 	private final ImageService imageService;
 	private final AdminService adminService;
+	private final CustomMailSender mailSender;
 	private final ImageValidator imageValidator;
 	private final EventValidator eventValidator;
 	private final EventRepository eventRepository;
 	private final BookingRepository bookingRepository;
+	private final AccountRepository accountRepository;
 	private final EventDraftValidator eventDraftValidator;
 	private final PromoterInfoRepository promoterInfoRepository;
 	private final EventPromoterAssociationRepository eventPromoterAssociationRepository;
+
 
 	/**
 	 * Recupera un evento specifico per un amministratore basandosi sull'ID dell'evento.
@@ -126,6 +133,22 @@ public class AdminEventService {
 	}
 
 	/**
+	 * Esegue l'invio delle email dopo che la transazione è stata completata con successo
+	 * @param emailEventType Il tipo di evento email
+	 * @param event L'evento per cui inviare le email
+	 */
+	private void scheduleEmailAfterCommit(EmailEventType emailEventType, Event event) {
+		Runnable sendEmailForEvent = new SendEmailForEvent(emailEventType, event, mailSender, accountRepository);
+		
+		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+			@Override
+			public void afterCommit() {
+				sendEmailForEvent.run();
+			}
+		});
+	}
+
+	/**
 	 * Crea un nuovo evento basandosi su un DTO di aggiornamento, validando i promotori inclusi.
 	 * @param eventUpdateDraftDTO DTO contenente i dettagli dell'evento da creare.
 	 * @return EventDTO Il DTO dell'evento creato.
@@ -157,6 +180,9 @@ public class AdminEventService {
 		List<Pair<Account, PromoterInfo>> promoters =
 			eventPromoterAssociationRepository.findPromotersByIdEvent(savedEventDraft.getId());
 
+		// Notifica gli utenti dopo il commit della transazione
+		scheduleEmailAfterCommit(EmailEventType.CREATED, savedEventDraft);
+		
 		return EventMapper.entityToDTO(savedEventDraft, false, 0L, promoters);
 	}
 
@@ -194,6 +220,10 @@ public class AdminEventService {
 
 		List<Pair<Account, PromoterInfo>> promoters = eventPromoterAssociationRepository.findPromotersByIdEvent(event.getId());
 		boolean booked = bookingRepository.findByIdEventAndIdAccount(event.getId(), adminService.getData().getId()).isPresent();
+
+		// Notifica gli utenti dopo il commit della transazione
+		scheduleEmailAfterCommit(EmailEventType.UPDATED, event);
+		
 		return EventMapper.entityToDTO(event, booked, bookingRepository.countByIdEvent(eventDTO.getId()), promoters);
 	}
 

@@ -45,4 +45,5 @@ public class CustomMailSender {
 		sendMail(to, "Reset Password", document, false, "sendResetPasswordConsumer");
 		return true;
 	}
+
 }

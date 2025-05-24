@@ -1,4 +1,4 @@
-package com.pareidolia.Decorator;
+package com.pareidolia.decorator.review;
 
 //  implementa l'interfaccia e contiene un riferimento all'oggetto ReviewComponent che avvolge, delegando a esso tutte le operazioni.
 

@@ -1,5 +1,6 @@
 package com.pareidolia.service.admin;
 
+import com.pareidolia.decorator.review.*;
 import com.pareidolia.dto.AdminDTO;
 import com.pareidolia.dto.ReviewDTO;
 import com.pareidolia.entity.Account;
@@ -73,9 +74,24 @@ public class AdminReviewService {
 		reviewValidator.validateEventIsOver(reviewDTO.getIdEvent());
 		reviewValidator.validateNewReviewFields(reviewDTO);
 
-		Review newReview = ReviewMapper.dtoToEntity(reviewDTO);
-		newReview.setAccount(account);
+		// Applica i decoratori alla recensione
+		ReviewComponent review = new BasicReview(reviewDTO);
+		
+		// Decora per l'anonimato se richiesto
+		review = new AnonymousDecorator(review);
+		
+		// Decora per evidenziare i promoter
+		review = new HighlightDecorator(review, accountRepository);
+		
+		// Decora per i tag se presenti
+		review = new TaggedReview(review);
+		
+		// Applica tutte le decorazioni
+		ReviewDTO decoratedReviewDTO = review.apply();
 
+		// Converti e salva
+		Review newReview = ReviewMapper.dtoToEntity(decoratedReviewDTO);
+		newReview.setAccount(account);
 		newReview = reviewRepository.save(newReview);
 
 		eventRepository.updateAverageScore(reviewDTO.getIdEvent());
