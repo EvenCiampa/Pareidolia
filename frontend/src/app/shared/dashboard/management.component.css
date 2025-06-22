@@ -1,0 +1,63 @@
+.admin-container {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+mat-table {
+  width: 100%;
+}
+
+mat-paginator {
+  margin-top: 16px;
+}
+
+.mat-column-name {
+  flex: 2;
+}
+
+.mat-column-email {
+  flex: 2;
+}
+
+.mat-column-phone {
+  flex: 1;
+}
+
+.mat-column-title {
+  flex: 2;
+}
+
+.mat-column-date {
+  flex: 1;
+}
+
+.mat-column-status {
+  flex: 1;
+}
+
+.mat-column-actions {
+  flex: 1;
+  justify-content: right;
+}
+
+::ng-deep .error-snackbar {
+  background: #d32f2f;
+  color: white;
+}
+
+::ng-deep .error-snackbar .mat-simple-snackbar-action {
+  color: white;
+}

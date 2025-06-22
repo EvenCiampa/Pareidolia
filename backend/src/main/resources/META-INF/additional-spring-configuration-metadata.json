@@ -1,0 +1,29 @@
+{
+	"properties": [
+		{
+			"name": "jwt.secret",
+			"type": "java.lang.String",
+			"description": " The secret bytes to use in the verify or signing the JWT tokens. Ensure the length of the secret is at least 256 bit long See HMAC Key Length and Security in README."
+		},
+		{
+			"name": "app.upload.url-prefix",
+			"type": "java.lang.String"
+		},
+		{
+			"name": "app.mail.from-name",
+			"type": "java.lang.String"
+		},
+		{
+			"name": "app.download.dir",
+			"type": "java.lang.String"
+		},
+		{
+			"name": "app.download.allowed-extensions",
+			"type": "java.lang.String"
+		},
+		{
+			"name": "app.download.max-age",
+			"type": "java.lang.String"
+		}
+	]
+}

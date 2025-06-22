@@ -1,0 +1,360 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EventDraftValidator</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.pareidolia.validator</a>
+</div>
+
+<h1>Coverage Summary for Class: EventDraftValidator (com.pareidolia.validator)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EventDraftValidator</td>
+<td class="coverageStat">
+  <span class="percent">
+    88,2%
+  </span>
+  <span class="absValue">
+    (15/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    47,9%
+  </span>
+  <span class="absValue">
+    (23/48)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    74,2%
+  </span>
+  <span class="absValue">
+    (66/89)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">EventDraftValidator$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    88,2%
+  </span>
+  <span class="absValue">
+    (15/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    47,9%
+  </span>
+  <span class="absValue">
+    (23/48)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    74,2%
+  </span>
+  <span class="absValue">
+    (66/89)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.pareidolia.validator;
+&nbsp;
+&nbsp;import com.pareidolia.dto.EventDTO;
+&nbsp;import com.pareidolia.dto.PromoterDTO;
+&nbsp;import com.pareidolia.entity.Account;
+&nbsp;import com.pareidolia.entity.Event;
+&nbsp;import com.pareidolia.repository.AccountRepository;
+&nbsp;import com.pareidolia.repository.EventPromoterAssociationRepository;
+&nbsp;import com.pareidolia.repository.EventRepository;
+&nbsp;import com.pareidolia.state.EventStateHandler;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;import java.time.Duration;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.LocalTime;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Set;
+&nbsp;import java.util.concurrent.ConcurrentHashMap;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@Component
+&nbsp;@Transactional
+&nbsp;@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+&nbsp;public class EventDraftValidator {
+&nbsp;
+&nbsp;	private final EventRepository eventRepository;
+&nbsp;	private final AccountValidator accountValidator;
+&nbsp;	private final AccountRepository accountRepository;
+&nbsp;	private final EventPromoterAssociationRepository eventPromoterAssociationRepository;
+&nbsp;
+&nbsp;	public void createEventDraftValidator(EventDTO eventDraftDTO) {
+<b class="fc">&nbsp;		titleValidation(eventDraftDTO.getTitle());</b>
+<b class="fc">&nbsp;		descriptionValidation(eventDraftDTO.getDescription());</b>
+<b class="fc">&nbsp;		placeValidation(eventDraftDTO.getPlace());</b>
+<b class="fc">&nbsp;		dateValidation(eventDraftDTO.getDate());</b>
+<b class="fc">&nbsp;		timeValidation(eventDraftDTO.getTime());</b>
+<b class="fc">&nbsp;		durationValidation(eventDraftDTO.getDuration());</b>
+<b class="fc">&nbsp;		maxNumberOfParticipantsValidation(eventDraftDTO.getMaxNumberOfParticipants());</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	private void titleValidation(String title) {
+<b class="pc">&nbsp;		if (title == null || title.trim().isEmpty()) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Event title must not be empty.&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	private void descriptionValidation(String description) {
+<b class="pc">&nbsp;		if (description == null || description.trim().isEmpty()) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Event description must not be empty.&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	private void placeValidation(String place) {
+<b class="pc">&nbsp;		if (place == null || place.trim().isEmpty()) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Event place must not be empty.&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	private void dateValidation(LocalDate date) {
+<b class="pc">&nbsp;		if (date == null) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Event date must be specified.&quot;);</b>
+&nbsp;		}
+<b class="pc">&nbsp;		if (date.isBefore(LocalDate.now())) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Event date must be in the future.&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	private void timeValidation(LocalTime time) {
+<b class="pc">&nbsp;		if (time == null) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Event time must be specified.&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	private void durationValidation(Duration duration) {
+<b class="pc">&nbsp;		if (duration == null || duration.isNegative() || duration.isZero()) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Event duration must be positive.&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	private void maxNumberOfParticipantsValidation(Long maxNumberOfParticipants) {
+<b class="pc">&nbsp;		if (maxNumberOfParticipants != null &amp;&amp; maxNumberOfParticipants &lt;= 0) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Maximum number of participants must be greater than zero.&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	// Metodo principale per la validazione dell&#39;aggiunta di un Promoter all&#39;EventDraft
+&nbsp;	public void validateAddPromoterToEventDraft(Long eventDraftId, Long accountId) {
+<b class="fc">&nbsp;		Event eventDraft = eventRepository.findById(eventDraftId)</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Invalid EventDraft ID&quot;));</b>
+<b class="fc">&nbsp;		Account account = validateAccountExists(accountId);</b>
+<b class="fc">&nbsp;		accountValidator.accountTypeValidation(account.getReferenceType(), Account.Type.PROMOTER);</b>
+<b class="fc">&nbsp;		validatePromoterNotAlreadyAssociated(eventDraftId, accountId);</b>
+<b class="fc">&nbsp;		validateEditable(eventDraft);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	// Controlla se l&#39;account esiste
+&nbsp;	private Account validateAccountExists(Long accountId) {
+<b class="fc">&nbsp;		return accountRepository.findById(accountId)</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Account not found.&quot;));</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	// Controlla che l&#39;account non sia già associato all&#39;evento
+&nbsp;	public void validatePromoterNotAlreadyAssociated(Long eventDraftId, Long accountId) {
+&nbsp;		// findByIdEventDraftAndIdPromoter per verificare se l&#39;associazione esiste già
+<b class="fc">&nbsp;		boolean isAlreadyAssociated = eventPromoterAssociationRepository</b>
+<b class="fc">&nbsp;			.findByIdEventAndIdPromoter(eventDraftId, accountId)</b>
+<b class="fc">&nbsp;			.isPresent();</b>
+&nbsp;
+<b class="pc">&nbsp;		if (isAlreadyAssociated) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Promoter is already associated with this event.&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	// Controlla che l&#39;EventDraft non sia già associato all&#39;evento (publicato)
+&nbsp;	public void validateEditable(Event eventDraft) {
+<b class="pc">&nbsp;		if (!EventStateHandler.canEdit(eventDraft)) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Event cannot be edited in the current state: &quot; + eventDraft.getState());</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	//aggiorna i dati di eventDraft
+&nbsp;	public Event getEventDraftAndValidateUpdate(EventDTO eventDraftDTO) {
+<b class="fc">&nbsp;		Event eventDraft = eventRepository.findById(eventDraftDTO.getId())</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;EventDraft not found&quot;));</b>
+&nbsp;
+&nbsp;		// validate update like: AccountValidator.getPromoterAndValidateUpdate-&gt; fatto diversamente
+<b class="fc">&nbsp;		validateEditable(eventDraft);</b>
+&nbsp;
+&nbsp;		// Step 3: Validate the fields in EventDraftDTO
+<b class="fc">&nbsp;		titleValidation(eventDraftDTO.getTitle());</b>
+<b class="fc">&nbsp;		descriptionValidation(eventDraftDTO.getDescription());</b>
+<b class="fc">&nbsp;		placeValidation(eventDraftDTO.getPlace());</b>
+<b class="fc">&nbsp;		dateValidation(eventDraftDTO.getDate());</b>
+<b class="fc">&nbsp;		timeValidation(eventDraftDTO.getTime());</b>
+<b class="fc">&nbsp;		durationValidation(eventDraftDTO.getDuration());</b>
+<b class="fc">&nbsp;		maxNumberOfParticipantsValidation(eventDraftDTO.getMaxNumberOfParticipants());</b>
+&nbsp;
+<b class="pc">&nbsp;		if (eventDraftDTO.getPromoters() == null || eventDraftDTO.getPromoters().isEmpty()) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Promoters must not be empty.&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		updatePromoterAssociations(eventDraft, eventDraftDTO.getPromoters());</b>
+&nbsp;
+<b class="fc">&nbsp;		return eventDraft;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	//aggiorna la lista promoters associata all&#39;eventDraft
+&nbsp;	private void updatePromoterAssociations(Event eventDraft, List&lt;PromoterDTO&gt; promoterDTOs) {
+&nbsp;		//  Recupera gli ID dei promoter ATTUALI associati all&#39;evento
+<b class="fc">&nbsp;		Set&lt;Long&gt; currentPromoterIds = eventPromoterAssociationRepository</b>
+<b class="fc">&nbsp;			.findPromotersByIdEvent(eventDraft.getId()).stream()</b>
+<b class="fc">&nbsp;			.map(pair -&gt; pair.getSecond().getIdPromoter())</b>
+<b class="fc">&nbsp;			.collect(Collectors.toSet());</b>
+&nbsp;
+&nbsp;		//  Crea un set per gli ID dei NUOVI promoter
+<b class="fc">&nbsp;		Set&lt;Long&gt; newPromoterIds = promoterDTOs.stream()</b>
+<b class="fc">&nbsp;			.map(PromoterDTO::getId)</b>
+<b class="fc">&nbsp;			.collect(Collectors.toSet());</b>
+&nbsp;
+&nbsp;		// Trova i promoter da aggiungere
+<b class="fc">&nbsp;		Set&lt;Long&gt; promotersToAdd = newPromoterIds.stream()</b>
+<b class="fc">&nbsp;			.filter(id -&gt; !currentPromoterIds.contains(id))</b>
+<b class="fc">&nbsp;			.collect(Collectors.toSet());</b>
+&nbsp;
+&nbsp;		//  Trova i promoter da rimuovere
+<b class="fc">&nbsp;		Set&lt;Long&gt; promotersToRemove = currentPromoterIds.stream()</b>
+<b class="fc">&nbsp;			.filter(id -&gt; !newPromoterIds.contains(id))</b>
+<b class="fc">&nbsp;			.collect(Collectors.toSet());</b>
+&nbsp;
+&nbsp;		// Aggiungi i nuovi promoter
+<b class="pc">&nbsp;		for (Long promoterId : promotersToAdd) {</b>
+&nbsp;			// Utilizza il tuo metodo di aggiunta del promoter, ad esempio:
+<b class="nc">&nbsp;			validateAddPromoterToEventDraft(eventDraft.getId(), promoterId);</b>
+&nbsp;		}
+&nbsp;
+&nbsp;		//  Rimuovi i promoter non più associati
+<b class="pc">&nbsp;		for (Long promoterId : promotersToRemove) {</b>
+&nbsp;			// Utilizza il tuo metodo di rimozione del promoter, ad esempio:
+<b class="nc">&nbsp;			removePromoterToEventDraft(eventDraft.getId(), promoterId);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	//Implementazione della rimozione di un promoter durante aggiornamento eventDraft
+&nbsp;	public void removePromoterToEventDraft(Long eventDraftId, Long accountId) {
+<b class="nc">&nbsp;		eventRepository.findById(eventDraftId).orElseThrow(() -&gt; new IllegalArgumentException(&quot;Invalid EventDraft ID&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;		validatePromoterAssociated(eventDraftId, accountId);</b>
+&nbsp;
+<b class="nc">&nbsp;		eventPromoterAssociationRepository.deleteByIdEventAndIdPromoter(eventDraftId, accountId);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	// Controlla se l&#39;associazione Promoter-EventDraft esiste già
+&nbsp;	public void validatePromoterAssociated(Long eventDraftId, Long accountId) {
+&nbsp;		// Controlla se l&#39;associazione esiste
+<b class="nc">&nbsp;		boolean isAlreadyAssociated = eventPromoterAssociationRepository</b>
+<b class="nc">&nbsp;			.findByIdEventAndIdPromoter(eventDraftId, accountId)</b>
+<b class="nc">&nbsp;			.isPresent();</b>
+&nbsp;
+<b class="nc">&nbsp;		if (!isAlreadyAssociated) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Promoter is not associated with this event, cannot remove.&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	public void createEventDraftValidatorWithPromoter(EventDTO eventDraftDTO) {
+<b class="fc">&nbsp;		titleValidation(eventDraftDTO.getTitle());</b>
+<b class="fc">&nbsp;		descriptionValidation(eventDraftDTO.getDescription());</b>
+<b class="fc">&nbsp;		placeValidation(eventDraftDTO.getPlace());</b>
+<b class="fc">&nbsp;		dateValidation(eventDraftDTO.getDate());</b>
+<b class="fc">&nbsp;		timeValidation(eventDraftDTO.getTime());</b>
+<b class="fc">&nbsp;		durationValidation(eventDraftDTO.getDuration());</b>
+<b class="fc">&nbsp;		maxNumberOfParticipantsValidation(eventDraftDTO.getMaxNumberOfParticipants());</b>
+&nbsp;
+&nbsp;		// 2. Validazione del promoter associato (come nel metodo validateAddPromoterToEventDraft)
+<b class="pc">&nbsp;		if (eventDraftDTO.getPromoters() == null || eventDraftDTO.getPromoters().isEmpty()) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Event promoters must not be empty.&quot;);</b>
+<b class="pc">&nbsp;		} else if (!eventDraftDTO.getPromoters().stream().allMatch(ConcurrentHashMap.newKeySet()::add)) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Event promoters must contain no duplicates.&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		eventDraftDTO.getPromoters().forEach(accountValidator::getPromoterAndValidate);</b>
+&nbsp;	}
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-11 13:30</div>
+</div>
+</body>
+</html>

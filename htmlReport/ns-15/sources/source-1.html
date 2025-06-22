@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EventStateHandler</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.pareidolia.state</a>
+</div>
+
+<h1>Coverage Summary for Class: EventStateHandler (com.pareidolia.state)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EventStateHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (3/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    23,1%
+  </span>
+  <span class="absValue">
+    (3/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    31,2%
+  </span>
+  <span class="absValue">
+    (5/16)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">EventStateHandler$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    57,1%
+  </span>
+  <span class="absValue">
+    (4/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    23,1%
+  </span>
+  <span class="absValue">
+    (3/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    35,3%
+  </span>
+  <span class="absValue">
+    (6/17)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.pareidolia.state;
+&nbsp;
+&nbsp;import com.pareidolia.entity.Event;
+&nbsp;
+<b class="nc">&nbsp;public final class EventStateHandler {</b>
+&nbsp;	public static void moveTo(Event event, Event.EventState state) {
+<b class="pc">&nbsp;		switch (state) {</b>
+&nbsp;			case DRAFT:
+<b class="nc">&nbsp;				moveToDraft(event);</b>
+&nbsp;				return;
+&nbsp;			case REVIEW:
+<b class="fc">&nbsp;				moveToReview(event);</b>
+&nbsp;				return;
+&nbsp;			case PUBLISHED:
+<b class="nc">&nbsp;				publish(event);</b>
+&nbsp;				return;
+&nbsp;			default:
+<b class="nc">&nbsp;				throw new IllegalStateException(state + &quot; state not managed&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	public static void moveToReview(Event event) {
+<b class="pc">&nbsp;		if (event.getState() != Event.EventState.DRAFT) {</b>
+<b class="nc">&nbsp;			throw new IllegalStateException(&quot;Can only move to review from DRAFT state&quot;);</b>
+&nbsp;		}
+<b class="fc">&nbsp;		event.setState(Event.EventState.REVIEW);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public static void publish(Event event) {
+<b class="nc">&nbsp;		if (event.getState() != Event.EventState.REVIEW) {</b>
+<b class="nc">&nbsp;			throw new IllegalStateException(&quot;Can only publish from REVIEW state&quot;);</b>
+&nbsp;		}
+<b class="nc">&nbsp;		event.setState(Event.EventState.PUBLISHED);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public static void moveToDraft(Event event) {
+<b class="nc">&nbsp;		if (event.getState() != Event.EventState.REVIEW &amp;&amp; event.getState() != Event.EventState.PUBLISHED) {</b>
+<b class="nc">&nbsp;			throw new IllegalStateException(&quot;Can only move to draft from REVIEW or PUBLISHED state&quot;);</b>
+&nbsp;		}
+<b class="nc">&nbsp;		event.setState(Event.EventState.DRAFT);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public static boolean canEdit(Event event) {
+<b class="pc">&nbsp;		return event.getState() == Event.EventState.DRAFT;</b>
+&nbsp;	}
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-11 13:30</div>
+</div>
+</body>
+</html>

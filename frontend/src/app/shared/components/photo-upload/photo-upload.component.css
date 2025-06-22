@@ -1,0 +1,58 @@
+.image-section {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.profile-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 8px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #f5f5f5;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.profile-image.clickable {
+  cursor: pointer;
+}
+
+.profile-image.loading {
+  opacity: 0.7;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.profile-image:hover .image-overlay {
+  opacity: 1;
+}
+
+.image-overlay.view-only {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.image-loading-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}

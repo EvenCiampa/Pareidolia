@@ -1,0 +1,17 @@
+@startuml
+left to right direction
+actor "Consumer"
+
+
+rectangle System{
+	Consumer -down->  (Login consumer)
+	Consumer -down-> (Display/Add/Delete Booking)
+	Consumer -down-> (Display/Update Consumer)
+	Consumer -down-> (Display/Add Review)
+
+
+	(Display/Add/Delete Booking) 	..> (Login consumer): <<include>>
+	(Display/Update Consumer) 		..> (Login consumer): <<include>>
+	(Display/Add Review) 			..> (Login consumer): <<include>>
+}
+@enduml

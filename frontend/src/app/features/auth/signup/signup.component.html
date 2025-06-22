@@ -1,0 +1,131 @@
+<div class="wrap-signup">
+	<div class="container">
+		<form (ngSubmit)="onSubmit()" [formGroup]="signupForm">
+			<mat-card class="signup-box">
+				<mat-card-header>
+					<img alt="App Logo" height="100" ngSrc="assets/images/logo.svg" width="100">
+					<h2>Sign Up</h2>
+				</mat-card-header>
+
+				<mat-card-content>
+					<div *ngIf="formError" class="form-error">
+						{{ formError }}
+					</div>
+
+					<div class="form-row">
+						<mat-form-field appearance="outline">
+							<mat-label>Name</mat-label>
+							<input formControlName="name"
+								   matInput
+								   required>
+							<mat-error>{{ getErrorMessage('name', 'Name') }}</mat-error>
+						</mat-form-field>
+
+						<mat-form-field appearance="outline">
+							<mat-label>Surname</mat-label>
+							<input formControlName="surname"
+								   matInput
+								   required>
+							<mat-error>{{ getErrorMessage('surname', 'Surname') }}</mat-error>
+						</mat-form-field>
+					</div>
+
+					<mat-form-field appearance="outline">
+						<mat-label>Email</mat-label>
+						<input formControlName="email"
+							   matInput
+							   required
+							   type="email">
+						<mat-icon matSuffix>email</mat-icon>
+						<mat-error>{{ getErrorMessage('email', 'Email') }}</mat-error>
+					</mat-form-field>
+
+					<div class="hint-container phone-hint">
+						<mat-icon>info</mat-icon>
+						<span>Format: +1 234-567-8900 or 2345678900</span>
+					</div>
+
+					<mat-form-field appearance="outline" class="phone-field">
+						<mat-label>Phone</mat-label>
+						<input formControlName="phone"
+							   matInput
+							   required
+							   type="tel">
+						<mat-icon matSuffix>phone</mat-icon>
+						<mat-error>{{ getErrorMessage('phone', 'Phone') }}</mat-error>
+					</mat-form-field>
+
+					<div class="hint-container password-hint">
+						<div class="hint-header">
+							<mat-icon>info</mat-icon>
+							<span>Password must contain:</span>
+						</div>
+						<ul class="password-hints">
+							<li [class.valid]="passwordValidations.minLength">
+								<mat-icon>{{ passwordValidations.minLength ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+								At least 8 characters
+							</li>
+							<li [class.valid]="passwordValidations.hasUpper">
+								<mat-icon>{{ passwordValidations.hasUpper ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+								One uppercase letter
+							</li>
+							<li [class.valid]="passwordValidations.hasLower">
+								<mat-icon>{{ passwordValidations.hasLower ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+								One lowercase letter
+							</li>
+							<li [class.valid]="passwordValidations.hasNumber">
+								<mat-icon>{{ passwordValidations.hasNumber ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+								One number
+							</li>
+							<li [class.valid]="passwordValidations.hasSpecial">
+								<mat-icon>{{ passwordValidations.hasSpecial ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+								One special character (&commat;#$%^&+=-)
+							</li>
+							<li [class.valid]="passwordValidations.noSpaces">
+								<mat-icon>{{ passwordValidations.noSpaces ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+								No spaces
+							</li>
+						</ul>
+					</div>
+
+					<mat-form-field appearance="outline" class="password-field">
+						<mat-label>Password</mat-label>
+						<input [type]="hidePassword ? 'password' : 'text'"
+							   formControlName="password"
+							   matInput
+							   required>
+						<button (click)="hidePassword = !hidePassword"
+								mat-icon-button
+								matSuffix
+								type="button">
+							<mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+						</button>
+						<mat-error>{{ getErrorMessage('password', 'Password') }}</mat-error>
+					</mat-form-field>
+
+					<mat-form-field appearance="outline">
+						<mat-label>Confirm Password</mat-label>
+						<input [type]="hidePassword ? 'password' : 'text'"
+							   formControlName="confirmPassword"
+							   matInput
+							   required>
+						<mat-error>{{ getErrorMessage('confirmPassword', 'Confirm Password') }}</mat-error>
+					</mat-form-field>
+				</mat-card-content>
+
+				<mat-card-actions>
+					<button [disabled]="!signupForm.valid"
+							color="primary"
+							mat-raised-button
+							type="submit">
+						Sign Up
+					</button>
+				</mat-card-actions>
+
+				<mat-card-footer>
+					<p>Already have an account? <a routerLink="/auth/login">Login here</a></p>
+				</mat-card-footer>
+			</mat-card>
+		</form>
+	</div>
+</div>

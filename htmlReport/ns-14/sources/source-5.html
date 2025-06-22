@@ -1,0 +1,276 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PromoterService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.pareidolia.service.promoter</a>
+</div>
+
+<h1>Coverage Summary for Class: PromoterService (com.pareidolia.service.promoter)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PromoterService</td>
+<td class="coverageStat">
+  <span class="percent">
+    83,3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    44,4%
+  </span>
+  <span class="absValue">
+    (8/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    70,4%
+  </span>
+  <span class="absValue">
+    (38/54)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">PromoterService$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    83,3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    44,4%
+  </span>
+  <span class="absValue">
+    (8/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    70,4%
+  </span>
+  <span class="absValue">
+    (38/54)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.pareidolia.service.promoter;
+&nbsp;
+&nbsp;import com.pareidolia.configuration.security.jwt.JWTService;
+&nbsp;import com.pareidolia.dto.AccountLoginDTO;
+&nbsp;import com.pareidolia.dto.PasswordUpdateDTO;
+&nbsp;import com.pareidolia.dto.PromoterDTO;
+&nbsp;import com.pareidolia.entity.Account;
+&nbsp;import com.pareidolia.entity.PromoterInfo;
+&nbsp;import com.pareidolia.mapper.AccountMapper;
+&nbsp;import com.pareidolia.repository.AccountRepository;
+&nbsp;import com.pareidolia.repository.PromoterInfoRepository;
+&nbsp;import com.pareidolia.service.ImageService;
+&nbsp;import com.pareidolia.validator.AccountValidator;
+&nbsp;import com.pareidolia.validator.ImageValidator;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.apache.commons.codec.digest.DigestUtils;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.data.util.Pair;
+&nbsp;import org.springframework.security.core.Authentication;
+&nbsp;import org.springframework.security.core.authority.SimpleGrantedAuthority;
+&nbsp;import org.springframework.security.core.context.SecurityContextHolder;
+&nbsp;import org.springframework.security.core.userdetails.User;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.web.multipart.MultipartFile;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Transactional
+&nbsp;@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+&nbsp;public class PromoterService {
+&nbsp;
+&nbsp;	private final JWTService jwtService;
+&nbsp;	private final ImageService imageService;
+&nbsp;	private final ImageValidator imageValidator;
+&nbsp;	private final AccountValidator accountValidator;
+&nbsp;	private final AccountRepository accountRepository;
+&nbsp;	private final PromoterInfoRepository promoterInfoRepository;
+&nbsp;
+&nbsp;	private Account getAccountAndValidate() {
+<b class="fc">&nbsp;		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();</b>
+<b class="pc">&nbsp;		if (authentication != null) {</b>
+<b class="fc">&nbsp;			User user = ((User) authentication.getPrincipal());</b>
+&nbsp;
+<b class="pc">&nbsp;			if (!user.getAuthorities().contains(new SimpleGrantedAuthority(Account.Type.PROMOTER.name()))) {</b>
+<b class="nc">&nbsp;				throw new JWTService.TokenVerificationException();</b>
+&nbsp;			}
+<b class="fc">&nbsp;			return accountRepository.findByEmail(user.getUsername())</b>
+<b class="fc">&nbsp;				.orElseThrow(JWTService.TokenVerificationException::new);</b>
+&nbsp;		}
+<b class="nc">&nbsp;		throw new JWTService.TokenVerificationException();</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public PromoterDTO getData() {
+<b class="fc">&nbsp;		Account account = getAccountAndValidate();</b>
+<b class="fc">&nbsp;		PromoterInfo promoterInfo = promoterInfoRepository.findByIdPromoter(account.getId())</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Promoter information not found&quot;));</b>
+<b class="fc">&nbsp;		return AccountMapper.entityToPromoterDTO(account, promoterInfo);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public AccountLoginDTO update(PromoterDTO promoterDTO) {
+<b class="fc">&nbsp;		if (promoterDTO.getId() == null || !promoterDTO.getId().equals(getAccountAndValidate().getId())) {</b>
+<b class="fc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid ID&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		Pair&lt;Account, PromoterInfo&gt; accountWithInfo = accountValidator.getPromoterAndValidateUpdate(promoterDTO);</b>
+<b class="fc">&nbsp;		Account account = accountWithInfo.getFirst();</b>
+<b class="fc">&nbsp;		PromoterInfo promoterInfo = accountWithInfo.getSecond();</b>
+<b class="fc">&nbsp;		boolean updateAuthToken = !Objects.equals(account.getEmail(), promoterDTO.getEmail());</b>
+&nbsp;
+<b class="fc">&nbsp;		AccountMapper.updateEntitiesWithPromoterDTO(account, promoterInfo, promoterDTO);</b>
+&nbsp;
+<b class="fc">&nbsp;		account = accountRepository.save(account);</b>
+<b class="fc">&nbsp;		promoterInfoRepository.save(promoterInfo);</b>
+&nbsp;
+<b class="fc">&nbsp;		String authToken = null;</b>
+<b class="pc">&nbsp;		if (updateAuthToken) {</b>
+<b class="fc">&nbsp;			authToken = jwtService.create(account.getReferenceType(), account.getEmail(), account.getPassword());</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		return AccountMapper.entityToAccountLoginDTO(account, authToken);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public AccountLoginDTO updatePassword(PasswordUpdateDTO passwordUpdateDTO) {
+<b class="nc">&nbsp;		Account account = getAccountAndValidate();</b>
+&nbsp;
+<b class="nc">&nbsp;		if (passwordUpdateDTO.getCurrentPassword() == null) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid Current Password&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		String currentPassword = DigestUtils.sha3_256Hex(passwordUpdateDTO.getCurrentPassword());</b>
+&nbsp;
+<b class="nc">&nbsp;		if (!Objects.equals(currentPassword, account.getPassword())) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Current password is incorrect&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		if (passwordUpdateDTO.getNewPassword() == null) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid New Password&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="nc">&nbsp;		accountValidator.passwordValidation(passwordUpdateDTO.getNewPassword());</b>
+&nbsp;
+<b class="nc">&nbsp;		account.setPassword(DigestUtils.sha3_256Hex(passwordUpdateDTO.getNewPassword()));</b>
+<b class="nc">&nbsp;		account = accountRepository.save(account);</b>
+&nbsp;
+<b class="nc">&nbsp;		String authToken = jwtService.create(account.getReferenceType(), account.getEmail(), account.getPassword());</b>
+&nbsp;
+<b class="nc">&nbsp;		return AccountMapper.entityToAccountLoginDTO(account, authToken);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public PromoterDTO updateImage(MultipartFile file) {
+<b class="fc">&nbsp;		imageValidator.validateAccountImage(file);</b>
+&nbsp;
+<b class="fc">&nbsp;		Account account = getAccountAndValidate();</b>
+<b class="fc">&nbsp;		PromoterInfo promoterInfo = promoterInfoRepository.findByIdPromoter(account.getId())</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Promoter information not found&quot;));</b>
+&nbsp;
+&nbsp;		try {
+<b class="fc">&nbsp;			String filename = imageService.saveImage(file);</b>
+<b class="fc">&nbsp;			promoterInfo.setPhoto(filename);</b>
+<b class="fc">&nbsp;			promoterInfo = promoterInfoRepository.save(promoterInfo);</b>
+<b class="fc">&nbsp;			return AccountMapper.entityToPromoterDTO(account, promoterInfo);</b>
+&nbsp;		} catch (IOException e) {
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Failed to save image&quot;, e);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	public PromoterDTO deleteImage() {
+<b class="fc">&nbsp;		Account account = getAccountAndValidate();</b>
+<b class="fc">&nbsp;		PromoterInfo promoterInfo = promoterInfoRepository.findByIdPromoter(account.getId())</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Promoter information not found&quot;));</b>
+&nbsp;
+<b class="pc">&nbsp;		if (promoterInfo.getPhoto() != null) {</b>
+<b class="fc">&nbsp;			promoterInfo.setPhoto(null);</b>
+<b class="fc">&nbsp;			account = accountRepository.save(account);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		return AccountMapper.entityToPromoterDTO(account, promoterInfo);</b>
+&nbsp;	}
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-11 13:30</div>
+</div>
+</body>
+</html>

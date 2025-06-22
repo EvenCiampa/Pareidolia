@@ -1,0 +1,227 @@
+<div class="form-container">
+	<mat-card>
+		<mat-card-header>
+			<mat-card-title>{{ eventId ? 'Edit Event' : 'New Event' }}</mat-card-title>
+		</mat-card-header>
+
+		<mat-card-content>
+			<mat-tab-group *ngIf="!mainLoading; else loadingSpinner">
+				<!-- Tab Informazioni Base -->
+				<mat-tab label="Informazioni">
+					<form (ngSubmit)="onSubmit()" *ngIf="!mainLoading; else loadingSpinner" [formGroup]="eventForm">
+						<div class="form-section">
+							<div *ngIf="formError" class="form-error">
+								{{ formError }}
+							</div>
+
+							<div class="form-row">
+								<mat-form-field appearance="outline">
+									<mat-label>Title</mat-label>
+									<input formControlName="title"
+										   matInput
+										   required>
+									<mat-error>{{ getErrorMessage('title', 'Title') }}</mat-error>
+								</mat-form-field>
+							</div>
+
+							<div class="form-row">
+								<mat-form-field appearance="outline">
+									<mat-label>Description</mat-label>
+									<textarea formControlName="description" matInput required rows="4"></textarea>
+									<mat-error>{{ getErrorMessage('description', 'Description') }}</mat-error>
+								</mat-form-field>
+							</div>
+
+							<div class="form-row">
+								<mat-form-field appearance="outline">
+									<mat-label>Place</mat-label>
+									<input formControlName="place"
+										   matInput
+										   required>
+									<mat-error>{{ getErrorMessage('place', 'Place') }}</mat-error>
+								</mat-form-field>
+							</div>
+
+							<div class="form-row">
+								<mat-form-field appearance="outline">
+									<mat-label>Date</mat-label>
+									<input [matDatepicker]="datePicker"
+										   formControlName="date"
+										   matInput
+										   required>
+									<mat-datepicker-toggle [for]="datePicker" matSuffix></mat-datepicker-toggle>
+									<mat-datepicker #datePicker></mat-datepicker>
+									<mat-error>{{ getErrorMessage('date', 'Date') }}</mat-error>
+								</mat-form-field>
+
+								<mat-form-field appearance="outline">
+									<mat-label>Time</mat-label>
+									<input [matTimepicker]="timePicker"
+										   formControlName="time"
+										   matInput
+										   required>
+									<mat-timepicker-toggle [for]="timePicker" matSuffix></mat-timepicker-toggle>
+									<mat-timepicker #timePicker></mat-timepicker>
+									<mat-error>{{ getErrorMessage('time', 'Time') }}</mat-error>
+								</mat-form-field>
+							</div>
+
+							<div class="form-row">
+								<mat-form-field appearance="outline">
+									<mat-label>Duration (minutes)</mat-label>
+									<input formControlName="duration"
+										   matInput
+										   min="15"
+										   required
+										   type="number">
+									<mat-error>{{ getErrorMessage('duration', 'Duration') }}</mat-error>
+								</mat-form-field>
+
+								<mat-form-field appearance="outline">
+									<mat-label>Max Participants</mat-label>
+									<input formControlName="maxNumberOfParticipants"
+										   matInput
+										   min="1"
+										   required
+										   type="number">
+									<mat-error>{{ getErrorMessage('maxNumberOfParticipants', 'Max Participants') }}</mat-error>
+								</mat-form-field>
+							</div>
+
+							<div class="form-row">
+								<mat-form-field appearance="outline" class="full-width">
+									<mat-label>Promoter Emails</mat-label>
+									<mat-chip-grid #chipGrid>
+										<mat-chip-row (removed)="removeEmail(email)"
+													  *ngFor="let email of promoterEmails">
+											{{ email }}
+											<button matChipRemove>
+												<mat-icon>cancel</mat-icon>
+											</button>
+										</mat-chip-row>
+										<input (matChipInputTokenEnd)="addEmail($event)"
+											   [matChipInputFor]="chipGrid"
+											   [matChipInputSeparatorKeyCodes]="separatorKeysCodes">
+									</mat-chip-grid>
+									<mat-error>{{ getErrorMessage('promoterEmails', 'Promoter Emails') }}</mat-error>
+								</mat-form-field>
+							</div>
+
+							<mat-card-actions>
+								<button mat-button routerLink="/admin/events" type="button">Cancel</button>
+								<button [disabled]="!eventForm.valid || loading" color="primary" mat-raised-button type="submit">
+									{{ loading ? 'Saving...' : (eventId ? 'Update' : 'Create') }}
+								</button>
+							</mat-card-actions>
+						</div>
+					</form>
+				</mat-tab>
+
+				<!-- Tab Foto (solo per promoter) -->
+				<mat-tab *ngIf="eventId != null" label="Foto">
+					<div class="form-section">
+						<app-photo-upload
+								(fileSelected)="onImageSelected($event)"
+								(removeImage)="removeImage()"
+								[imagePreview]="imagePreview"
+								[loading]="imageLoading"
+								[originalImage]="originalImage">
+						</app-photo-upload>
+					</div>
+				</mat-tab>
+
+				<!-- Chat Tab -->
+				<mat-tab *ngIf="eventId != null" label="Chat">
+					<div class="form-section chat-section">
+						<div #chatContainer
+							 (scroll)="onScroll($event)"
+							 class="chat-messages">
+							<div *ngIf="loadingMessages" class="messages-loading">
+								<mat-progress-spinner diameter="30" mode="indeterminate">
+								</mat-progress-spinner>
+							</div>
+							<div *ngFor="let message of messages"
+								 [class.own-message]="isOwnMessage(message)"
+								 class="message">
+								<div class="message-header">
+									<span class="sender">{{ message.accountName }}</span>
+									<span class="time">{{ message.creationTime | date:'short' }}</span>
+									<button (click)="deleteMessage(message.id)" color="warn" mat-icon-button>
+										<mat-icon>delete</mat-icon>
+									</button>
+								</div>
+								<div class="message-content">{{ message.message }}</div>
+							</div>
+						</div>
+
+						<div class="chat-input" style="align-content: center;">
+							<mat-form-field appearance="outline" style="flex: 1">
+								<input (keyup.enter)="sendMessage()"
+									   [(ngModel)]="newMessage"
+									   matInput>
+							</mat-form-field>
+							<button (click)="sendMessage()"
+									[disabled]="!newMessage.trim()"
+									color="primary"
+									mat-fab>
+								<mat-icon>send</mat-icon>
+							</button>
+						</div>
+					</div>
+				</mat-tab>
+
+				<!-- Status Management Tab -->
+				<mat-tab *ngIf="eventId != null" label="Status">
+					<div class="form-section status-section">
+						<h3>Current Status: {{ event?.state }}</h3>
+
+						<div class="status-actions">
+							<!-- DRAFT state actions -->
+							<button (click)="moveForward()"
+									*ngIf="event?.state === 'DRAFT'"
+									class="review-button"
+									mat-raised-button
+									style="width: auto; height: auto;">
+								<mat-icon>rate_review</mat-icon>
+								Submit for Review
+							</button>
+
+							<!-- REVIEW state actions -->
+							<ng-container *ngIf="event?.state === 'REVIEW'">
+								<button (click)="moveBackwards()"
+										class="draft-button"
+										mat-raised-button
+										style="width: auto; height: auto;">
+									<mat-icon>edit</mat-icon>
+									Back to Draft
+								</button>
+								<button (click)="moveForward()"
+										class="publish-button"
+										mat-raised-button
+										style="width: auto; height: auto;">
+									<mat-icon>publish</mat-icon>
+									Publish Event
+								</button>
+							</ng-container>
+
+							<!-- PUBLISHED state actions -->
+							<button (click)="moveBackwards()"
+									*ngIf="event?.state === 'PUBLISHED'"
+									class="draft-button"
+									mat-raised-button
+									style="width: auto; height: auto;">
+								<mat-icon>unpublished</mat-icon>
+								Unpublish
+							</button>
+						</div>
+					</div>
+				</mat-tab>
+			</mat-tab-group>
+			<ng-template #loadingSpinner>
+				<div class="loading-container">
+					<mat-spinner style="margin: 30px auto;"></mat-spinner>
+				</div>
+			</ng-template>
+		</mat-card-content>
+	</mat-card>
+</div>

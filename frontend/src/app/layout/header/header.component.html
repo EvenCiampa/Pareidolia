@@ -1,0 +1,44 @@
+<mat-toolbar color="primary">
+	<a class="logo-link" routerLink="/home">
+		<span class="logo-container">
+			<img alt="App Logo" height="40" ngSrc="assets/images/logo.svg" width="40">
+			<span [class.mobile]="isMobile" class="app-name">Pareidolia</span>
+		</span>
+	</a>
+
+	<span class="spacer"></span>
+
+	<ng-container *ngIf="!user">
+		<button class="auth-button" mat-raised-button routerLink="/auth/login">
+			<mat-icon>login</mat-icon>
+			<span>Login</span>
+		</button>
+	</ng-container>
+
+	<ng-template [ngIf]="user">
+		<button #menuTrigger="matMenuTrigger" [matMenuTriggerFor]="menu" class="user-menu-button" mat-button>
+			<span class="user-name">{{ displayName }}</span>
+			<mat-icon class="dropdown-icon">{{ menuTrigger.menuOpen ? 'arrow_drop_up' : 'arrow_drop_down' }}</mat-icon>
+		</button>
+
+		<mat-menu #menu="matMenu">
+			<button mat-menu-item routerLink="/profile">
+				<mat-icon>person</mat-icon>
+				<span>Profile</span>
+			</button>
+			<button *ngIf="isAdmin" mat-menu-item routerLink="/admin">
+				<mat-icon>admin_panel_settings</mat-icon>
+				<span>Admin Panel</span>
+			</button>
+			<button *ngIf="isPromoter" mat-menu-item routerLink="/promoter">
+				<mat-icon>admin_panel_settings</mat-icon>
+				<span>Promoter Panel</span>
+			</button>
+			<mat-divider></mat-divider>
+			<button (click)="logout()" class="logout-item" mat-menu-item>
+				<mat-icon>exit_to_app</mat-icon>
+				<span>Logout</span>
+			</button>
+		</mat-menu>
+	</ng-template>
+</mat-toolbar>

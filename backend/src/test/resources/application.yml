@@ -1,0 +1,52 @@
+spring:
+    application:
+        name: Pareidolia
+    main:
+        banner-mode: off
+        allow-bean-definition-overriding: true
+    datasource:
+        username: root
+        password: rootroot
+        url: jdbc:tc:mysql:8.4.3:///test?TC_REUSABLE=true&TC_DAEMON=true&TC_TMPFS=/var/lib/mysql:rw&TC_MY_CNF=mysql_conf_override&cacheDefaultTimezone=false
+        hikari:
+            minimum-idle: 1
+            maximum-pool-size: 15
+    jpa:
+        hibernate:
+            ddl-auto: update
+            naming:
+                implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        database: mysql
+        open-in-view: false
+        database-platform: org.hibernate.dialect.MySQL8Dialect
+        generate-ddl: true
+        properties:
+            hibernate:
+                storage_engine: innodb
+                globally_quoted_identifiers: true
+                use_sql_comments: false
+                format_sql: false
+                show_sql: true
+
+jwt:
+    secret: TEST_SECRET
+
+app:
+    mail:
+        from-name: TEST_NAME
+        from-email: TEST_EMAIL
+    upload:
+        dir: "\0"
+        url-prefix: TEST_URL
+        thumbnail-prefix: thumbnail-
+        account:
+            max-size: 5242880  # 5MB in bytes
+            allowed-extensions: png,jpg,jpeg
+        event:
+            max-size: 10485760  # 10MB in bytes
+            allowed-extensions: png,jpg,jpeg
+    download:
+        dir: "\0"
+        allowed-extensions: png,jpg,jpeg
+        max-age: 0

@@ -1,0 +1,262 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AdminPromoterService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.pareidolia.service.admin</a>
+</div>
+
+<h1>Coverage Summary for Class: AdminPromoterService (com.pareidolia.service.admin)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AdminPromoterService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    62,5%
+  </span>
+  <span class="absValue">
+    (10/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88,5%
+  </span>
+  <span class="absValue">
+    (46/52)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AdminPromoterService$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    62,5%
+  </span>
+  <span class="absValue">
+    (10/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88,5%
+  </span>
+  <span class="absValue">
+    (46/52)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.pareidolia.service.admin;
+&nbsp;
+&nbsp;import com.pareidolia.dto.PromoterDTO;
+&nbsp;import com.pareidolia.dto.RegistrationDTO;
+&nbsp;import com.pareidolia.entity.Account;
+&nbsp;import com.pareidolia.entity.PromoterInfo;
+&nbsp;import com.pareidolia.mapper.AccountMapper;
+&nbsp;import com.pareidolia.repository.AccountRepository;
+&nbsp;import com.pareidolia.repository.PromoterInfoRepository;
+&nbsp;import com.pareidolia.service.ImageService;
+&nbsp;import com.pareidolia.validator.AccountValidator;
+&nbsp;import com.pareidolia.validator.ImageValidator;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.data.util.Pair;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.web.multipart.MultipartFile;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Transactional
+&nbsp;@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+&nbsp;public class AdminPromoterService {
+&nbsp;	private final ImageService imageService;
+&nbsp;	private final ImageValidator imageValidator;
+&nbsp;	private final AccountValidator accountValidator;
+&nbsp;	private final AccountRepository accountRepository;
+&nbsp;	private final PromoterInfoRepository promoterInfoRepository;
+&nbsp;
+&nbsp;	public PromoterDTO create(RegistrationDTO registrationDTO) {
+<b class="fc">&nbsp;		accountValidator.createAccountValidator(registrationDTO);</b>
+&nbsp;
+<b class="fc">&nbsp;		Account account = AccountMapper.registrationDTOToEntity(registrationDTO, Account.Type.PROMOTER);</b>
+<b class="fc">&nbsp;		account = accountRepository.save(account);</b>
+&nbsp;
+<b class="fc">&nbsp;		PromoterInfo promoterInfo = new PromoterInfo();</b>
+<b class="fc">&nbsp;		promoterInfo.setIdPromoter(account.getId());</b>
+<b class="fc">&nbsp;		promoterInfo = promoterInfoRepository.save(promoterInfo);</b>
+&nbsp;
+<b class="fc">&nbsp;		return AccountMapper.entityToPromoterDTO(account, promoterInfo);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public PromoterDTO update(PromoterDTO promoterDTO) {
+<b class="fc">&nbsp;		if (promoterDTO.getId() == null) {</b>
+<b class="fc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid ID&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		Pair&lt;Account, PromoterInfo&gt; accountWithInfo = accountValidator.getPromoterAndValidateUpdate(promoterDTO);</b>
+<b class="fc">&nbsp;		Account account = accountWithInfo.getFirst();</b>
+<b class="fc">&nbsp;		PromoterInfo promoterInfo = accountWithInfo.getSecond();</b>
+&nbsp;
+<b class="fc">&nbsp;		AccountMapper.updateEntitiesWithPromoterDTO(account, promoterInfo, promoterDTO);</b>
+&nbsp;
+<b class="fc">&nbsp;		account = accountRepository.save(account);</b>
+<b class="fc">&nbsp;		promoterInfo = promoterInfoRepository.save(promoterInfo);</b>
+&nbsp;
+<b class="fc">&nbsp;		return AccountMapper.entityToPromoterDTO(account, promoterInfo);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public PromoterDTO updateImage(Long id, MultipartFile file) {
+<b class="pc">&nbsp;		if (id == null) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid ID&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		Account account = accountRepository.findById(id)</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Account not found&quot;));</b>
+&nbsp;
+<b class="pc">&nbsp;		if (account.getReferenceType() != Account.Type.PROMOTER) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid Account Type&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		imageValidator.validateAccountImage(file);</b>
+&nbsp;
+<b class="fc">&nbsp;		PromoterInfo promoterInfo = promoterInfoRepository.findByIdPromoter(account.getId())</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Promoter information not found&quot;));</b>
+&nbsp;
+&nbsp;		try {
+<b class="fc">&nbsp;			String filename = imageService.saveImage(file);</b>
+<b class="fc">&nbsp;			promoterInfo.setPhoto(filename);</b>
+<b class="fc">&nbsp;			promoterInfo = promoterInfoRepository.save(promoterInfo);</b>
+<b class="fc">&nbsp;			return AccountMapper.entityToPromoterDTO(account, promoterInfo);</b>
+&nbsp;		} catch (Exception e) {
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Failed to save image&quot;, e);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	public PromoterDTO deleteImage(Long id) {
+<b class="pc">&nbsp;		if (id == null) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid ID&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		Account account = accountRepository.findById(id)</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Account not found&quot;));</b>
+&nbsp;
+<b class="pc">&nbsp;		if (account.getReferenceType() != Account.Type.PROMOTER) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid Account Type&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		PromoterInfo promoterInfo = promoterInfoRepository.findByIdPromoter(account.getId())</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Promoter information not found&quot;));</b>
+&nbsp;
+<b class="pc">&nbsp;		if (promoterInfo.getPhoto() != null) {</b>
+<b class="fc">&nbsp;			promoterInfo.setPhoto(null);</b>
+<b class="fc">&nbsp;			account = accountRepository.save(account);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		return AccountMapper.entityToPromoterDTO(account, promoterInfo);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void delete(Long id) {
+<b class="fc">&nbsp;		if (id == null) {</b>
+<b class="fc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid ID&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		Account account = accountRepository.findById(id)</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Account not found&quot;));</b>
+&nbsp;
+<b class="pc">&nbsp;		if (account.getReferenceType() != Account.Type.PROMOTER) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid Account Type&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		PromoterInfo promoterInfo = promoterInfoRepository.findByIdPromoter(id)</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Promoter info not found&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;		promoterInfoRepository.deleteById(promoterInfo.getId());</b>
+<b class="fc">&nbsp;		accountRepository.deleteById(id);</b>
+&nbsp;	}
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-11 13:30</div>
+</div>
+</body>
+</html>

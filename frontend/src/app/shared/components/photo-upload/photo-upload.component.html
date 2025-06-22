@@ -1,0 +1,24 @@
+<div class="image-section">
+	<div (click)="!editable && openImagePreview()"
+		 [class.clickable]="!editable"
+		 [class.loading]="loading"
+		 [style.background-image]="originalImage ? 'url(' + originalImage + ')' : (imagePreview ? 'url(' + imagePreview + ')' : 'none')"
+		 class="profile-image">
+		<div *ngIf="editable" class="image-overlay">
+			<button (click)="fileInput.click(); $event.stopPropagation()" color="primary" mat-mini-fab type="button">
+				<mat-icon>photo_camera</mat-icon>
+			</button>
+			<button (click)="onRemoveImage(); $event.stopPropagation()" *ngIf="imagePreview || originalImage" color="warn" mat-mini-fab type="button">
+				<mat-icon>delete</mat-icon>
+			</button>
+		</div>
+		<div *ngIf="!editable && (imagePreview || originalImage)" class="image-overlay view-only">
+			<button (click)="openImagePreview(); $event.stopPropagation()" color="primary" mat-mini-fab>
+				<mat-icon>zoom_in</mat-icon>
+			</button>
+		</div>
+		<mat-progress-bar *ngIf="loading" class="image-loading-progress" mode="indeterminate">
+		</mat-progress-bar>
+	</div>
+	<input #fileInput (change)="onFileSelected($event)" accept="image/*" hidden type="file">
+</div>

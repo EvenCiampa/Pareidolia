@@ -1,0 +1,166 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AccessService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.pareidolia.service.generic</a>
+</div>
+
+<h1>Coverage Summary for Class: AccessService (com.pareidolia.service.generic)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AccessService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AccessService$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/10)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.pareidolia.service.generic;
+&nbsp;
+&nbsp;import com.pareidolia.configuration.security.jwt.JWTAuthenticationService;
+&nbsp;import com.pareidolia.configuration.security.jwt.JWTService;
+&nbsp;import com.pareidolia.dto.AccountLoginDTO;
+&nbsp;import com.pareidolia.dto.LoginDTO;
+&nbsp;import com.pareidolia.dto.RegistrationDTO;
+&nbsp;import com.pareidolia.entity.Account;
+&nbsp;import com.pareidolia.mapper.AccountMapper;
+&nbsp;import com.pareidolia.repository.AccountRepository;
+&nbsp;import com.pareidolia.validator.AccountValidator;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.apache.commons.codec.digest.DigestUtils;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.security.authentication.BadCredentialsException;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Transactional
+&nbsp;@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+&nbsp;public class AccessService {
+&nbsp;
+&nbsp;	private final JWTService jwtService;
+&nbsp;	private final AccountValidator accountValidator;
+&nbsp;	private final AccountRepository accountRepository;
+&nbsp;	private final JWTAuthenticationService jwtAuthenticationService;
+&nbsp;
+&nbsp;	public AccountLoginDTO register(RegistrationDTO registrationDTO) {
+<b class="fc">&nbsp;		accountValidator.createAccountValidator(registrationDTO);</b>
+&nbsp;
+<b class="fc">&nbsp;		Account account = AccountMapper.registrationDTOToEntity(registrationDTO, Account.Type.CONSUMER);</b>
+<b class="fc">&nbsp;		account = accountRepository.save(account);</b>
+&nbsp;
+<b class="fc">&nbsp;		String authToken = jwtService.create(account.getReferenceType(), account.getEmail(), account.getPassword());</b>
+&nbsp;
+<b class="fc">&nbsp;		return AccountMapper.entityToAccountLoginDTO(account, authToken);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public AccountLoginDTO login(LoginDTO loginDTO) {
+<b class="fc">&nbsp;		Account account = accountRepository.findByEmailAndPassword(loginDTO.getEmail(), DigestUtils.sha3_256Hex(loginDTO.getPassword()))</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new BadCredentialsException(&quot;Invalid username or password&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;		String authToken = jwtService.create(account.getReferenceType(), account.getEmail(), account.getPassword());</b>
+&nbsp;
+<b class="fc">&nbsp;		return AccountMapper.entityToAccountLoginDTO(account, authToken);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void forgotPassword(String email) {
+<b class="fc">&nbsp;		jwtAuthenticationService.reset(email);</b>
+&nbsp;	}
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-11 13:30</div>
+</div>
+</body>
+</html>

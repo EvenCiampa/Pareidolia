@@ -1,0 +1,97 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EventPromoterAssociationRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.pareidolia.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: EventPromoterAssociationRepository (com.pareidolia.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">EventPromoterAssociationRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.pareidolia.repository;
+&nbsp;
+&nbsp;import com.pareidolia.entity.Account;
+&nbsp;import com.pareidolia.entity.EventPromoterAssociation;
+&nbsp;import com.pareidolia.entity.PromoterInfo;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.util.Pair;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface EventPromoterAssociationRepository extends JpaRepository&lt;EventPromoterAssociation, Long&gt; {
+&nbsp;
+&nbsp;	@Query(&quot;&quot;&quot;
+&nbsp;			SELECT new org.springframework.data.util.Pair(a, pi)
+&nbsp;			FROM EventPromoterAssociation epa
+&nbsp;			INNER JOIN PromoterInfo pi ON pi.idPromoter = epa.idPromoter
+&nbsp;			INNER JOIN Account a ON a.id = epa.idPromoter
+&nbsp;			WHERE epa.idEvent = :idEvent
+&nbsp;		&quot;&quot;&quot;)
+&nbsp;	List&lt;Pair&lt;Account, PromoterInfo&gt;&gt; findPromotersByIdEvent(Long idEvent);
+&nbsp;
+&nbsp;	Optional&lt;EventPromoterAssociation&gt; findByIdEventAndIdPromoter(Long idEvent, Long idPromoter);
+&nbsp;
+&nbsp;	void deleteByIdEventAndIdPromoter(Long eventId, Long promoterId);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-11 13:30</div>
+</div>
+</body>
+</html>

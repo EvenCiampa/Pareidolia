@@ -1,0 +1,16 @@
+@import '../../../shared/dashboard/management.component.css';
+
+.admin-container {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+mat-table {
+  width: 100%;
+}

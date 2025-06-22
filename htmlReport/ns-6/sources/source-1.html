@@ -1,0 +1,270 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SecurityConfiguration</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.pareidolia.configuration.security</a>
+</div>
+
+<h1>Coverage Summary for Class: SecurityConfiguration (com.pareidolia.configuration.security)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SecurityConfiguration</td>
+<td class="coverageStat">
+  <span class="percent">
+    87,5%
+  </span>
+  <span class="absValue">
+    (7/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89,1%
+  </span>
+  <span class="absValue">
+    (41/46)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">SecurityConfiguration$$SpringCGLIB$$0</td>
+  </tr>
+  <tr>
+    <td class="name">SecurityConfiguration$$SpringCGLIB$$FastClass$$0</td>
+  </tr>
+  <tr>
+    <td class="name">SecurityConfiguration$$SpringCGLIB$$FastClass$$1</td>
+  </tr>
+  <tr>
+    <td class="name">SecurityConfiguration$NoRedirectStrategy</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    90%
+  </span>
+  <span class="absValue">
+    (9/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89,6%
+  </span>
+  <span class="absValue">
+    (43/48)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.pareidolia.configuration.security;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import com.pareidolia.configuration.error.ErrorResponse;
+&nbsp;import com.pareidolia.entity.Account;
+&nbsp;import jakarta.servlet.http.HttpServletRequest;
+&nbsp;import jakarta.servlet.http.HttpServletResponse;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.context.annotation.Configuration;
+&nbsp;import org.springframework.http.HttpMethod;
+&nbsp;import org.springframework.security.authentication.AuthenticationManager;
+&nbsp;import org.springframework.security.authentication.ProviderManager;
+&nbsp;import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+&nbsp;import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+&nbsp;import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+&nbsp;import org.springframework.security.web.RedirectStrategy;
+&nbsp;import org.springframework.security.web.SecurityFilterChain;
+&nbsp;import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
+&nbsp;import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+&nbsp;import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+&nbsp;import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
+&nbsp;import org.springframework.security.web.util.matcher.OrRequestMatcher;
+&nbsp;import org.springframework.security.web.util.matcher.RequestMatcher;
+&nbsp;import org.springframework.web.cors.CorsConfiguration;
+&nbsp;import org.springframework.web.cors.CorsConfigurationSource;
+&nbsp;import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import static org.springframework.http.HttpStatus.FORBIDDEN;
+&nbsp;import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+&nbsp;import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+&nbsp;
+&nbsp;@Configuration
+&nbsp;@EnableWebSecurity
+&nbsp;@EnableMethodSecurity
+&nbsp;@RequiredArgsConstructor(onConstructor_ = @Autowired)
+&nbsp;public class SecurityConfiguration {
+<b class="fc">&nbsp;	private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(</b>
+&nbsp;		new AntPathRequestMatcher(&quot;/admin/**&quot;),
+&nbsp;		new AntPathRequestMatcher(&quot;/consumer/**&quot;),
+&nbsp;		new AntPathRequestMatcher(&quot;/promoter/**&quot;)
+&nbsp;	);
+&nbsp;	private final ObjectMapper mapper;
+&nbsp;
+&nbsp;	@Bean
+&nbsp;	public AuthenticationManager authenticationManager(TokenAuthenticationProvider authenticationProvider) {
+<b class="fc">&nbsp;		return new ProviderManager(authenticationProvider);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Bean
+&nbsp;	public SecurityFilterChain filterChain(HttpSecurity http, TokenAuthenticationProvider authenticationProvider, AuthenticationManager authenticationManager) throws Exception {
+<b class="fc">&nbsp;		return http</b>
+<b class="fc">&nbsp;			.cors(it -&gt; it.configurationSource(corsConfigurationSource())) // enable CORS</b>
+<b class="fc">&nbsp;			.csrf(AbstractHttpConfigurer::disable)</b>
+<b class="fc">&nbsp;			.formLogin(AbstractHttpConfigurer::disable)</b>
+<b class="fc">&nbsp;			.httpBasic(AbstractHttpConfigurer::disable)</b>
+<b class="fc">&nbsp;			.logout(AbstractHttpConfigurer::disable)</b>
+<b class="fc">&nbsp;			.requiresChannel(it -&gt; it.anyRequest().requiresInsecure())</b>
+<b class="fc">&nbsp;			.headers(it -&gt; it.cacheControl(HeadersConfigurer.CacheControlConfig::disable))</b>
+<b class="fc">&nbsp;			.sessionManagement(it -&gt; it.sessionCreationPolicy(STATELESS)) // disable session cookies bc of token JWT</b>
+<b class="fc">&nbsp;			.exceptionHandling(it -&gt; it.authenticationEntryPoint((request, response, authException) -&gt; forbiddenEntryPoint(response))) // enable exception handling</b>
+<b class="fc">&nbsp;			.authenticationProvider(authenticationProvider) // authenticator object</b>
+<b class="fc">&nbsp;			.addFilterBefore(restAuthenticationFilter(authenticationManager), AnonymousAuthenticationFilter.class)</b>
+&nbsp;			// if not authenticated return this (1st parameter)
+<b class="fc">&nbsp;			.authorizeHttpRequests(it -&gt; {</b>
+<b class="fc">&nbsp;				it.requestMatchers(new AntPathRequestMatcher(&quot;/**&quot;, HttpMethod.TRACE.name())).denyAll();</b>
+<b class="fc">&nbsp;				it.requestMatchers(PROTECTED_URLS).authenticated();</b>
+<b class="fc">&nbsp;				it.requestMatchers(new AntPathRequestMatcher(&quot;/admin/**&quot;)).hasRole(Account.Type.ADMIN.name());</b>
+<b class="fc">&nbsp;				it.requestMatchers(new AntPathRequestMatcher(&quot;/consumer/**&quot;)).hasRole(Account.Type.CONSUMER.name());</b>
+<b class="fc">&nbsp;				it.requestMatchers(new AntPathRequestMatcher(&quot;/promoter/**&quot;)).hasRole(Account.Type.PROMOTER.name());</b>
+<b class="fc">&nbsp;				it.requestMatchers(new NegatedRequestMatcher(PROTECTED_URLS)).permitAll();</b>
+&nbsp;			}) // require validation for following paths
+<b class="fc">&nbsp;			.build();</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	TokenAuthenticationFilter restAuthenticationFilter(AuthenticationManager authenticationManager) {
+<b class="fc">&nbsp;		TokenAuthenticationFilter filter = new TokenAuthenticationFilter(PROTECTED_URLS);</b>
+<b class="fc">&nbsp;		filter.setAuthenticationManager(authenticationManager);</b>
+<b class="fc">&nbsp;		filter.setAuthenticationSuccessHandler(successHandler());</b>
+<b class="fc">&nbsp;		filter.setAuthenticationFailureHandler((request, response, authException) -&gt; forbiddenEntryPoint(response));</b>
+<b class="fc">&nbsp;		return filter;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	void forbiddenEntryPoint(HttpServletResponse response) throws IOException {
+<b class="nc">&nbsp;		response.setContentType(APPLICATION_JSON_VALUE);</b>
+<b class="nc">&nbsp;		response.setStatus(FORBIDDEN.value());</b>
+<b class="nc">&nbsp;		mapper.writeValue(</b>
+<b class="nc">&nbsp;			response.getOutputStream(),</b>
+&nbsp;			new ErrorResponse(
+<b class="nc">&nbsp;				FORBIDDEN.value(),</b>
+&nbsp;				&quot;NOT_LOGGED&quot;
+&nbsp;			)
+&nbsp;		);
+&nbsp;	}
+&nbsp;
+&nbsp;	@Bean
+&nbsp;	SimpleUrlAuthenticationSuccessHandler successHandler() {
+<b class="fc">&nbsp;		SimpleUrlAuthenticationSuccessHandler successHandler = new SimpleUrlAuthenticationSuccessHandler();</b>
+<b class="fc">&nbsp;		successHandler.setRedirectStrategy(new NoRedirectStrategy());</b>
+<b class="fc">&nbsp;		return successHandler;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	@Bean
+&nbsp;	CorsConfigurationSource corsConfigurationSource() {
+<b class="fc">&nbsp;		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();</b>
+<b class="fc">&nbsp;		CorsConfiguration configuration = new CorsConfiguration();</b>
+<b class="fc">&nbsp;		configuration.setAllowedOrigins(List.of(&quot;*&quot;));</b>
+<b class="fc">&nbsp;		configuration.setAllowedHeaders(List.of(&quot;*&quot;));</b>
+<b class="fc">&nbsp;		configuration.setAllowedMethods(List.of(</b>
+<b class="fc">&nbsp;			HttpMethod.GET.name(),</b>
+<b class="fc">&nbsp;			HttpMethod.POST.name(),</b>
+<b class="fc">&nbsp;			HttpMethod.PUT.name(),</b>
+<b class="fc">&nbsp;			HttpMethod.DELETE.name()</b>
+&nbsp;		));
+<b class="fc">&nbsp;		source.registerCorsConfiguration(&quot;/**&quot;, configuration);</b>
+<b class="fc">&nbsp;		return source;</b>
+&nbsp;	}
+&nbsp;
+<b class="fc">&nbsp;	public static class NoRedirectStrategy implements RedirectStrategy {</b>
+&nbsp;		@Override
+&nbsp;		public void sendRedirect(HttpServletRequest request, HttpServletResponse response, String url) {
+<b class="fc">&nbsp;		}</b>
+&nbsp;	}
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-11 13:30</div>
+</div>
+</body>
+</html>

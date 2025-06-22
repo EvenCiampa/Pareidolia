@@ -1,0 +1,213 @@
+:root {
+  --mdc-theme-error: #B00020;
+  --mdc-outlined-card-outline-width: 2px;
+}
+
+:host {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.wrap-login, .wrap-signup, .wrap-forgot {
+  flex: 1;
+  display: flex;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+mat-card {
+  padding: 24px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-header {
+  gap: 10px;
+  margin-bottom: 24px;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+::ng-deep mat-card-header .mat-mdc-card-header-text {
+  display: none;
+}
+
+mat-card-header img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: center;
+  padding: 16px 0;
+  margin: 0;
+}
+
+mat-card-footer {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  align-items: center;
+}
+
+.footer-links a, mat-card-footer a {
+  color: #3f51b5;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover, mat-card-footer a:hover {
+  color: #303f9f;
+  text-decoration: none;
+}
+
+.divider {
+  color: rgba(0, 0, 0, 0.38);
+  font-weight: 300;
+}
+
+.instructions {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 24px;
+}
+
+button[type="submit"] {
+  min-width: 160px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.25px;
+  border-radius: 24px;
+  transition: all 0.2s ease;
+}
+
+/* Primary button styling */
+.mat-mdc-raised-button.mat-primary {
+  background-color: #3f51b5 !important;
+  color: white;
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, .2),
+  0 6px 10px 0 rgba(0, 0, 0, .14),
+  0 1px 18px 0 rgba(0, 0, 0, .12);
+}
+
+/* Hover state */
+.mat-mdc-raised-button.mat-primary:not(:disabled):hover {
+  background-color: #303f9f !important;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, .2),
+  0 8px 10px 1px rgba(0, 0, 0, .14),
+  0 3px 14px 2px rgba(0, 0, 0, .12);
+  transform: translateY(-1px);
+}
+
+/* Active/pressed state */
+.mat-mdc-raised-button.mat-primary:not(:disabled):active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, .2),
+  0 6px 10px 0 rgba(0, 0, 0, .14),
+  0 1px 18px 0 rgba(0, 0, 0, .12);
+}
+
+/* Disabled state */
+.mat-mdc-raised-button.mat-primary:disabled {
+  background-color: rgba(0, 0, 0, 0.12) !important;
+  color: rgba(0, 0, 0, 0.38);
+  box-shadow: none;
+}
+
+/* Loading state (for the forgot password button) */
+.mat-mdc-raised-button.mat-primary.loading {
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 16px;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+/* Form error styling */
+.form-error {
+  background-color: #fdecea;
+  color: #B00020;
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Snackbar styling */
+::ng-deep .success-snackbar {
+  background: #43a047;
+  color: white;
+  border-radius: 4px;
+}
+
+::ng-deep .error-snackbar {
+  background: #d32f2f;
+  color: white;
+  border-radius: 4px;
+}
+
+::ng-deep .mat-mdc-snack-bar-container {
+  margin: 16px !important;
+}
+
+::ng-deep .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  border-radius: 4px !important;
+}
+
+::ng-deep .mat-mdc-snack-bar-container .mat-mdc-button {
+  color: white !important;
+}

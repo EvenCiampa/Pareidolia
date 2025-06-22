@@ -1,0 +1,66 @@
+<div class="admin-container">
+	<div class="header">
+		<h2>Admin Management</h2>
+		<button color="primary" mat-raised-button routerLink="/admin/admins/new">
+			<mat-icon>add</mat-icon>
+			New Admin
+		</button>
+	</div>
+
+	<ng-container *ngIf="!loading; else loadingSpinner">
+		<ng-container *ngIf="admins.length > 0; else noData">
+			<mat-table [dataSource]="admins">
+				<ng-container matColumnDef="name">
+					<mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+					<mat-cell *matCellDef="let admin">{{ admin.name }} {{ admin.surname }}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="email">
+					<mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+					<mat-cell *matCellDef="let admin">{{ admin.email }}</mat-cell>
+				</ng-container>
+
+				<ng-container matColumnDef="actions">
+					<mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+					<mat-cell *matCellDef="let admin">
+						<button [routerLink]="['/admin/admins', admin.id]" mat-icon-button>
+							<mat-icon>edit</mat-icon>
+						</button>
+						<button (click)="deleteAdmin(admin.id)" *ngIf="admin.id !== authService.getCurrentUserSubject()?.id" color="warn" mat-icon-button>
+							<mat-icon>delete</mat-icon>
+						</button>
+					</mat-cell>
+				</ng-container>
+
+				<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+				<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+			</mat-table>
+
+			<mat-paginator
+					#paginator
+					(page)="onPageChange($event)"
+					[length]="totalAdmins"
+					[pageIndex]="pageIndex"
+					[pageSizeOptions]="[25, 50, 100]"
+					[pageSize]="pageSize"
+					showFirstLastButtons>
+			</mat-paginator>
+		</ng-container>
+	</ng-container>
+
+	<ng-template #loadingSpinner>
+		<div class="loading-container">
+			<mat-spinner></mat-spinner>
+		</div>
+	</ng-template>
+
+	<ng-template #noData>
+		<app-empty-table
+				createButtonText="Create Admin"
+				createRoute="/admin/admins/new"
+				icon="admin_panel_settings"
+				message="There are no admins available. Create one to get started."
+				title="No Admins">
+		</app-empty-table>
+	</ng-template>
+</div>

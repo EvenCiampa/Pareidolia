@@ -1,0 +1,73 @@
+server:
+    port: 8080
+spring:
+    application:
+        name: Pareidolia
+    main:
+        banner-mode: off
+        allow-bean-definition-overriding: true
+    datasource:
+        username: root
+        password: rootroot
+        url: jdbc:mysql://localhost:3307/pareidolia
+        hikari:
+            minimum-idle: 1
+            maximum-pool-size: 15
+    jpa:
+        hibernate:
+            ddl-auto: update
+            naming:
+                implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        database: mysql
+        open-in-view: false
+        database-platform: org.hibernate.dialect.MySQL8Dialect
+        generate-ddl: true
+        properties:
+            hibernate:
+                storage_engine: innodb
+                globally_quoted_identifiers: true
+                use_sql_comments: false
+                format_sql: false
+                show_sql: false
+    servlet:
+        multipart:
+            max-file-size: 10MB
+            max-request-size: 10MB
+
+    mail:
+        host: EDIT_THIS
+        username: EDIT_THIS
+        password: EDIT_THIS
+        properties:
+            mail:
+                transport:
+                    protocol: smtp
+                smtp:
+                    port: 587
+                    auth: true
+                    starttls:
+                        enable: true
+                        required: true
+
+jwt:
+    secret: EDIT_THIS
+
+app:
+    mail:
+        from-name: EDIT_THIS
+        from-email: EDIT_THIS
+    upload:
+        dir: ${user.home}/pareidolia/uploads
+        url-prefix: http://localhost:8080/generic/service/image
+        thumbnail-prefix: thumbnail-
+        account:
+            max-size: 5242880  # 5MB in bytes
+            allowed-extensions: png,jpg,jpeg
+        event:
+            max-size: 10485760  # 10MB in bytes
+            allowed-extensions: png,jpg,jpeg
+    download:
+        dir: ${user.home}/pareidolia/uploads
+        allowed-extensions: png,jpg,jpeg
+        max-age: 31536000

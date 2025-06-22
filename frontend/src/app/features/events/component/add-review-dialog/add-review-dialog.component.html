@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>Scrivi una recensione</h2>
+<mat-dialog-content>
+	<form [formGroup]="reviewForm" class="form-container">
+		<mat-form-field appearance="outline" class="full-width">
+			<mat-label>Titolo</mat-label>
+			<input formControlName="title" matInput required>
+		</mat-form-field>
+
+		<mat-form-field appearance="outline" class="full-width">
+			<mat-label>Valutazione</mat-label>
+			<mat-select formControlName="score" required>
+				<mat-option [value]="1">1 stella</mat-option>
+				<mat-option [value]="2">2 stelle</mat-option>
+				<mat-option [value]="3">3 stelle</mat-option>
+				<mat-option [value]="4">4 stelle</mat-option>
+				<mat-option [value]="5">5 stelle</mat-option>
+			</mat-select>
+		</mat-form-field>
+
+		<mat-form-field appearance="outline" class="full-width">
+			<mat-label>Descrizione</mat-label>
+			<textarea formControlName="description" matInput required rows="4"></textarea>
+		</mat-form-field>
+	</form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+	<button (click)="onCancel()" mat-button>Annulla</button>
+	<button (click)="onSubmit()" [disabled]="!reviewForm.valid || loading"
+			color="primary"
+			mat-raised-button>
+		{{ loading ? 'Invio...' : 'Invia' }}
+	</button>
+</mat-dialog-actions>

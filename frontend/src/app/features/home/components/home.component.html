@@ -1,0 +1,105 @@
+<div class="home-container">
+	<div class="header">
+		<h1>Eventi Disponibili</h1>
+		<mat-button-toggle-group (change)="toggleView($event.value)" [value]="viewMode">
+			<mat-button-toggle value="grid">
+				<mat-icon>grid_view</mat-icon>
+			</mat-button-toggle>
+			<mat-button-toggle value="list">
+				<mat-icon>view_list</mat-icon>
+			</mat-button-toggle>
+		</mat-button-toggle-group>
+	</div>
+
+	<ng-container *ngIf="!loading; else loadingSpinner">
+		<div *ngIf="events.length > 0; else noEvents"
+			 [class.grid-view]="viewMode === 'grid'"
+			 [class.list-view]="viewMode === 'list'"
+			 class="events-container">
+			<mat-card *ngFor="let event of events" class="event-card">
+				<div class="event-image">
+					<app-event-image [imageUrl]="event.image ?? null"></app-event-image>
+					<div *ngIf="event.booked" class="booking-badge">
+						<mat-icon>check_circle</mat-icon>
+						Prenotato
+					</div>
+				</div>
+
+				<div class="event-content">
+					<mat-card-header>
+						<mat-card-title>{{ event.title }}</mat-card-title>
+						<mat-card-subtitle>{{ event.place }}</mat-card-subtitle>
+					</mat-card-header>
+
+					<mat-card-content>
+						<p class="description">{{ event.description }}</p>
+						<div class="event-details">
+							<div class="details-row">
+								<p><strong>Data:</strong> {{ formatDate(event) }}</p>
+								<p><strong>Ora:</strong> {{ formatTime(event) }}</p>
+								<p><strong>Durata:</strong> {{ event.duration }} minuti</p>
+							</div>
+							<div class="details-row">
+								<p><strong>Posti:</strong> {{ event.maxNumberOfParticipants }}</p>
+								<p><strong>Disponibili:</strong> {{ Math.floor(Math.abs((event.maxNumberOfParticipants) - (event.currentParticipants ?? 0))) }}</p>
+							</div>
+							<div class="promoters">
+								<strong>Organizzatori:</strong>
+								<div class="promoter-list">
+									<span *ngFor="let promoter of event.promoters">
+										{{ promoter.name }} {{ promoter.surname }}
+									</span>
+								</div>
+							</div>
+						</div>
+					</mat-card-content>
+
+					<mat-card-actions>
+						<button [routerLink]="['/events', event.id]"
+								color="primary"
+								mat-raised-button>
+							Dettagli
+						</button>
+						<ng-container *ngIf="canBookEvents">
+							<button (click)="bookEvent(event, $event)"
+									*ngIf="!isEventStarted(event)"
+									[class.booked]="event.booked"
+									[disabled]="!canBookOrCancelBook(event)"
+									color="accent"
+									mat-raised-button>
+								<mat-icon>{{ event.booked ? 'event_busy' : 'bookmark' }}</mat-icon>
+								{{ event.booked ? 'Annulla' : 'Prenota' }}
+							</button>
+							<div *ngIf="isEventStarted(event)" class="event-status">
+								<mat-icon>event_busy</mat-icon>
+								{{ event.booked ? 'Iscritto' : 'Iniziato' }}
+							</div>
+						</ng-container>
+					</mat-card-actions>
+				</div>
+			</mat-card>
+		</div>
+
+		<mat-paginator #paginator
+					   (page)="onPageChange($event)"
+					   [length]="totalEvents"
+					   [pageIndex]="pageIndex"
+					   [pageSize]="pageSize"
+					   showFirstLastButtons>
+		</mat-paginator>
+	</ng-container>
+
+	<ng-template #loadingSpinner>
+		<div class="loading-container">
+			<mat-spinner></mat-spinner>
+		</div>
+	</ng-template>
+
+	<ng-template #noEvents>
+		<div class="no-events-container">
+			<mat-icon class="no-events-icon">event_busy</mat-icon>
+			<h2>Nessun evento disponibile</h2>
+			<p>Al momento non ci sono eventi pubblicati.</p>
+		</div>
+	</ng-template>
+</div>

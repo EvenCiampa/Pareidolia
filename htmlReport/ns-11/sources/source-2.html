@@ -1,0 +1,208 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AdminConsumerService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.pareidolia.service.admin</a>
+</div>
+
+<h1>Coverage Summary for Class: AdminConsumerService (com.pareidolia.service.admin)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AdminConsumerService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (8/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90,9%
+  </span>
+  <span class="absValue">
+    (20/22)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AdminConsumerService$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    80%
+  </span>
+  <span class="absValue">
+    (8/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90,9%
+  </span>
+  <span class="absValue">
+    (20/22)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.pareidolia.service.admin;
+&nbsp;
+&nbsp;import com.pareidolia.dto.ConsumerDTO;
+&nbsp;import com.pareidolia.entity.Account;
+&nbsp;import com.pareidolia.mapper.AccountMapper;
+&nbsp;import com.pareidolia.repository.AccountRepository;
+&nbsp;import com.pareidolia.validator.AccountValidator;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.PageRequest;
+&nbsp;import org.springframework.data.domain.Sort;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Transactional
+&nbsp;@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+&nbsp;public class AdminConsumerService {
+&nbsp;
+&nbsp;	private final AccountValidator accountValidator;
+&nbsp;	private final AccountRepository accountRepository;
+&nbsp;
+&nbsp;	public ConsumerDTO getData(Long id) {
+<b class="fc">&nbsp;		if (id == null) {</b>
+<b class="fc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid ID&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		Account account = accountRepository.findById(id)</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Account not found&quot;));</b>
+&nbsp;
+<b class="pc">&nbsp;		if (account.getReferenceType() != Account.Type.CONSUMER) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid Account Type&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		return AccountMapper.entityToConsumerDTO(account);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public Page&lt;ConsumerDTO&gt; getConsumers(Integer page, Integer size) {
+<b class="fc">&nbsp;		return accountRepository.findAllByReferenceType(</b>
+&nbsp;			Account.Type.CONSUMER,
+<b class="fc">&nbsp;			PageRequest.of(Math.max(0, Optional.ofNullable(page).orElse(0)), Math.max(10, Optional.ofNullable(size).orElse(10)), Sort.by(Sort.Order.desc(&quot;id&quot;)))</b>
+<b class="fc">&nbsp;		).map(AccountMapper::entityToConsumerDTO);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public ConsumerDTO update(ConsumerDTO consumerDTO) {
+<b class="fc">&nbsp;		if (consumerDTO.getId() == null) {</b>
+<b class="fc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid ID&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		Account account = accountValidator.getConsumerAndValidateUpdate(consumerDTO);</b>
+&nbsp;
+<b class="fc">&nbsp;		AccountMapper.updateEntityWithConsumerDTO(account, consumerDTO);</b>
+&nbsp;
+<b class="fc">&nbsp;		return AccountMapper.entityToConsumerDTO(accountRepository.save(account));</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public void delete(Long id) {
+<b class="fc">&nbsp;		if (id == null) {</b>
+<b class="fc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid ID&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		Account account = accountRepository.findById(id)</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Account not found&quot;));</b>
+&nbsp;
+<b class="pc">&nbsp;		if (account.getReferenceType() != Account.Type.CONSUMER) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid Account Type&quot;);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		accountRepository.deleteById(id);</b>
+&nbsp;	}
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-11 13:30</div>
+</div>
+</body>
+</html>

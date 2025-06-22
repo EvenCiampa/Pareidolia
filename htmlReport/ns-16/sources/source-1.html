@@ -1,0 +1,266 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AccountValidator</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.pareidolia.validator</a>
+</div>
+
+<h1>Coverage Summary for Class: AccountValidator (com.pareidolia.validator)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AccountValidator</td>
+<td class="coverageStat">
+  <span class="percent">
+    91,7%
+  </span>
+  <span class="absValue">
+    (11/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (11/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85,1%
+  </span>
+  <span class="absValue">
+    (40/47)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AccountValidator$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    91,7%
+  </span>
+  <span class="absValue">
+    (11/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (11/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85,1%
+  </span>
+  <span class="absValue">
+    (40/47)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.pareidolia.validator;
+&nbsp;
+&nbsp;import com.pareidolia.dto.AccountDTO;
+&nbsp;import com.pareidolia.dto.ConsumerDTO;
+&nbsp;import com.pareidolia.dto.PromoterDTO;
+&nbsp;import com.pareidolia.dto.RegistrationDTO;
+&nbsp;import com.pareidolia.entity.Account;
+&nbsp;import com.pareidolia.entity.PromoterInfo;
+&nbsp;import com.pareidolia.repository.AccountRepository;
+&nbsp;import com.pareidolia.repository.PromoterInfoRepository;
+&nbsp;import jakarta.transaction.Transactional;
+&nbsp;import lombok.RequiredArgsConstructor;
+&nbsp;import org.apache.commons.validator.routines.EmailValidator;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.data.util.Pair;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.regex.Pattern;
+&nbsp;
+&nbsp;@Component
+&nbsp;@Transactional
+&nbsp;@RequiredArgsConstructor(onConstructor_ = {@Autowired})
+&nbsp;public class AccountValidator {
+&nbsp;
+&nbsp;	private final AccountRepository accountRepository;
+&nbsp;	private final PromoterInfoRepository promoterInfoRepository;
+&nbsp;
+&nbsp;	public void createAccountValidator(RegistrationDTO dto) {
+<b class="fc">&nbsp;		emailValidation(dto.getEmail());</b>
+<b class="fc">&nbsp;		passwordValidation(dto.getPassword());</b>
+<b class="fc">&nbsp;		phoneValidation(dto.getPhone());</b>
+&nbsp;
+<b class="fc">&nbsp;		emailNotExistsValidation(dto.getEmail());</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public Account getAccountAndValidateUpdate(AccountDTO dto, boolean skipTypeValidation) {
+<b class="fc">&nbsp;		Account account = accountRepository.findById(dto.getId())</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Account not found&quot;));</b>
+&nbsp;
+<b class="pc">&nbsp;		if (!skipTypeValidation) {</b>
+<b class="nc">&nbsp;			accountTypeValidation(account.getReferenceType(), List.of(Account.Type.ADMIN, Account.Type.CONSUMER));</b>
+&nbsp;		}
+<b class="fc">&nbsp;		phoneValidation(dto.getPhone());</b>
+<b class="fc">&nbsp;		emailValidation(dto.getEmail());</b>
+&nbsp;
+<b class="fc">&nbsp;		return account;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public Account getConsumerAndValidateUpdate(ConsumerDTO dto) {
+<b class="fc">&nbsp;		Account account = accountRepository.findById(dto.getId())</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Account not found&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;		accountTypeValidation(account.getReferenceType(), Account.Type.CONSUMER);</b>
+<b class="fc">&nbsp;		phoneValidation(dto.getPhone());</b>
+<b class="fc">&nbsp;		emailValidation(dto.getEmail());</b>
+&nbsp;
+<b class="fc">&nbsp;		return account;</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public Pair&lt;Account, PromoterInfo&gt; getPromoterAndValidateUpdate(PromoterDTO dto) {
+<b class="fc">&nbsp;		return getPromoterAndValidateUpdate(dto, false);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public Pair&lt;Account, PromoterInfo&gt; getPromoterAndValidateUpdate(PromoterDTO dto, boolean skipTypeValidation) {
+<b class="fc">&nbsp;		Account account = accountRepository.findById(dto.getId())</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Account not found&quot;));</b>
+&nbsp;
+<b class="pc">&nbsp;		if (!skipTypeValidation) {</b>
+<b class="fc">&nbsp;			accountTypeValidation(account.getReferenceType(), Account.Type.PROMOTER);</b>
+&nbsp;		}
+&nbsp;
+<b class="fc">&nbsp;		PromoterInfo promoterInfo = promoterInfoRepository.findByIdPromoter(dto.getId())</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Promoter not found&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;		phoneValidation(dto.getPhone());</b>
+<b class="fc">&nbsp;		emailValidation(dto.getEmail());</b>
+&nbsp;
+<b class="fc">&nbsp;		return Pair.of(account, promoterInfo);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	public Pair&lt;Account, PromoterInfo&gt; getPromoterAndValidate(PromoterDTO dto) {
+<b class="fc">&nbsp;		Account account = accountRepository.findById(dto.getId())</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Account not found&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;		accountTypeValidation(account.getReferenceType(), Account.Type.PROMOTER);</b>
+&nbsp;
+<b class="fc">&nbsp;		PromoterInfo promoterInfo = promoterInfoRepository.findByIdPromoter(dto.getId())</b>
+<b class="fc">&nbsp;			.orElseThrow(() -&gt; new IllegalArgumentException(&quot;Promoter not found&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;		return Pair.of(account, promoterInfo);</b>
+&nbsp;	}
+&nbsp;
+&nbsp;	void accountTypeValidation(Account.Type referenceType, Account.Type expectedReferenceType) {
+<b class="pc">&nbsp;		if (referenceType != expectedReferenceType) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid Account Type&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	void accountTypeValidation(Account.Type referenceType, List&lt;Account.Type&gt; validReferenceTypes) {
+<b class="nc">&nbsp;		if (!validReferenceTypes.contains(referenceType)) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid Account Type&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	private void phoneValidation(String phone) {
+<b class="fc">&nbsp;		String regex = &quot;^[+]?[0-9 \\-().]{5,32}$&quot;;</b>
+<b class="pc">&nbsp;		if (phone == null || !Pattern.matches(regex, phone)) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid phone number&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	private void emailValidation(String email) {
+<b class="pc">&nbsp;		if (email == null || !EmailValidator.getInstance().isValid(email)) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid email&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	public void passwordValidation(String password) {
+<b class="fc">&nbsp;		String regex = &quot;^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&amp;+=\\-!])(?=\\S+$).{8,}$&quot;;</b>
+<b class="pc">&nbsp;		if (password == null || !Pattern.matches(regex, password)) {</b>
+<b class="nc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid password&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;	private void emailNotExistsValidation(String email) {
+<b class="fc">&nbsp;		if (accountRepository.findByEmail(email).isPresent()) {</b>
+<b class="fc">&nbsp;			throw new IllegalArgumentException(&quot;Invalid email&quot;);</b>
+&nbsp;		}
+&nbsp;	}
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-02-11 13:30</div>
+</div>
+</body>
+</html>

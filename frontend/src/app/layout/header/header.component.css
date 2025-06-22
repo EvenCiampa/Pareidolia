@@ -1,0 +1,132 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+.mat-toolbar {
+  padding: 0 16px;
+  height: 64px;
+}
+
+.logo-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-name {
+  font-size: 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.app-name.mobile {
+  font-size: 16px;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.auth-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  height: 36px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+.auth-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.auth-button mat-icon {
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+
+.user-menu-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  height: 36px;
+}
+
+.user-icon {
+  margin-right: 4px;
+}
+
+.user-name {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dropdown-icon {
+  margin-left: 4px;
+  font-size: 20px;
+}
+
+/* Menu styling */
+::ng-deep .user-menu {
+  margin-top: 8px;
+}
+
+::ng-deep .mat-mdc-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+}
+
+::ng-deep .mat-mdc-menu-item mat-icon {
+  margin-right: 0;
+}
+
+.logout-item {
+  color: #f44336;
+}
+
+.logout-item mat-icon {
+  color: #f44336;
+}
+
+@media (max-width: 600px) {
+  .mat-toolbar {
+    padding: 0 8px;
+  }
+
+  .app-name {
+    display: none;
+  }
+
+  .auth-button span {
+    display: none;
+  }
+
+  .auth-button {
+    padding: 0 12px;
+  }
+
+  .user-menu-button {
+    padding: 0 4px;
+  }
+
+  .user-name {
+    max-width: 40px;
+    font-size: 14px;
+  }
+}

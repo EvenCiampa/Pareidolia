@@ -1,0 +1,24 @@
+@startuml
+left to right direction
+actor "Admin"
+
+
+rectangle System{
+	Admin -down->  (Login admin)
+	Admin -down-> (Display/Update/Delete Consumer)
+	Admin -down-> (Display/Add/Update/Delete Admin)
+	Admin -down-> (Add/Update/Delete Promoter)
+	Admin -down-> (Display/Add/Delete Booking)
+	Admin -down-> (Display/Add/Update/Delete/Publish Event)
+    Admin -down-> (Display/Add/Delete Message)
+
+
+   	(Display/Update/Delete Consumer) 			..>  (Login admin): <<include>>
+   	(Display/Add/Update/Delete Admin) 			..>  (Login admin): <<include>>
+   	(Add/Update/Delete Promoter) 				..>  (Login admin): <<include>>
+    ' eliminato: Booking configurations, gift, order, Package, Product, Treatment, ServiceComment '
+    (Display/Add/Delete Booking) 				..>  (Login admin): <<include>>
+    (Display/Add/Update/Delete/Publish Event)	..> (Login admin): <<include>>
+    (Display/Add/Delete Message) 				..> (Login admin): <<include>>
+}
+@enduml

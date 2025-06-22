@@ -1,0 +1,156 @@
+<div class="event-details-container">
+	<ng-container *ngIf="!loading; else loadingSpinner">
+		<div class="event-header">
+			<h1>{{ event?.title }}</h1>
+			<p class="event-location">{{ event?.place }}</p>
+		</div>
+
+		<div class="event-image-container">
+			<app-event-image [imageUrl]="event?.image ?? null"></app-event-image>
+		</div>
+
+		<mat-card class="event-info-card">
+			<mat-card-content>
+				<div class="event-description">
+					<p>{{ event?.description }}</p>
+				</div>
+
+				<mat-divider></mat-divider>
+
+				<div class="event-details">
+					<div class="details-section">
+						<h3>Dettagli Evento</h3>
+						<div class="details-grid">
+							<div class="detail-item">
+								<mat-icon>event</mat-icon>
+								<span><strong>Data:</strong> {{ formatDate(event!) }}</span>
+							</div>
+							<div class="detail-item">
+								<mat-icon>schedule</mat-icon>
+								<span><strong>Ora:</strong> {{ formatTime(event!) }}</span>
+							</div>
+							<div class="detail-item">
+								<mat-icon>timer</mat-icon>
+								<span><strong>Durata:</strong> {{ event?.duration }} minuti</span>
+							</div>
+							<div class="detail-item">
+								<mat-icon>group</mat-icon>
+								<span><strong>Posti totali:</strong> {{ event?.maxNumberOfParticipants }}</span>
+							</div>
+							<div class="detail-item">
+								<mat-icon>event_seat</mat-icon>
+								<span><strong>Posti disponibili:</strong>
+									{{ Math.floor(Math.abs((event?.maxNumberOfParticipants ?? 0) - (event?.currentParticipants ?? 0))) }}
+								</span>
+							</div>
+						</div>
+					</div>
+
+					<mat-divider></mat-divider>
+
+					<div class="organizers-section">
+						<h3>Organizzatori</h3>
+						<div class="organizers-list">
+							<div *ngFor="let promoter of event?.promoters" class="organizer-chip">
+								{{ promoter.name }} {{ promoter.surname }}
+							</div>
+						</div>
+					</div>
+
+					<div class="booking-section">
+						<ng-container *ngIf="user?.referenceType === 'CONSUMER'">
+							<div *ngIf="isEventStarted" class="booking-status">
+								<mat-icon>event_busy</mat-icon>
+								<span>{{ event?.booked ? 'Sei iscritto a questo evento' : 'Evento già iniziato' }}</span>
+							</div>
+							<button (click)="bookEvent()"
+									*ngIf="!isEventStarted"
+									[class.booked]="event?.booked"
+									[disabled]="!canBookOrCancelBook"
+									color="primary"
+									mat-raised-button>
+								<mat-icon>{{ event?.booked ? 'event_busy' : 'bookmark' }}</mat-icon>
+								{{ event?.booked ? 'Annulla Prenotazione' : 'Prenota' }}
+							</button>
+						</ng-container>
+					</div>
+				</div>
+			</mat-card-content>
+		</mat-card>
+
+		<mat-card class="reviews-card">
+			<mat-card-header>
+				<mat-card-title>Recensioni</mat-card-title>
+				<ng-container *ngIf="!isEventEnded">
+					<div class="review-status-message">
+						<mat-icon>schedule</mat-icon>
+						<span>Le recensioni saranno disponibili dopo la fine dell'evento</span>
+					</div>
+				</ng-container>
+				<ng-container *ngIf="isEventEnded && user?.referenceType === 'CONSUMER' && !event?.booked">
+					<div class="review-status-message warning">
+						<mat-icon>info</mat-icon>
+						<span>Solo i partecipanti possono scrivere recensioni</span>
+					</div>
+				</ng-container>
+				<button (click)="openReviewDialog()"
+						*ngIf="canReview"
+						color="primary"
+						mat-raised-button>
+					<mat-icon>rate_review</mat-icon>
+					Scrivi una recensione
+				</button>
+			</mat-card-header>
+
+			<mat-card-content>
+				<div class="reviews-container">
+					<div *ngIf="!isEventEnded" class="no-reviews">
+						<mat-icon>event_busy</mat-icon>
+						<p>L'evento non è ancora terminato</p>
+						<span class="event-time">Data evento: {{ formatDate(event!) }} {{ formatTime(event!) }}</span>
+					</div>
+
+					<ng-container *ngIf="isEventEnded">
+						<div *ngIf="reviewsLoading" class="loading-spinner">
+							<mat-spinner diameter="40"></mat-spinner>
+						</div>
+
+						<div *ngIf="!reviewsLoading && reviews.length === 0" class="no-reviews">
+							<mat-icon>rate_review</mat-icon>
+							<p>Nessuna recensione disponibile</p>
+						</div>
+
+						<div *ngFor="let review of reviews" class="review-item">
+							<div class="review-header">
+								<div class="review-title">{{ review.title }}</div>
+								<div class="review-score">
+									<mat-icon *ngFor="let star of getStarsArray(review.score)" class="star-filled">star</mat-icon>
+									<mat-icon *ngFor="let star of getEmptyStarsArray(review.score)" class="star-empty">star_border</mat-icon>
+								</div>
+							</div>
+							<div class="review-author">
+								{{ review.accountName }}
+								<span class="review-date">{{ review.creationTime | date:'medium' }}</span>
+							</div>
+							<p class="review-content">{{ review.description }}</p>
+						</div>
+					</ng-container>
+				</div>
+
+				<mat-paginator (page)="onPageChange($event)"
+							   *ngIf="reviews.length > 0"
+							   [length]="totalReviews"
+							   [pageIndex]="pageIndex"
+							   [pageSize]="pageSize"
+							   showFirstLastButtons>
+				</mat-paginator>
+			</mat-card-content>
+		</mat-card>
+	</ng-container>
+
+	<ng-template #loadingSpinner>
+		<div class="loading-container">
+			<mat-spinner></mat-spinner>
+		</div>
+	</ng-template>
+</div>
